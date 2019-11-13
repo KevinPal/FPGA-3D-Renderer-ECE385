@@ -1,0 +1,30 @@
+# # File gsaved with Nlview version 6.3.8  2013-12-19 bk=1.2992 VDI=34 GEI=35
+# 
+preplace inst final_soc -pg 1 -lvl 1 -y 40 -regy -20
+preplace inst final_soc.clk_0 -pg 1 -lvl 1 -y 180
+preplace inst final_soc.VGA_Controller_0 -pg 1 -lvl 3 -y 270
+preplace inst final_soc.NIOS2.cpu -pg 1
+preplace inst final_soc.NIOS2.reset_bridge -pg 1
+preplace inst final_soc.PLL -pg 1 -lvl 3 -y 150
+preplace inst final_soc.NIOS2.clock_bridge -pg 1
+preplace inst final_soc.NIOS2 -pg 1 -lvl 2 -y 140
+preplace inst final_soc.SDRAM -pg 1 -lvl 3 -y 30
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)VGA_Controller_0.VGA_HS,(SLAVE)final_soc.vga_hs) 1 0 3 NJ 400 NJ 400 NJ
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)VGA_Controller_0.VGA_VS,(SLAVE)final_soc.vga_vs) 1 0 3 NJ 480 NJ 480 NJ
+preplace netloc EXPORT<net_container>final_soc</net_container>(MASTER)final_soc.sdram_clk,(MASTER)PLL.c1) 1 3 1 NJ
+preplace netloc POINT_TO_POINT<net_container>final_soc</net_container>(MASTER)PLL.c2,(SLAVE)VGA_Controller_0.VGA_CLK) 1 2 2 750 260 980
+preplace netloc POINT_TO_POINT<net_container>final_soc</net_container>(MASTER)PLL.c0,(SLAVE)SDRAM.clk) 1 2 2 750 140 980
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)final_soc.vga_sync_n,(SLAVE)VGA_Controller_0.VGA_SYNC_N) 1 0 3 NJ 460 NJ 460 NJ
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)clk_0.clk_in,(SLAVE)final_soc.clk) 1 0 1 NJ
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)VGA_Controller_0.VGA_G,(SLAVE)final_soc.vga_g) 1 0 3 NJ 380 NJ 380 NJ
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)final_soc.vga_blank_n,(SLAVE)VGA_Controller_0.VGA_BLANK_N) 1 0 3 NJ 340 NJ 340 NJ
+preplace netloc INTERCONNECT<net_container>final_soc</net_container>(MASTER)clk_0.clk_reset,(SLAVE)PLL.inclk_interface_reset,(MASTER)NIOS2.debug_reset_request,(SLAVE)SDRAM.reset,(SLAVE)VGA_Controller_0.RESET,(SLAVE)NIOS2.reset) 1 1 2 290 300 710
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)final_soc.reset,(SLAVE)clk_0.clk_in_reset) 1 0 1 NJ
+preplace netloc FAN_OUT<net_container>final_soc</net_container>(SLAVE)NIOS2.clk,(SLAVE)VGA_Controller_0.CLK,(MASTER)clk_0.clk,(SLAVE)PLL.inclk_interface) 1 1 2 310 280 730
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)VGA_Controller_0.VGA_R,(SLAVE)final_soc.vga_r) 1 0 3 NJ 420 NJ 420 NJ
+preplace netloc INTERCONNECT<net_container>final_soc</net_container>(SLAVE)PLL.pll_slave,(MASTER)NIOS2.instruction_master,(MASTER)NIOS2.data_master,(SLAVE)SDRAM.s1,(SLAVE)VGA_Controller_0.VGA_SLAVE,(SLAVE)NIOS2.debug_mem_slave) 1 1 2 330 440 690
+preplace netloc EXPORT<net_container>final_soc</net_container>(MASTER)PLL.c3,(MASTER)final_soc.vga_clk) 1 3 1 NJ
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)SDRAM.wire,(SLAVE)final_soc.sdram_wire) 1 0 3 NJ 100 NJ 100 NJ
+preplace netloc EXPORT<net_container>final_soc</net_container>(SLAVE)final_soc.vga_b,(SLAVE)VGA_Controller_0.VGA_B) 1 0 3 NJ 320 NJ 320 NJ
+levelinfo -pg 1 0 80 1090
+levelinfo -hier final_soc 90 120 450 790 1000
