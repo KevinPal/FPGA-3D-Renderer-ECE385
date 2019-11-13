@@ -115,8 +115,8 @@ module VGA_mapper(
     logic [7:0] ram1_data, ram2_data;
     logic ram1_we, ram2_we;
     logic current_ram = 0;
-    logic needs_write = 0;
-    logic needs_write_next;
+    logic [7:0] needs_write = 0;
+    logic [7:0] needs_write_next;
 
     logic [10:0] draw_counter = 0;
     logic [1:0] rgb_counter = 0;
@@ -162,7 +162,7 @@ module VGA_mapper(
         end
 
         if(draw_counter == 1919)
-            needs_write_next = 1;
+            needs_write_next = needs_write+1;
         else
             needs_write_next = needs_write;
         
@@ -170,7 +170,7 @@ module VGA_mapper(
             if(VGA_ADDR == 1920) 
                 VGA_READDATA = {7'b0000000, current_ram};
             else if (VGA_ADDR == 1921)
-                VGA_READDATA = {7'b0000000, needs_write};
+                VGA_READDATA = needs_write;
             else
                 VGA_READDATA = 8'bzzzzzzzz;
         end else

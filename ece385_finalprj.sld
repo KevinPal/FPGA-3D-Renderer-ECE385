@@ -2,8 +2,8 @@
   <sld_infos>
     <sld_info hpath="final_soc:final_subsystem" name="final_subsystem">
       <assignment_values>
-        <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1573619290"/>
-        <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1573619378"/>
+        <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1573662303"/>
+        <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1573662394"/>
       </assignment_values>
     </sld_info>
     <sld_info hpath="sld_hub:auto_hub|alt_sld_fab:\instrumentation_fabric_with_node_gen:instrumentation_fabric" library="alt_sld_fab" name="instrumentation_fabric">
