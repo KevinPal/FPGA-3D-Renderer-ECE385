@@ -42,6 +42,7 @@ module avalon_vga_interface (
     input  logic [31:0] VGA_MASTER_READDATA,
     output logic VGA_MASTER_CS,
     input  logic VGA_MASTER_WAIT_REQUEST,
+    input  logic VGA_MASTER_READDATAVALID, 
     
     // Exported Conduits
     output logic [7:0]  VGA_R,        //VGA Red
@@ -65,7 +66,7 @@ VGA_mapper map(.CLK, .VGA_CLK(VGA_CLK_clk), .RESET, .VGA_ADDR, .VGA_WRITEDATA,
     .VGA_BYTE_EN, .VGA_BLANK_N, .VGA_R, .VGA_G, .VGA_B, 
     .VGA_READ, .VGA_READDATA, .VGA_MASTER_ADDR, .VGA_MASTER_READ,
     .VGA_MASTER_READDATA, .VGA_MASTER_CS, .VGA_MASTER_WAIT_REQUEST, 
-    .DrawX, .DrawY, .DEBUG);
+    .DrawX, .DrawY, .DEBUG, .VGA_MASTER_READDATAVALID);
 
 assign CLK_OUT_clk = VGA_CLK_clk;
 

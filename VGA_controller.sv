@@ -118,6 +118,7 @@ module VGA_mapper(
     input  logic [31:0] VGA_MASTER_READDATA,
     output logic VGA_MASTER_CS,
     input  logic VGA_MASTER_WAIT_REQUEST,
+    input logic  VGA_MASTER_READDATAVALID,
 
     input logic [9:0] DrawX,
     input logic [9:0] DrawY,
@@ -138,7 +139,12 @@ module VGA_mapper(
 
      enum logic [3:0] {
              IDLE,
-             COPYING}   State, Next_state; // Data Copy State
+             COPYING,
+             COPYING1,
+             COPYING2,
+             COPYING3,
+             COPYING4
+         }   State, Next_state; // Data Copy State
 
     
     vga_ram #(0) ram1(.output_data(ram1_data),
@@ -182,7 +188,7 @@ module VGA_mapper(
             end
         end
 
-        if((State == COPYING)) begin
+        if(~(State == IDLE)) begin
            // ram1_we = (current_ram == 1); // Write to R1 if reading from R2
            // ram2_we = (current_ram == 0); // Write to R2 if reading from R1
             ram1_we = 1;
@@ -211,10 +217,14 @@ module VGA_mapper(
                     copy_counter_next = 0;
                     offset_counter_next = offset_counter + 1;
                 end else begin
+                    if (VGA_MASTER_READDATAVALID) begin
+                        copy_counter_next = copy_counter + 1;
+                    end
                     Next_state = COPYING;
-                    copy_counter_next = copy_counter + 1;
                 end
             end
+            default:
+                Next_state = State;
         endcase
     end
 

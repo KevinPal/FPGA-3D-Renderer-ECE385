@@ -34,6 +34,7 @@ module final_soc (
 	wire         vga_controller_0_vga_master_waitrequest;                     // mm_interconnect_0:VGA_Controller_0_VGA_MASTER_waitrequest -> VGA_Controller_0:VGA_MASTER_WAIT_REQUEST
 	wire  [31:0] vga_controller_0_vga_master_address;                         // VGA_Controller_0:VGA_MASTER_ADDR -> mm_interconnect_0:VGA_Controller_0_VGA_MASTER_address
 	wire         vga_controller_0_vga_master_read;                            // VGA_Controller_0:VGA_MASTER_READ -> mm_interconnect_0:VGA_Controller_0_VGA_MASTER_read
+	wire         vga_controller_0_vga_master_readdatavalid;                   // mm_interconnect_0:VGA_Controller_0_VGA_MASTER_readdatavalid -> VGA_Controller_0:VGA_MASTER_READDATAVALID
 	wire  [31:0] nios2_data_master_readdata;                                  // mm_interconnect_0:NIOS2_data_master_readdata -> NIOS2:d_readdata
 	wire         nios2_data_master_waitrequest;                               // mm_interconnect_0:NIOS2_data_master_waitrequest -> NIOS2:d_waitrequest
 	wire         nios2_data_master_debugaccess;                               // NIOS2:debug_mem_slave_debugaccess_to_roms -> mm_interconnect_0:NIOS2_data_master_debugaccess
@@ -137,7 +138,7 @@ module final_soc (
 		.c1                 (sdram_clk_clk),                             //                    c1.clk
 		.c2                 (pll_c2_clk),                                //                    c2.clk
 		.c3                 (vga_clk_clk),                               //                    c3.clk
-		.c4                 (),                                          //            c4_conduit.export
+		.c4                 (),                                          //                    c4.clk
 		.scandone           (),                                          //           (terminated)
 		.scandataout        (),                                          //           (terminated)
 		.areset             (1'b0),                                      //           (terminated)
@@ -176,29 +177,30 @@ module final_soc (
 	);
 
 	avalon_vga_interface vga_controller_0 (
-		.CLK                     (clk_clk),                                                   //         CLK.clk
-		.RESET                   (rst_controller_reset_out_reset),                            //       RESET.reset
-		.VGA_R                   (vga_r_vga_r),                                               //       VGA_R.vga_r
-		.VGA_G                   (vga_g_vga_g),                                               //       VGA_G.vga_g
-		.VGA_SYNC_N              (vga_sync_n_vga_sync_n),                                     //  VGA_SYNC_N.vga_sync_n
-		.VGA_BLANK_N             (vga_blank_n_vga_blank_n),                                   // VGA_BLANK_N.vga_blank_n
-		.VGA_VS                  (vga_vs_vga_vs),                                             //      VGA_VS.vga_vs
-		.VGA_HS                  (vga_hs_vga_hs),                                             //      VGA_HS.vga_hs
-		.DEBUG                   (debug_debug),                                               //       DEBUG.debug
-		.VGA_CLK_clk             (pll_c2_clk),                                                //     VGA_CLK.clk
-		.VGA_B                   (vga_b_vga_b),                                               //       VGA_B.vga_b
-		.VGA_ADDR                (mm_interconnect_0_vga_controller_0_vga_slave_1_address),    // VGA_SLAVE_1.address
-		.VGA_BYTE_EN             (mm_interconnect_0_vga_controller_0_vga_slave_1_byteenable), //            .byteenable
-		.VGA_CS                  (mm_interconnect_0_vga_controller_0_vga_slave_1_chipselect), //            .chipselect
-		.VGA_READDATA            (mm_interconnect_0_vga_controller_0_vga_slave_1_readdata),   //            .readdata
-		.VGA_WRITEDATA           (mm_interconnect_0_vga_controller_0_vga_slave_1_writedata),  //            .writedata
-		.VGA_READ                (mm_interconnect_0_vga_controller_0_vga_slave_1_read),       //            .read
-		.VGA_WRITE               (mm_interconnect_0_vga_controller_0_vga_slave_1_write),      //            .write
-		.VGA_MASTER_ADDR         (vga_controller_0_vga_master_address),                       //  VGA_MASTER.address
-		.VGA_MASTER_READ         (vga_controller_0_vga_master_read),                          //            .read
-		.VGA_MASTER_READDATA     (vga_controller_0_vga_master_readdata),                      //            .readdata
-		.VGA_MASTER_CS           (vga_controller_0_vga_master_chipselect),                    //            .chipselect
-		.VGA_MASTER_WAIT_REQUEST (vga_controller_0_vga_master_waitrequest)                    //            .waitrequest
+		.CLK                      (clk_clk),                                                   //         CLK.clk
+		.RESET                    (rst_controller_reset_out_reset),                            //       RESET.reset
+		.VGA_R                    (vga_r_vga_r),                                               //       VGA_R.vga_r
+		.VGA_G                    (vga_g_vga_g),                                               //       VGA_G.vga_g
+		.VGA_SYNC_N               (vga_sync_n_vga_sync_n),                                     //  VGA_SYNC_N.vga_sync_n
+		.VGA_BLANK_N              (vga_blank_n_vga_blank_n),                                   // VGA_BLANK_N.vga_blank_n
+		.VGA_VS                   (vga_vs_vga_vs),                                             //      VGA_VS.vga_vs
+		.VGA_HS                   (vga_hs_vga_hs),                                             //      VGA_HS.vga_hs
+		.DEBUG                    (debug_debug),                                               //       DEBUG.debug
+		.VGA_CLK_clk              (pll_c2_clk),                                                //     VGA_CLK.clk
+		.VGA_B                    (vga_b_vga_b),                                               //       VGA_B.vga_b
+		.VGA_ADDR                 (mm_interconnect_0_vga_controller_0_vga_slave_1_address),    // VGA_SLAVE_1.address
+		.VGA_BYTE_EN              (mm_interconnect_0_vga_controller_0_vga_slave_1_byteenable), //            .byteenable
+		.VGA_CS                   (mm_interconnect_0_vga_controller_0_vga_slave_1_chipselect), //            .chipselect
+		.VGA_READDATA             (mm_interconnect_0_vga_controller_0_vga_slave_1_readdata),   //            .readdata
+		.VGA_WRITEDATA            (mm_interconnect_0_vga_controller_0_vga_slave_1_writedata),  //            .writedata
+		.VGA_READ                 (mm_interconnect_0_vga_controller_0_vga_slave_1_read),       //            .read
+		.VGA_WRITE                (mm_interconnect_0_vga_controller_0_vga_slave_1_write),      //            .write
+		.VGA_MASTER_ADDR          (vga_controller_0_vga_master_address),                       //  VGA_MASTER.address
+		.VGA_MASTER_READ          (vga_controller_0_vga_master_read),                          //            .read
+		.VGA_MASTER_READDATA      (vga_controller_0_vga_master_readdata),                      //            .readdata
+		.VGA_MASTER_CS            (vga_controller_0_vga_master_chipselect),                    //            .chipselect
+		.VGA_MASTER_WAIT_REQUEST  (vga_controller_0_vga_master_waitrequest),                   //            .waitrequest
+		.VGA_MASTER_READDATAVALID (vga_controller_0_vga_master_readdatavalid)                  //            .readdatavalid
 	);
 
 	final_soc_jtag_uart_0 jtag_uart_0 (
@@ -248,6 +250,7 @@ module final_soc (
 		.VGA_Controller_0_VGA_MASTER_chipselect             (vga_controller_0_vga_master_chipselect),                      //                                             .chipselect
 		.VGA_Controller_0_VGA_MASTER_read                   (vga_controller_0_vga_master_read),                            //                                             .read
 		.VGA_Controller_0_VGA_MASTER_readdata               (vga_controller_0_vga_master_readdata),                        //                                             .readdata
+		.VGA_Controller_0_VGA_MASTER_readdatavalid          (vga_controller_0_vga_master_readdatavalid),                   //                                             .readdatavalid
 		.jtag_uart_0_avalon_jtag_slave_address              (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_address),     //                jtag_uart_0_avalon_jtag_slave.address
 		.jtag_uart_0_avalon_jtag_slave_write                (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write),       //                                             .write
 		.jtag_uart_0_avalon_jtag_slave_read                 (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read),        //                                             .read

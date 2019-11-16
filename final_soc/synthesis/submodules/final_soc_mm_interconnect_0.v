@@ -29,6 +29,7 @@ module final_soc_mm_interconnect_0 (
 		input  wire        VGA_Controller_0_VGA_MASTER_chipselect,             //                                             .chipselect
 		input  wire        VGA_Controller_0_VGA_MASTER_read,                   //                                             .read
 		output wire [31:0] VGA_Controller_0_VGA_MASTER_readdata,               //                                             .readdata
+		output wire        VGA_Controller_0_VGA_MASTER_readdatavalid,          //                                             .readdatavalid
 		output wire [0:0]  jtag_uart_0_avalon_jtag_slave_address,              //                jtag_uart_0_avalon_jtag_slave.address
 		output wire        jtag_uart_0_avalon_jtag_slave_write,                //                                             .write
 		output wire        jtag_uart_0_avalon_jtag_slave_read,                 //                                             .read
@@ -635,7 +636,7 @@ module final_soc_mm_interconnect_0 (
 		.USE_BEGINTRANSFER           (0),
 		.USE_CHIPSELECT              (1),
 		.USE_BURSTCOUNT              (0),
-		.USE_READDATAVALID           (0),
+		.USE_READDATAVALID           (1),
 		.USE_WAITREQUEST             (1),
 		.USE_READRESPONSE            (0),
 		.USE_WRITERESPONSE           (0),
@@ -665,11 +666,11 @@ module final_soc_mm_interconnect_0 (
 		.av_chipselect          (VGA_Controller_0_VGA_MASTER_chipselect),                                         //                          .chipselect
 		.av_read                (VGA_Controller_0_VGA_MASTER_read),                                               //                          .read
 		.av_readdata            (VGA_Controller_0_VGA_MASTER_readdata),                                           //                          .readdata
+		.av_readdatavalid       (VGA_Controller_0_VGA_MASTER_readdatavalid),                                      //                          .readdatavalid
 		.av_burstcount          (1'b1),                                                                           //               (terminated)
 		.av_byteenable          (4'b1111),                                                                        //               (terminated)
 		.av_beginbursttransfer  (1'b0),                                                                           //               (terminated)
 		.av_begintransfer       (1'b0),                                                                           //               (terminated)
-		.av_readdatavalid       (),                                                                               //               (terminated)
 		.av_write               (1'b0),                                                                           //               (terminated)
 		.av_writedata           (32'b00000000000000000000000000000000),                                           //               (terminated)
 		.av_lock                (1'b0),                                                                           //               (terminated)
