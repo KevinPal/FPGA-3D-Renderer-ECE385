@@ -140,7 +140,7 @@
     <sld_info hpath="final_soc:final_subsystem" name="final_subsystem">
       <assignment_values>
         <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1573878064"/>
-        <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1573878129"/>
+        <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1573878836"/>
       </assignment_values>
       <parameters/>
     </sld_info>
