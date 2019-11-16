@@ -24,7 +24,6 @@ Progress: Validating
 Progress: Done reading input file
 Info: final_soc.SDRAM: SDRAM Controller will only be supported in Quartus Prime Standard Edition in the future release.
 Info: final_soc.jtag_uart_0: JTAG UART IP input clock need to be at least double (2x) the operating frequency of JTAG TCK on board
-Warning: final_soc.PLL: PLL.c4_conduit must be exported, or connected to a matching conduit.
 Info: qsys-generate succeeded.
 Info: Finished: Create block symbol file (.bsf)
 Info: 
@@ -54,7 +53,6 @@ Progress: Validating
 Progress: Done reading input file
 Info: final_soc.SDRAM: SDRAM Controller will only be supported in Quartus Prime Standard Edition in the future release.
 Info: final_soc.jtag_uart_0: JTAG UART IP input clock need to be at least double (2x) the operating frequency of JTAG TCK on board
-Warning: final_soc.PLL: PLL.c4_conduit must be exported, or connected to a matching conduit.
 Info: final_soc: Generating final_soc "final_soc" for QUARTUS_SYNTH
 Info: Inserting clock-crossing logic between cmd_demux.src0 and cmd_mux.sink0
 Info: Inserting clock-crossing logic between cmd_demux_001.src0 and cmd_mux.sink1
@@ -65,16 +63,16 @@ Info: Inserting clock-crossing logic between rsp_demux.src2 and rsp_mux_002.sink
 Info: NIOS2: "final_soc" instantiated altera_nios2_gen2 "NIOS2"
 Info: PLL: "final_soc" instantiated altpll "PLL"
 Info: SDRAM: Starting RTL generation for module 'final_soc_SDRAM'
-Info: SDRAM:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_new_sdram_controller -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_new_sdram_controller/generate_rtl.pl --name=final_soc_SDRAM --dir=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0210_SDRAM_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0210_SDRAM_gen//final_soc_SDRAM_component_configuration.pl  --do_build_sim=0  ]
+Info: SDRAM:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_new_sdram_controller -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_new_sdram_controller/generate_rtl.pl --name=final_soc_SDRAM --dir=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0352_SDRAM_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0352_SDRAM_gen//final_soc_SDRAM_component_configuration.pl  --do_build_sim=0  ]
 Info: SDRAM: Done RTL generation for module 'final_soc_SDRAM'
 Info: SDRAM: "final_soc" instantiated altera_avalon_new_sdram_controller "SDRAM"
 Info: VGA_Controller_0: "final_soc" instantiated VGA_Controller "VGA_Controller_0"
 Info: jtag_uart_0: Starting RTL generation for module 'final_soc_jtag_uart_0'
-Info: jtag_uart_0:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart/generate_rtl.pl --name=final_soc_jtag_uart_0 --dir=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0212_jtag_uart_0_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0212_jtag_uart_0_gen//final_soc_jtag_uart_0_component_configuration.pl  --do_build_sim=0  ]
+Info: jtag_uart_0:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart/generate_rtl.pl --name=final_soc_jtag_uart_0 --dir=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0354_jtag_uart_0_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0354_jtag_uart_0_gen//final_soc_jtag_uart_0_component_configuration.pl  --do_build_sim=0  ]
 Info: jtag_uart_0: Done RTL generation for module 'final_soc_jtag_uart_0'
 Info: jtag_uart_0: "final_soc" instantiated altera_avalon_jtag_uart "jtag_uart_0"
 Info: timer_0: Starting RTL generation for module 'final_soc_timer_0'
-Info: timer_0:   Generation command is [exec C:/intelFPGA_lite/18.1/quartus/bin64//perl/bin/perl.exe -I C:/intelFPGA_lite/18.1/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer/generate_rtl.pl --name=final_soc_timer_0 --dir=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0213_timer_0_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0213_timer_0_gen//final_soc_timer_0_component_configuration.pl  --do_build_sim=0  ]
+Info: timer_0:   Generation command is [exec C:/intelFPGA_lite/18.1/quartus/bin64//perl/bin/perl.exe -I C:/intelFPGA_lite/18.1/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer/generate_rtl.pl --name=final_soc_timer_0 --dir=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0355_timer_0_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0355_timer_0_gen//final_soc_timer_0_component_configuration.pl  --do_build_sim=0  ]
 Info: timer_0: Done RTL generation for module 'final_soc_timer_0'
 Info: timer_0: "final_soc" instantiated altera_avalon_timer "timer_0"
 Info: avalon_st_adapter: Inserting error_adapter: error_adapter_0
@@ -87,19 +85,19 @@ Info: mm_interconnect_0: "final_soc" instantiated altera_mm_interconnect "mm_int
 Info: irq_mapper: "final_soc" instantiated altera_irq_mapper "irq_mapper"
 Info: rst_controller: "final_soc" instantiated altera_reset_controller "rst_controller"
 Info: cpu: Starting RTL generation for module 'final_soc_NIOS2_cpu'
-Info: cpu:   Generation command is [exec C:/intelFPGA_lite/18.1/quartus/bin64//eperlcmd.exe -I C:/intelFPGA_lite/18.1/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/cpu_lib -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/nios_lib -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -- C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/generate_rtl.epl --name=final_soc_NIOS2_cpu --dir=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0216_cpu_gen/ --quartus_bindir=C:/intelFPGA_lite/18.1/quartus/bin64/ --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0216_cpu_gen//final_soc_NIOS2_cpu_processor_configuration.pl  --do_build_sim=0  ]
-Info: cpu: # 2019.11.15 18:49:25 (*) Starting Nios II generation
-Info: cpu: # 2019.11.15 18:49:25 (*)   Checking for plaintext license.
-Info: cpu: # 2019.11.15 18:49:25 (*)   Couldn't query license setup in Quartus directory C:/intelFPGA_lite/18.1/quartus/bin64/
-Info: cpu: # 2019.11.15 18:49:25 (*)   Defaulting to contents of LM_LICENSE_FILE environment variable
-Info: cpu: # 2019.11.15 18:49:25 (*)   LM_LICENSE_FILE environment variable is empty
-Info: cpu: # 2019.11.15 18:49:25 (*)   Plaintext license not found.
-Info: cpu: # 2019.11.15 18:49:25 (*)   No license required to generate encrypted Nios II/e.
-Info: cpu: # 2019.11.15 18:49:25 (*)   Elaborating CPU configuration settings
-Info: cpu: # 2019.11.15 18:49:25 (*)   Creating all objects for CPU
-Info: cpu: # 2019.11.15 18:49:26 (*)   Generating RTL from CPU objects
-Info: cpu: # 2019.11.15 18:49:26 (*)   Creating plain-text RTL
-Info: cpu: # 2019.11.15 18:49:27 (*) Done Nios II generation
+Info: cpu:   Generation command is [exec C:/intelFPGA_lite/18.1/quartus/bin64//eperlcmd.exe -I C:/intelFPGA_lite/18.1/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/cpu_lib -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/nios_lib -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -- C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/generate_rtl.epl --name=final_soc_NIOS2_cpu --dir=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0358_cpu_gen/ --quartus_bindir=C:/intelFPGA_lite/18.1/quartus/bin64/ --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8214_2365325407869791383.dir/0358_cpu_gen//final_soc_NIOS2_cpu_processor_configuration.pl  --do_build_sim=0  ]
+Info: cpu: # 2019.11.15 22:16:20 (*) Starting Nios II generation
+Info: cpu: # 2019.11.15 22:16:20 (*)   Checking for plaintext license.
+Info: cpu: # 2019.11.15 22:16:21 (*)   Couldn't query license setup in Quartus directory C:/intelFPGA_lite/18.1/quartus/bin64/
+Info: cpu: # 2019.11.15 22:16:21 (*)   Defaulting to contents of LM_LICENSE_FILE environment variable
+Info: cpu: # 2019.11.15 22:16:21 (*)   LM_LICENSE_FILE environment variable is empty
+Info: cpu: # 2019.11.15 22:16:21 (*)   Plaintext license not found.
+Info: cpu: # 2019.11.15 22:16:21 (*)   No license required to generate encrypted Nios II/e.
+Info: cpu: # 2019.11.15 22:16:21 (*)   Elaborating CPU configuration settings
+Info: cpu: # 2019.11.15 22:16:21 (*)   Creating all objects for CPU
+Info: cpu: # 2019.11.15 22:16:22 (*)   Generating RTL from CPU objects
+Info: cpu: # 2019.11.15 22:16:22 (*)   Creating plain-text RTL
+Info: cpu: # 2019.11.15 22:16:23 (*) Done Nios II generation
 Info: cpu: Done RTL generation for module 'final_soc_NIOS2_cpu'
 Info: cpu: "NIOS2" instantiated altera_nios2_gen2_unit "cpu"
 Info: VGA_Controller_0_VGA_MASTER_translator: "mm_interconnect_0" instantiated altera_merlin_master_translator "VGA_Controller_0_VGA_MASTER_translator"
