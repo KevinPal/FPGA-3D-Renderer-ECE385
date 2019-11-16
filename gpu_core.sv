@@ -2,25 +2,25 @@
 
 
 module project_cube(
-    input real scale,
-    input real pos[3],
-    input real prj[4][4],
-    output real out[8][3]
+    input int scale,
+    input int pos[3],
+    input int prj[4][4],
+    output int out[8][3]
 );
 
 // 8 vertex locations
-real back_top_left[4];
-real back_top_right[4];
-real back_bot_left[4];
-real back_bot_right[4];
-real front_top_left[4];
-real front_top_right[4];
-real front_bot_left[4];
-real front_bot_right[4];
+int back_top_left[4];
+int back_top_right[4];
+int back_bot_left[4];
+int back_bot_right[4];
+int front_top_left[4];
+int front_top_right[4];
+int front_bot_left[4];
+int front_bot_right[4];
 
-real all_verticies[8][4];
-real prj_vert[8][4];
-real screen_verts[8][3];
+int all_verticies[8][4];
+int prj_vert[8][4];
+int screen_verts[8][3];
 
 assign all_verticies = '{back_top_left, back_top_right, back_bot_left, back_bot_right, front_top_left, front_top_right, front_bot_left, front_bot_right};
 
@@ -60,14 +60,14 @@ always_comb begin
 
     // W component is 1
     
-    back_top_left[3] = 1;
-    back_top_right[3] = 1;
-    back_bot_left[3] = 1;
-    back_bot_right[3] = 1;
-    front_top_left[3] = 1;
-    front_top_right[3] = 1;
-    front_bot_left[3] = 1;
-    front_bot_right[3] = 1;
+    back_top_left[3] = 1 * (1<<8);
+    back_top_right[3] = 1 * (1<<8);
+    back_bot_left[3] = 1 * (1<<8);
+    back_bot_right[3] = 1 * (1<<8);
+    front_top_left[3] = 1 * (1<<8);
+    front_top_right[3] = 1 * (1<<8);
+    front_bot_left[3] = 1 * (1<<8);
+    front_bot_right[3] = 1 * (1<<8);
 
     // All right verticies need to be shifted to the right by scale
     back_top_right[0] += scale;
@@ -91,20 +91,20 @@ end
 endmodule
 
 module viewport_trans(
-    input real vec[4],
-    output real out[3]
+    input int vec[4],
+    output int out[3]
 );
 
-real pers_div[3];
+int pers_div[3];
 
 always_comb begin
     // Persepective divide
-    pers_div[0] = vec[0] / vec[3];
-    pers_div[1] = vec[1] / vec[3];
-    pers_div[2] = vec[2] / vec[3];
+    pers_div[0] = (vec[0]*(1<<8)) / vec[3];
+    pers_div[1] = (vec[1]*(1<<8)) / vec[3];
+    pers_div[2] = (vec[2]*(1<<8)) / vec[3];
     // Viewport transform
-    out[0] = pers_div[0] + ((1 + pers_div[0])*320);
-    out[1] = pers_div[1] + ((1 - pers_div[1])*240);
+    out[0] = pers_div[0] + ((((1*(1<<8)) + pers_div[0])*(320*(1<<8)))/(1<<8));
+    out[1] = pers_div[1] + ((((1*(1<<8)) - pers_div[1])*(240*(1<<8)))/(1<<8));
     out[2] = pers_div[3];
 end
 
