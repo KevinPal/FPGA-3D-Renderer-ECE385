@@ -130,7 +130,6 @@ module VGA_mapper(
     logic ram1_we, ram2_we;
     logic current_ram = 0;
 
-    logic [31:0] draw_counter = 0; // Current draw address
     logic [31:0] copy_counter = 0, copy_counter_next; // coping offset from start of line
     logic [31:0] offset_counter = 0, offset_counter_next; // num lines offset from start
 
@@ -144,12 +143,12 @@ module VGA_mapper(
     
     vga_ram #(0) ram1(.output_data(ram1_data),
         .input_data(VGA_MASTER_READDATA), 
-        .write_address(copy_counter), .read_address(draw_counter),
+        .write_address(copy_counter), .read_address(DrawX),
         .we(ram1_we), .clk(CLK), .read_clk(VGA_CLK));
 
     vga_ram #(1) ram2(.output_data(ram2_data),
         .input_data(VGA_MASTER_READDATA), 
-        .write_address(copy_counter), .read_address(draw_counter),
+        .write_address(copy_counter), .read_address(DrawX),
         .we(ram2_we), .clk(CLK), .read_clk(VGA_CLK));
 
 
@@ -189,23 +188,25 @@ module VGA_mapper(
             ram1_we = 1;
             VGA_MASTER_CS = 1;
             VGA_MASTER_READ = 1;
-            VGA_MASTER_ADDR = frame_pointer + ((640*offset_counter)+copy_counter) * 4;
+            VGA_MASTER_ADDR = frame_pointer + ((640*(DrawY))+copy_counter) * 4;
         end
+        //VGA_MASTER_ADDR = frame_pointer + ((640*DrawY)+DrawX) * 4;
 
         unique case (State)
             IDLE: begin
-                if((draw_counter == 639) & (DrawY < 480))
+                if((DrawX <= 640) & (DrawY <= 480))
                     Next_state = COPYING;
                 else begin
                     Next_state = IDLE;
-                    if (DrawY == 524)
+                    if (DrawY > 480)
                         offset_counter_next = 0;
                 end
             end
             COPYING: begin
-                if(VGA_MASTER_WAIT_REQUEST)
-                    Next_state = COPYING;
-                else if (copy_counter == 639) begin
+                //if(VGA_MASTER_WAIT_REQUEST)
+                //    Next_state = COPYING;
+                //else 
+                if (copy_counter == 639) begin
                     Next_state = IDLE;
                     copy_counter_next = 0;
                     offset_counter_next = offset_counter + 1;
@@ -213,8 +214,6 @@ module VGA_mapper(
                     Next_state = COPYING;
                     copy_counter_next = copy_counter + 1;
                 end
-                if(draw_counter == 639)
-                    DEBUG = 1'hF;
             end
         endcase
     end
@@ -238,29 +237,22 @@ module VGA_mapper(
 
      always_ff @(posedge VGA_CLK) begin // 25 MHz
 
-         if (RESET)
-             draw_counter <= 0;
-         else if(draw_counter == 640) begin
-             draw_counter <= 0;
-             if(current_ram == 0)
-                 current_ram <= 1;
-             else
-                 current_ram <= 0;
-         end
-         else if(VGA_BLANK_N)
-             draw_counter <= (draw_counter+1);
-         else
-             draw_counter <= draw_counter;
+             //VGA_R <= VGA_MASTER_READDATA[7:0];
+             //VGA_G <= VGA_MASTER_READDATA[15:8];
+             //VGA_B <= VGA_MASTER_READDATA[23:16];
+             VGA_R <= ram1_data[7:0];
+             VGA_G <= ram1_data[15:8];
+             VGA_B <= ram1_data[23:16];
  
-         if(current_ram == 0) begin
-             VGA_R <= ram1_data[7:0];
-             VGA_G <= ram1_data[15:8];
-             VGA_B <= ram1_data[23:16];
-         end else begin
-             VGA_R <= ram1_data[7:0];
-             VGA_G <= ram1_data[15:8];
-             VGA_B <= ram1_data[23:16];
-         end
+//         if(current_ram == 0) begin
+//             VGA_R <= ram1_data[7:0];
+//             VGA_G <= ram1_data[15:8];
+//             VGA_B <= ram1_data[23:16];
+//         end else begin
+//             VGA_R <= ram1_data[7:0];
+//             VGA_G <= ram1_data[15:8];
+//             VGA_B <= ram1_data[23:16];
+//         end
  
  
      end

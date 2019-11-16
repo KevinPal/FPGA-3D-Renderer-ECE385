@@ -71,9 +71,9 @@ int main()
 		for(int x =0; x < SCREEN_WIDTH; x++) {
 			//struct pixel_t p = {{(y*255) / SCREEN_HEIGHT, (x*255) / SCREEN_WIDTH,0, 0}};
 			struct pixel_t p = {.r = 0, .g = 255, .b = 0, .a = 0};  //? B G R
-			p.r = (y * 255)/20;
+			p.r = (y * 255)/480;
+			p.g = (x * 255)/640;
 			frame1->D2[y][x] = p;
-			//usleep(100);
 		}
 	}
 	//for(i = 0; i < 100; i++) {
@@ -97,6 +97,10 @@ int main()
 
 	for(int x = 0; x < SCREEN_WIDTH; x++) {
 		struct pixel_t p = {.r = 0, .g = x, .b = 0, .a = 0};  //? B G R
+		if(x%2==0) {
+			p.b = 255;
+			p.g = 0;
+		}
 		frame1->D2[2][x] = p;
 	}
 	frame1->D2[0][6].r = 0;
