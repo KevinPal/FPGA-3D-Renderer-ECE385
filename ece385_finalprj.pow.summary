@@ -1,12 +1,12 @@
-Power Analyzer Status : Successful - Wed Nov 13 10:29:21 2019
+Power Analyzer Status : Successful - Fri Nov 15 19:35:01 2019
 Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 Revision Name : ece385_finalprj
 Top-level Entity Name : final_top
 Family : Cyclone IV E
 Device : EP4CE115F29C7
 Power Models : Final
-Total Thermal Power Dissipation : 175.17 mW
-Core Dynamic Thermal Power Dissipation : 0.76 mW
-Core Static Thermal Power Dissipation : 102.04 mW
-I/O Thermal Power Dissipation : 72.38 mW
+Total Thermal Power Dissipation : 174.66 mW
+Core Dynamic Thermal Power Dissipation : 0.89 mW
+Core Static Thermal Power Dissipation : 101.99 mW
+I/O Thermal Power Dissipation : 71.77 mW
 Power Estimation Confidence : Low: user provided insufficient toggle rate data

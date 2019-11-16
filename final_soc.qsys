@@ -21,7 +21,7 @@
    {
       datum baseAddress
       {
-         value = "134227968";
+         value = "134219776";
          type = "String";
       }
    }
@@ -37,7 +37,7 @@
    {
       datum baseAddress
       {
-         value = "134230160";
+         value = "134221920";
          type = "String";
       }
    }
@@ -70,11 +70,11 @@
          type = "int";
       }
    }
-   element VGA_Controller_0.VGA_SLAVE
+   element VGA_Controller_0.VGA_SLAVE_1
    {
       datum baseAddress
       {
-         value = "134221824";
+         value = "134221936";
          type = "String";
       }
    }
@@ -98,7 +98,39 @@
    {
       datum baseAddress
       {
-         value = "134230080";
+         value = "134238304";
+         type = "String";
+      }
+   }
+   element final_soc
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone IV E";
+         type = "String";
+      }
+   }
+   element final_soc
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone IV E";
+         type = "String";
+      }
+   }
+   element final_soc
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone IV E";
+         type = "String";
+      }
+   }
+   element final_soc
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone IV E";
          type = "String";
       }
    }
@@ -122,7 +154,7 @@
    {
       datum baseAddress
       {
-         value = "134230184";
+         value = "134221960";
          type = "String";
       }
    }
@@ -138,7 +170,7 @@
    {
       datum baseAddress
       {
-         value = "134230112";
+         value = "134221856";
          type = "String";
       }
    }
@@ -228,7 +260,7 @@
   <parameter name="dataAddrWidth" value="28" />
   <parameter name="dataMasterHighPerformanceAddrWidth" value="1" />
   <parameter name="dataMasterHighPerformanceMapParam" value="" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='VGA_Controller_0.VGA_SLAVE' start='0x8001000' end='0x8002000' type='VGA_Controller.VGA_SLAVE' /><slave name='NIOS2.debug_mem_slave' start='0x8002800' end='0x8003000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='dma_0.control_port_slave' start='0x8003040' end='0x8003060' type='altera_avalon_dma.control_port_slave' /><slave name='timer_0.s1' start='0x8003060' end='0x8003080' type='altera_avalon_timer.s1' /><slave name='PLL.pll_slave' start='0x8003090' end='0x80030A0' type='altpll.pll_slave' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x80030A8' end='0x80030B0' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='NIOS2.debug_mem_slave' start='0x8000800' end='0x8001000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='timer_0.s1' start='0x8001020' end='0x8001040' type='altera_avalon_timer.s1' /><slave name='PLL.pll_slave' start='0x8001060' end='0x8001070' type='altpll.pll_slave' /><slave name='VGA_Controller_0.VGA_SLAVE_1' start='0x8001070' end='0x8001080' type='VGA_Controller.VGA_SLAVE_1' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x8001088' end='0x8001090' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
   <parameter name="data_master_high_performance_paddr_base" value="0" />
   <parameter name="data_master_high_performance_paddr_size" value="0" />
   <parameter name="data_master_paddr_base" value="0" />
@@ -267,14 +299,14 @@
   <parameter name="icache_tagramBlockType" value="Automatic" />
   <parameter name="impl" value="Tiny" />
   <parameter name="instAddrWidth" value="28" />
-  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='VGA_Controller_0.VGA_SLAVE' start='0x8001000' end='0x8002000' type='VGA_Controller.VGA_SLAVE' /><slave name='NIOS2.debug_mem_slave' start='0x8002800' end='0x8003000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='dma_0.control_port_slave' start='0x8003040' end='0x8003060' type='altera_avalon_dma.control_port_slave' /><slave name='timer_0.s1' start='0x8003060' end='0x8003080' type='altera_avalon_timer.s1' /><slave name='PLL.pll_slave' start='0x8003090' end='0x80030A0' type='altpll.pll_slave' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x80030A8' end='0x80030B0' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
+  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='NIOS2.debug_mem_slave' start='0x8000800' end='0x8001000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='timer_0.s1' start='0x8001020' end='0x8001040' type='altera_avalon_timer.s1' /><slave name='PLL.pll_slave' start='0x8001060' end='0x8001070' type='altpll.pll_slave' /><slave name='VGA_Controller_0.VGA_SLAVE_1' start='0x8001070' end='0x8001080' type='VGA_Controller.VGA_SLAVE_1' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x8001088' end='0x8001090' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
   <parameter name="instructionMasterHighPerformanceAddrWidth" value="1" />
   <parameter name="instructionMasterHighPerformanceMapParam" value="" />
   <parameter name="instruction_master_high_performance_paddr_base" value="0" />
   <parameter name="instruction_master_high_performance_paddr_size" value="0" />
   <parameter name="instruction_master_paddr_base" value="0" />
   <parameter name="instruction_master_paddr_size" value="0" />
-  <parameter name="internalIrqMaskSystemInfo" value="7" />
+  <parameter name="internalIrqMaskSystemInfo" value="3" />
   <parameter name="io_regionbase" value="0" />
   <parameter name="io_regionsize" value="0" />
   <parameter name="master_addr_map" value="false" />
@@ -457,7 +489,7 @@
   <parameter name="FEEDBACK_SOURCE" value="" />
   <parameter name="GATE_LOCK_COUNTER" value="" />
   <parameter name="GATE_LOCK_SIGNAL" value="" />
-  <parameter name="HIDDEN_CONSTANTS">CT#CLK2_DIVIDE_BY 2 CT#PORT_clk5 PORT_UNUSED CT#PORT_clk4 PORT_USED CT#PORT_clk3 PORT_USED CT#PORT_clk2 PORT_USED CT#PORT_clk1 PORT_USED CT#PORT_clk0 PORT_USED CT#CLK0_MULTIPLY_BY 1 CT#PORT_SCANWRITE PORT_UNUSED CT#PORT_SCANACLR PORT_UNUSED CT#PORT_PFDENA PORT_UNUSED CT#CLK3_DUTY_CYCLE 50 CT#CLK3_DIVIDE_BY 2 CT#PORT_PLLENA PORT_UNUSED CT#PORT_SCANDATA PORT_UNUSED CT#CLK3_PHASE_SHIFT 0 CT#PORT_SCANCLKENA PORT_UNUSED CT#CLK4_DIVIDE_BY 2 CT#WIDTH_CLOCK 5 CT#PORT_SCANDATAOUT PORT_UNUSED CT#CLK4_MULTIPLY_BY 3 CT#LPM_TYPE altpll CT#PLL_TYPE AUTO CT#CLK0_PHASE_SHIFT 0 CT#CLK1_DUTY_CYCLE 50 CT#PORT_PHASEDONE PORT_UNUSED CT#OPERATION_MODE NORMAL CT#PORT_CONFIGUPDATE PORT_UNUSED CT#CLK1_MULTIPLY_BY 1 CT#COMPENSATE_CLOCK CLK0 CT#PORT_CLKSWITCH PORT_UNUSED CT#CLK4_PHASE_SHIFT 0 CT#INCLK0_INPUT_FREQUENCY 20000 CT#CLK4_DUTY_CYCLE 50 CT#PORT_SCANDONE PORT_UNUSED CT#PORT_CLKLOSS PORT_UNUSED CT#PORT_INCLK1 PORT_UNUSED CT#AVALON_USE_SEPARATE_SYSCLK NO CT#PORT_INCLK0 PORT_USED CT#PORT_clkena5 PORT_UNUSED CT#PORT_clkena4 PORT_UNUSED CT#PORT_clkena3 PORT_UNUSED CT#PORT_clkena2 PORT_UNUSED CT#PORT_clkena1 PORT_UNUSED CT#PORT_clkena0 PORT_UNUSED CT#CLK1_PHASE_SHIFT -3000 CT#PORT_ARESET PORT_UNUSED CT#BANDWIDTH_TYPE AUTO CT#CLK2_MULTIPLY_BY 1 CT#INTENDED_DEVICE_FAMILY {Cyclone IV E} CT#PORT_SCANREAD PORT_UNUSED CT#CLK2_DUTY_CYCLE 50 CT#PORT_PHASESTEP PORT_UNUSED CT#PORT_SCANCLK PORT_UNUSED CT#PORT_CLKBAD1 PORT_UNUSED CT#PORT_CLKBAD0 PORT_UNUSED CT#PORT_FBIN PORT_UNUSED CT#PORT_PHASEUPDOWN PORT_UNUSED CT#PORT_extclk3 PORT_UNUSED CT#PORT_extclk2 PORT_UNUSED CT#PORT_extclk1 PORT_UNUSED CT#PORT_PHASECOUNTERSELECT PORT_UNUSED CT#PORT_extclk0 PORT_UNUSED CT#PORT_ACTIVECLOCK PORT_UNUSED CT#CLK2_PHASE_SHIFT 0 CT#CLK0_DUTY_CYCLE 50 CT#CLK0_DIVIDE_BY 1 CT#CLK1_DIVIDE_BY 1 CT#CLK3_MULTIPLY_BY 1 CT#PORT_LOCKED PORT_UNUSED</parameter>
+  <parameter name="HIDDEN_CONSTANTS">CT#CLK2_DIVIDE_BY 2 CT#PORT_clk5 PORT_UNUSED CT#PORT_clk4 PORT_UNUSED CT#PORT_clk3 PORT_USED CT#PORT_clk2 PORT_USED CT#PORT_clk1 PORT_USED CT#PORT_clk0 PORT_USED CT#CLK0_MULTIPLY_BY 1 CT#PORT_SCANWRITE PORT_UNUSED CT#PORT_SCANACLR PORT_UNUSED CT#PORT_PFDENA PORT_UNUSED CT#CLK3_DUTY_CYCLE 50 CT#CLK3_DIVIDE_BY 2 CT#PORT_PLLENA PORT_UNUSED CT#PORT_SCANDATA PORT_UNUSED CT#CLK3_PHASE_SHIFT 0 CT#PORT_SCANCLKENA PORT_UNUSED CT#CLK4_DIVIDE_BY 2 CT#WIDTH_CLOCK 5 CT#PORT_SCANDATAOUT PORT_UNUSED CT#CLK4_MULTIPLY_BY 3 CT#LPM_TYPE altpll CT#PLL_TYPE AUTO CT#CLK0_PHASE_SHIFT 0 CT#CLK1_DUTY_CYCLE 50 CT#PORT_PHASEDONE PORT_UNUSED CT#OPERATION_MODE NORMAL CT#PORT_CONFIGUPDATE PORT_UNUSED CT#CLK1_MULTIPLY_BY 1 CT#COMPENSATE_CLOCK CLK0 CT#PORT_CLKSWITCH PORT_UNUSED CT#CLK4_PHASE_SHIFT 0 CT#INCLK0_INPUT_FREQUENCY 20000 CT#CLK4_DUTY_CYCLE 50 CT#PORT_SCANDONE PORT_UNUSED CT#PORT_CLKLOSS PORT_UNUSED CT#PORT_INCLK1 PORT_UNUSED CT#AVALON_USE_SEPARATE_SYSCLK NO CT#PORT_INCLK0 PORT_USED CT#PORT_clkena5 PORT_UNUSED CT#PORT_clkena4 PORT_UNUSED CT#PORT_clkena3 PORT_UNUSED CT#PORT_clkena2 PORT_UNUSED CT#PORT_clkena1 PORT_UNUSED CT#PORT_clkena0 PORT_UNUSED CT#CLK1_PHASE_SHIFT -3000 CT#PORT_ARESET PORT_UNUSED CT#BANDWIDTH_TYPE AUTO CT#CLK2_MULTIPLY_BY 1 CT#INTENDED_DEVICE_FAMILY {Cyclone IV E} CT#PORT_SCANREAD PORT_UNUSED CT#CLK2_DUTY_CYCLE 50 CT#PORT_PHASESTEP PORT_UNUSED CT#PORT_SCANCLK PORT_UNUSED CT#PORT_CLKBAD1 PORT_UNUSED CT#PORT_CLKBAD0 PORT_UNUSED CT#PORT_FBIN PORT_UNUSED CT#PORT_PHASEUPDOWN PORT_UNUSED CT#PORT_extclk3 PORT_UNUSED CT#PORT_extclk2 PORT_UNUSED CT#PORT_extclk1 PORT_UNUSED CT#PORT_PHASECOUNTERSELECT PORT_UNUSED CT#PORT_extclk0 PORT_UNUSED CT#PORT_ACTIVECLOCK PORT_UNUSED CT#CLK2_PHASE_SHIFT 0 CT#CLK0_DUTY_CYCLE 50 CT#CLK0_DIVIDE_BY 1 CT#CLK1_DIVIDE_BY 1 CT#CLK3_MULTIPLY_BY 1 CT#PORT_LOCKED PORT_UNUSED</parameter>
   <parameter name="HIDDEN_CUSTOM_ELABORATION">altpll_avalon_elaboration</parameter>
   <parameter name="HIDDEN_CUSTOM_POST_EDIT">altpll_avalon_post_edit</parameter>
   <parameter name="HIDDEN_IF_PORTS">IF#phasecounterselect {input 4} IF#locked {output 0} IF#reset {input 0} IF#clk {input 0} IF#phaseupdown {input 0} IF#scandone {output 0} IF#readdata {output 32} IF#write {input 0} IF#scanclk {input 0} IF#phasedone {output 0} IF#c4 {output 0} IF#c3 {output 0} IF#address {input 2} IF#c2 {output 0} IF#c1 {output 0} IF#c0 {output 0} IF#writedata {input 32} IF#read {input 0} IF#areset {input 0} IF#scanclkena {input 0} IF#scandataout {output 0} IF#configupdate {input 0} IF#phasestep {input 0} IF#scandata {input 0}</parameter>
@@ -510,7 +542,7 @@
   <parameter name="PORT_clk1" value="PORT_USED" />
   <parameter name="PORT_clk2" value="PORT_USED" />
   <parameter name="PORT_clk3" value="PORT_USED" />
-  <parameter name="PORT_clk4" value="PORT_USED" />
+  <parameter name="PORT_clk4" value="PORT_UNUSED" />
   <parameter name="PORT_clk5" value="PORT_UNUSED" />
   <parameter name="PORT_clk6" value="" />
   <parameter name="PORT_clk7" value="" />
@@ -593,7 +625,7 @@
   <parameter name="inputClockFrequency" value="0" />
   <parameter name="resetSynchronousEdges" value="NONE" />
  </module>
- <module name="dma_0" kind="altera_avalon_dma" version="18.1" enabled="1">
+ <module name="dma_0" kind="altera_avalon_dma" version="18.1" enabled="0">
   <parameter name="allowByteTransactions" value="true" />
   <parameter name="allowDoubleWordTransactions" value="true" />
   <parameter name="allowHalfWordTransactions" value="true" />
@@ -610,9 +642,9 @@
   <parameter name="readSlaveDataWidthMax" value="32" />
   <parameter name="softresetEnable" value="true" />
   <parameter name="useRegistersForFIFO" value="false" />
-  <parameter name="writeAddressMap"><![CDATA[<address-map><slave name='VGA_Controller_0.VGA_SLAVE' start='0x8001000' end='0x8002000' /></address-map>]]></parameter>
+  <parameter name="writeAddressMap"><![CDATA[<address-map><slave name='VGA_Controller_0.VGA_SLAVE' start='0x8002000' end='0x8004000' /></address-map>]]></parameter>
   <parameter name="writeSlaveAddressWidthMax" value="28" />
-  <parameter name="writeSlaveDataWidthMax" value="8" />
+  <parameter name="writeSlaveDataWidthMax" value="32" />
  </module>
  <module
    name="jtag_uart_0"
@@ -648,10 +680,19 @@
  <connection
    kind="avalon"
    version="18.1"
-   start="NIOS2.data_master"
-   end="VGA_Controller_0.VGA_SLAVE">
+   start="VGA_Controller_0.VGA_MASTER"
+   end="SDRAM.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001000" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="18.1"
+   start="NIOS2.data_master"
+   end="VGA_Controller_0.VGA_SLAVE_1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x08001070" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -660,7 +701,7 @@
    start="NIOS2.data_master"
    end="jtag_uart_0.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x080030a8" />
+  <parameter name="baseAddress" value="0x08001088" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -669,7 +710,7 @@
    start="NIOS2.data_master"
    end="dma_0.control_port_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08003040" />
+  <parameter name="baseAddress" value="0x08005060" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -678,7 +719,7 @@
    start="NIOS2.data_master"
    end="NIOS2.debug_mem_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08002800" />
+  <parameter name="baseAddress" value="0x08000800" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -687,7 +728,7 @@
    start="NIOS2.data_master"
    end="PLL.pll_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08003090" />
+  <parameter name="baseAddress" value="0x08001060" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="avalon" version="18.1" start="NIOS2.data_master" end="SDRAM.s1">
@@ -701,16 +742,16 @@
    start="NIOS2.data_master"
    end="timer_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08003060" />
+  <parameter name="baseAddress" value="0x08001020" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
    kind="avalon"
    version="18.1"
    start="NIOS2.instruction_master"
-   end="VGA_Controller_0.VGA_SLAVE">
+   end="VGA_Controller_0.VGA_SLAVE_1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001000" />
+  <parameter name="baseAddress" value="0x08001070" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -719,7 +760,7 @@
    start="NIOS2.instruction_master"
    end="jtag_uart_0.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x080030a8" />
+  <parameter name="baseAddress" value="0x08001088" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -728,7 +769,7 @@
    start="NIOS2.instruction_master"
    end="dma_0.control_port_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08003040" />
+  <parameter name="baseAddress" value="0x08005060" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -737,7 +778,7 @@
    start="NIOS2.instruction_master"
    end="NIOS2.debug_mem_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08002800" />
+  <parameter name="baseAddress" value="0x08000800" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -746,7 +787,7 @@
    start="NIOS2.instruction_master"
    end="PLL.pll_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08003090" />
+  <parameter name="baseAddress" value="0x08001060" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -764,21 +805,12 @@
    start="NIOS2.instruction_master"
    end="timer_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08003060" />
+  <parameter name="baseAddress" value="0x08001020" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="avalon" version="18.1" start="dma_0.read_master" end="SDRAM.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="18.1"
-   start="dma_0.write_master"
-   end="VGA_Controller_0.VGA_SLAVE">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="clock" version="18.1" start="PLL.c0" end="SDRAM.clk" />
@@ -787,11 +819,6 @@
    version="18.1"
    start="PLL.c2"
    end="VGA_Controller_0.VGA_CLK" />
- <connection
-   kind="clock"
-   version="18.1"
-   start="PLL.c4"
-   end="VGA_Controller_0.RGB_CLK" />
  <connection
    kind="clock"
    version="18.1"

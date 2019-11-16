@@ -103,92 +103,144 @@ endmodule
 
 
 module VGA_mapper(
-    input logic CLK, RESET,
-    input logic [11:0] VGA_ADDR,
-    input logic [7:0] VGA_WRITEDATA,
-    output logic [7:0] VGA_READDATA,
-    input logic VGA_WRITE, VGA_CS, VGA_BYTE_EN, VGA_READ,
+    input logic CLK, VGA_CLK, RESET,
+    input logic [1:0] VGA_ADDR,
+    input logic [31:0] VGA_WRITEDATA,
+    output logic [31:0] VGA_READDATA,
+    input logic [3:0] VGA_BYTE_EN,
+    input logic VGA_WRITE, VGA_CS, VGA_READ,
     input logic VGA_BLANK_N,
-    output logic [7:0] VGA_R, VGA_G, VGA_B
+    output logic [7:0] VGA_R, VGA_G, VGA_B,
+
+    // Avalon-MM Master Signals
+    output logic [31:0] VGA_MASTER_ADDR,
+    output logic VGA_MASTER_READ,
+    input  logic [31:0] VGA_MASTER_READDATA,
+    output logic VGA_MASTER_CS,
+    input  logic VGA_MASTER_WAIT_REQUEST,
+
+    input logic [9:0] DrawX,
+    input logic [9:0] DrawY,
+
+    output logic [7:0] DEBUG
+
 );
 
-    logic [7:0] ram1_data, ram2_data;
+    logic [31:0] ram1_data, ram2_data;
     logic ram1_we, ram2_we;
     logic current_ram = 0;
-    logic [7:0] needs_write = 0;
-    logic [7:0] needs_write_next;
 
-    logic [10:0] draw_counter = 0;
-    logic [1:0] rgb_counter = 0;
+    logic [31:0] draw_counter = 0; // Current draw address
+    logic [31:0] copy_counter = 0, copy_counter_next; // coping offset from start of line
+    logic [31:0] offset_counter = 0, offset_counter_next; // num lines offset from start
 
-    logic [7:0] signal_reg, signal_reg_next;
+    logic [31:0] frame_pointer = 0, frame_pointer_next; // location of image 
+    logic [31:0] should_draw = 0, should_draw_next; // TODO
 
+     enum logic [3:0] {
+             IDLE,
+             COPYING}   State, Next_state; // Data Copy State
+
+    
     vga_ram #(0) ram1(.output_data(ram1_data),
-        .input_data(VGA_WRITEDATA), 
-        .write_address(VGA_ADDR[10:0]), .read_address(draw_counter),
-        .we(ram1_we), .clk(CLK));
+        .input_data(VGA_MASTER_READDATA), 
+        .write_address(copy_counter), .read_address(draw_counter),
+        .we(ram1_we), .clk(CLK), .read_clk(VGA_CLK));
 
     vga_ram #(1) ram2(.output_data(ram2_data),
-        .input_data(VGA_WRITEDATA), 
-        .write_address(VGA_ADDR[10:0]), .read_address(draw_counter),
-        .we(ram2_we), .clk(CLK));
+        .input_data(VGA_MASTER_READDATA), 
+        .write_address(copy_counter), .read_address(draw_counter),
+        .we(ram2_we), .clk(CLK), .read_clk(VGA_CLK));
 
 
     always_comb begin
+        DEBUG = 1;
+        frame_pointer_next = frame_pointer;
+        should_draw_next = should_draw;
+        copy_counter_next = copy_counter;
+        offset_counter_next = offset_counter;
+        VGA_READDATA = 4'hzzzz;
+        ram1_we = 0;
+        ram2_we = 0;
 
-        if(VGA_ADDR == 1920) begin
-            ram1_we = 1'b0;
-            ram2_we = 1'b0;
-            needs_write_next = needs_write;
-        end else if (VGA_ADDR == 1921) begin
-            ram1_we = 1'b0;
-            ram2_we = 1'b0;
-            if(VGA_CS & VGA_WRITE & VGA_BYTE_EN)
-                needs_write_next = 0;
-            else
-                needs_write_next = needs_write;
-        end else if(VGA_ADDR[11] == 0) begin
-            ram1_we = VGA_WRITE & VGA_CS & VGA_BYTE_EN;
-            ram2_we = 1'b0;
-            needs_write_next = needs_write;
-        end else if(VGA_ADDR[11] == 1) begin
-            ram2_we = VGA_WRITE & VGA_CS & VGA_BYTE_EN;
-            ram1_we = 1'b0;
-            needs_write_next = needs_write;
-        end else begin
-            ram1_we = 1'b0;
-            ram2_we = 1'b0;
-            needs_write_next = needs_write;
+        // Master default values
+        VGA_MASTER_ADDR = 4'hzzzz;
+        VGA_MASTER_CS = 0;
+        VGA_MASTER_READ = 0;
+
+        // Slave read writes
+        if(VGA_CS) begin
+            if(VGA_WRITE) begin
+                if(VGA_ADDR == 0) 
+                    frame_pointer_next = VGA_WRITEDATA;
+                if(VGA_ADDR == 1) 
+                    should_draw_next = VGA_WRITEDATA;
+            end else if(VGA_READ) begin
+                if(VGA_ADDR == 0) 
+                    VGA_READDATA = frame_pointer;
+                if(VGA_ADDR == 1) 
+                    VGA_READDATA = should_draw;
+            end
         end
 
-        if(draw_counter == 1919)
-            needs_write_next = needs_write+1;
-        else
-            needs_write_next = needs_write;
-        
-        if(VGA_READ & VGA_CS) begin
-            if(VGA_ADDR == 1920) 
-                VGA_READDATA = {7'b0000000, current_ram};
-            else if (VGA_ADDR == 1921)
-                VGA_READDATA = needs_write;
-            else
-                VGA_READDATA = 8'bzzzzzzzz;
-        end else
-            VGA_READDATA = 8'bzzzzzzzz;
+        if((State == COPYING)) begin
+           // ram1_we = (current_ram == 1); // Write to R1 if reading from R2
+           // ram2_we = (current_ram == 0); // Write to R2 if reading from R1
+            ram1_we = 1;
+            VGA_MASTER_CS = 1;
+            VGA_MASTER_READ = 1;
+            VGA_MASTER_ADDR = frame_pointer + ((640*offset_counter)+copy_counter) * 4;
+        end
 
-
+        unique case (State)
+            IDLE: begin
+                if((draw_counter == 639) & (DrawY < 480))
+                    Next_state = COPYING;
+                else begin
+                    Next_state = IDLE;
+                    if (DrawY == 524)
+                        offset_counter_next = 0;
+                end
+            end
+            COPYING: begin
+                if(VGA_MASTER_WAIT_REQUEST)
+                    Next_state = COPYING;
+                else if (copy_counter == 639) begin
+                    Next_state = IDLE;
+                    copy_counter_next = 0;
+                    offset_counter_next = offset_counter + 1;
+                end else begin
+                    Next_state = COPYING;
+                    copy_counter_next = copy_counter + 1;
+                end
+                if(draw_counter == 639)
+                    DEBUG = 1'hF;
+            end
+        endcase
     end
 
-     always_ff @(posedge CLK) begin
+    // D flop flops
+    always_ff @(posedge CLK) begin //50 MHz
+        if (RESET) begin
+            frame_pointer <= 0;
+            should_draw <= 0;
+            State <= IDLE;
+            copy_counter <= 0;
+            offset_counter <= 0;
+        end else begin
+            frame_pointer <= frame_pointer_next;
+            should_draw <= should_draw_next;
+            State <= Next_state;
+            copy_counter <= copy_counter_next;
+            offset_counter <= offset_counter_next;
+        end
+    end
 
-         if (RESET)
-             needs_write <= 0;
-         else
-             needs_write <= needs_write_next;
+     always_ff @(posedge VGA_CLK) begin // 25 MHz
 
          if (RESET)
              draw_counter <= 0;
-         else if(draw_counter == 1919) begin
+         else if(draw_counter == 640) begin
              draw_counter <= 0;
              if(current_ram == 0)
                  current_ram <= 1;
@@ -200,29 +252,14 @@ module VGA_mapper(
          else
              draw_counter <= draw_counter;
  
-         if (RESET || (VGA_BLANK_N == 0))
-             rgb_counter <= 0;
-         else if(rgb_counter == 2)
-             rgb_counter <= 0;
-         else if(VGA_BLANK_N)
-             rgb_counter <= (rgb_counter + 1);
-         else
-             rgb_counter <= rgb_counter;
- 
          if(current_ram == 0) begin
-             if(rgb_counter == 0)
-                 VGA_R <= ram1_data;
-             else if (rgb_counter == 1)
-                 VGA_G <= ram1_data;
-             else
-                 VGA_B <= ram1_data;
+             VGA_R <= ram1_data[7:0];
+             VGA_G <= ram1_data[15:8];
+             VGA_B <= ram1_data[23:16];
          end else begin
-             if(rgb_counter == 0)
-                 VGA_R <= ram2_data;
-             else if (rgb_counter == 1)
-                 VGA_G <= ram2_data;
-             else
-                 VGA_B <= ram2_data;
+             VGA_R <= ram1_data[7:0];
+             VGA_G <= ram1_data[15:8];
+             VGA_B <= ram1_data[23:16];
          end
  
  
@@ -232,13 +269,13 @@ module VGA_mapper(
 endmodule
 
 module vga_ram #(parameter ram_num = 0)(
-    output logic [7:0] output_data,
-    input logic [7:0] input_data,
+    output logic [31:0] output_data,
+    input logic [31:0] input_data,
     input [10:0] write_address, read_address,
-    input we, clk
+    input we, clk, read_clk
 );
 
-logic [7:0] mem[1920];
+logic [31:0] mem[640];
 
 initial
 begin
@@ -256,7 +293,9 @@ end
 always_ff @ (posedge clk) begin
     if (we)
         mem[write_address] <= input_data;
-    output_data <= mem[read_address];
+end
 
+always_ff @ (posedge read_clk) begin
+    output_data <= mem[read_address];
 end
 endmodule

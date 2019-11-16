@@ -29,7 +29,11 @@ module final_soc (
 
 	wire         pll_c0_clk;                                                  // PLL:c0 -> [SDRAM:clk, mm_interconnect_0:PLL_c0_clk, rst_controller_001:clk]
 	wire         pll_c2_clk;                                                  // PLL:c2 -> VGA_Controller_0:VGA_CLK_clk
-	wire         pll_c4_clk;                                                  // PLL:c4 -> VGA_Controller_0:RGB_CLK_clk
+	wire         vga_controller_0_vga_master_chipselect;                      // VGA_Controller_0:VGA_MASTER_CS -> mm_interconnect_0:VGA_Controller_0_VGA_MASTER_chipselect
+	wire  [31:0] vga_controller_0_vga_master_readdata;                        // mm_interconnect_0:VGA_Controller_0_VGA_MASTER_readdata -> VGA_Controller_0:VGA_MASTER_READDATA
+	wire         vga_controller_0_vga_master_waitrequest;                     // mm_interconnect_0:VGA_Controller_0_VGA_MASTER_waitrequest -> VGA_Controller_0:VGA_MASTER_WAIT_REQUEST
+	wire  [31:0] vga_controller_0_vga_master_address;                         // VGA_Controller_0:VGA_MASTER_ADDR -> mm_interconnect_0:VGA_Controller_0_VGA_MASTER_address
+	wire         vga_controller_0_vga_master_read;                            // VGA_Controller_0:VGA_MASTER_READ -> mm_interconnect_0:VGA_Controller_0_VGA_MASTER_read
 	wire  [31:0] nios2_data_master_readdata;                                  // mm_interconnect_0:NIOS2_data_master_readdata -> NIOS2:d_readdata
 	wire         nios2_data_master_waitrequest;                               // mm_interconnect_0:NIOS2_data_master_waitrequest -> NIOS2:d_waitrequest
 	wire         nios2_data_master_debugaccess;                               // NIOS2:debug_mem_slave_debugaccess_to_roms -> mm_interconnect_0:NIOS2_data_master_debugaccess
@@ -42,25 +46,22 @@ module final_soc (
 	wire         nios2_instruction_master_waitrequest;                        // mm_interconnect_0:NIOS2_instruction_master_waitrequest -> NIOS2:i_waitrequest
 	wire  [27:0] nios2_instruction_master_address;                            // NIOS2:i_address -> mm_interconnect_0:NIOS2_instruction_master_address
 	wire         nios2_instruction_master_read;                               // NIOS2:i_read -> mm_interconnect_0:NIOS2_instruction_master_read
-	wire         dma_0_write_master_chipselect;                               // dma_0:write_chipselect -> mm_interconnect_0:dma_0_write_master_chipselect
-	wire         dma_0_write_master_waitrequest;                              // mm_interconnect_0:dma_0_write_master_waitrequest -> dma_0:write_waitrequest
-	wire  [27:0] dma_0_write_master_address;                                  // dma_0:write_address -> mm_interconnect_0:dma_0_write_master_address
-	wire   [3:0] dma_0_write_master_byteenable;                               // dma_0:write_byteenable -> mm_interconnect_0:dma_0_write_master_byteenable
-	wire         dma_0_write_master_write;                                    // dma_0:write_write_n -> mm_interconnect_0:dma_0_write_master_write
-	wire  [31:0] dma_0_write_master_writedata;                                // dma_0:write_writedata -> mm_interconnect_0:dma_0_write_master_writedata
-	wire         dma_0_read_master_chipselect;                                // dma_0:read_chipselect -> mm_interconnect_0:dma_0_read_master_chipselect
-	wire  [31:0] dma_0_read_master_readdata;                                  // mm_interconnect_0:dma_0_read_master_readdata -> dma_0:read_readdata
-	wire         dma_0_read_master_waitrequest;                               // mm_interconnect_0:dma_0_read_master_waitrequest -> dma_0:read_waitrequest
-	wire  [26:0] dma_0_read_master_address;                                   // dma_0:read_address -> mm_interconnect_0:dma_0_read_master_address
-	wire         dma_0_read_master_read;                                      // dma_0:read_read_n -> mm_interconnect_0:dma_0_read_master_read
-	wire         dma_0_read_master_readdatavalid;                             // mm_interconnect_0:dma_0_read_master_readdatavalid -> dma_0:read_readdatavalid
-	wire         mm_interconnect_0_vga_controller_0_vga_slave_chipselect;     // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_chipselect -> VGA_Controller_0:VGA_CS
-	wire   [7:0] mm_interconnect_0_vga_controller_0_vga_slave_readdata;       // VGA_Controller_0:VGA_READDATA -> mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_readdata
-	wire  [11:0] mm_interconnect_0_vga_controller_0_vga_slave_address;        // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_address -> VGA_Controller_0:VGA_ADDR
-	wire         mm_interconnect_0_vga_controller_0_vga_slave_read;           // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_read -> VGA_Controller_0:VGA_READ
-	wire   [0:0] mm_interconnect_0_vga_controller_0_vga_slave_byteenable;     // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_byteenable -> VGA_Controller_0:VGA_BYTE_EN
-	wire         mm_interconnect_0_vga_controller_0_vga_slave_write;          // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_write -> VGA_Controller_0:VGA_WRITE
-	wire   [7:0] mm_interconnect_0_vga_controller_0_vga_slave_writedata;      // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_writedata -> VGA_Controller_0:VGA_WRITEDATA
+	wire         mm_interconnect_0_sdram_s1_chipselect;                       // mm_interconnect_0:SDRAM_s1_chipselect -> SDRAM:az_cs
+	wire  [31:0] mm_interconnect_0_sdram_s1_readdata;                         // SDRAM:za_data -> mm_interconnect_0:SDRAM_s1_readdata
+	wire         mm_interconnect_0_sdram_s1_waitrequest;                      // SDRAM:za_waitrequest -> mm_interconnect_0:SDRAM_s1_waitrequest
+	wire  [24:0] mm_interconnect_0_sdram_s1_address;                          // mm_interconnect_0:SDRAM_s1_address -> SDRAM:az_addr
+	wire         mm_interconnect_0_sdram_s1_read;                             // mm_interconnect_0:SDRAM_s1_read -> SDRAM:az_rd_n
+	wire   [3:0] mm_interconnect_0_sdram_s1_byteenable;                       // mm_interconnect_0:SDRAM_s1_byteenable -> SDRAM:az_be_n
+	wire         mm_interconnect_0_sdram_s1_readdatavalid;                    // SDRAM:za_valid -> mm_interconnect_0:SDRAM_s1_readdatavalid
+	wire         mm_interconnect_0_sdram_s1_write;                            // mm_interconnect_0:SDRAM_s1_write -> SDRAM:az_wr_n
+	wire  [31:0] mm_interconnect_0_sdram_s1_writedata;                        // mm_interconnect_0:SDRAM_s1_writedata -> SDRAM:az_data
+	wire         mm_interconnect_0_vga_controller_0_vga_slave_1_chipselect;   // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_1_chipselect -> VGA_Controller_0:VGA_CS
+	wire  [31:0] mm_interconnect_0_vga_controller_0_vga_slave_1_readdata;     // VGA_Controller_0:VGA_READDATA -> mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_1_readdata
+	wire   [1:0] mm_interconnect_0_vga_controller_0_vga_slave_1_address;      // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_1_address -> VGA_Controller_0:VGA_ADDR
+	wire         mm_interconnect_0_vga_controller_0_vga_slave_1_read;         // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_1_read -> VGA_Controller_0:VGA_READ
+	wire   [3:0] mm_interconnect_0_vga_controller_0_vga_slave_1_byteenable;   // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_1_byteenable -> VGA_Controller_0:VGA_BYTE_EN
+	wire         mm_interconnect_0_vga_controller_0_vga_slave_1_write;        // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_1_write -> VGA_Controller_0:VGA_WRITE
+	wire  [31:0] mm_interconnect_0_vga_controller_0_vga_slave_1_writedata;    // mm_interconnect_0:VGA_Controller_0_VGA_SLAVE_1_writedata -> VGA_Controller_0:VGA_WRITEDATA
 	wire         mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_chipselect;  // mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_chipselect -> jtag_uart_0:av_chipselect
 	wire  [31:0] mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_readdata;    // jtag_uart_0:av_readdata -> mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_readdata
 	wire         mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_waitrequest; // jtag_uart_0:av_waitrequest -> mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_waitrequest
@@ -68,11 +69,6 @@ module final_soc (
 	wire         mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read;        // mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_read -> jtag_uart_0:av_read_n
 	wire         mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write;       // mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_write -> jtag_uart_0:av_write_n
 	wire  [31:0] mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_writedata;   // mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_writedata -> jtag_uart_0:av_writedata
-	wire         mm_interconnect_0_dma_0_control_port_slave_chipselect;       // mm_interconnect_0:dma_0_control_port_slave_chipselect -> dma_0:dma_ctl_chipselect
-	wire  [27:0] mm_interconnect_0_dma_0_control_port_slave_readdata;         // dma_0:dma_ctl_readdata -> mm_interconnect_0:dma_0_control_port_slave_readdata
-	wire   [2:0] mm_interconnect_0_dma_0_control_port_slave_address;          // mm_interconnect_0:dma_0_control_port_slave_address -> dma_0:dma_ctl_address
-	wire         mm_interconnect_0_dma_0_control_port_slave_write;            // mm_interconnect_0:dma_0_control_port_slave_write -> dma_0:dma_ctl_write_n
-	wire  [27:0] mm_interconnect_0_dma_0_control_port_slave_writedata;        // mm_interconnect_0:dma_0_control_port_slave_writedata -> dma_0:dma_ctl_writedata
 	wire  [31:0] mm_interconnect_0_nios2_debug_mem_slave_readdata;            // NIOS2:debug_mem_slave_readdata -> mm_interconnect_0:NIOS2_debug_mem_slave_readdata
 	wire         mm_interconnect_0_nios2_debug_mem_slave_waitrequest;         // NIOS2:debug_mem_slave_waitrequest -> mm_interconnect_0:NIOS2_debug_mem_slave_waitrequest
 	wire         mm_interconnect_0_nios2_debug_mem_slave_debugaccess;         // mm_interconnect_0:NIOS2_debug_mem_slave_debugaccess -> NIOS2:debug_mem_slave_debugaccess
@@ -86,15 +82,6 @@ module final_soc (
 	wire         mm_interconnect_0_pll_pll_slave_read;                        // mm_interconnect_0:PLL_pll_slave_read -> PLL:read
 	wire         mm_interconnect_0_pll_pll_slave_write;                       // mm_interconnect_0:PLL_pll_slave_write -> PLL:write
 	wire  [31:0] mm_interconnect_0_pll_pll_slave_writedata;                   // mm_interconnect_0:PLL_pll_slave_writedata -> PLL:writedata
-	wire         mm_interconnect_0_sdram_s1_chipselect;                       // mm_interconnect_0:SDRAM_s1_chipselect -> SDRAM:az_cs
-	wire  [31:0] mm_interconnect_0_sdram_s1_readdata;                         // SDRAM:za_data -> mm_interconnect_0:SDRAM_s1_readdata
-	wire         mm_interconnect_0_sdram_s1_waitrequest;                      // SDRAM:za_waitrequest -> mm_interconnect_0:SDRAM_s1_waitrequest
-	wire  [24:0] mm_interconnect_0_sdram_s1_address;                          // mm_interconnect_0:SDRAM_s1_address -> SDRAM:az_addr
-	wire         mm_interconnect_0_sdram_s1_read;                             // mm_interconnect_0:SDRAM_s1_read -> SDRAM:az_rd_n
-	wire   [3:0] mm_interconnect_0_sdram_s1_byteenable;                       // mm_interconnect_0:SDRAM_s1_byteenable -> SDRAM:az_be_n
-	wire         mm_interconnect_0_sdram_s1_readdatavalid;                    // SDRAM:za_valid -> mm_interconnect_0:SDRAM_s1_readdatavalid
-	wire         mm_interconnect_0_sdram_s1_write;                            // mm_interconnect_0:SDRAM_s1_write -> SDRAM:az_wr_n
-	wire  [31:0] mm_interconnect_0_sdram_s1_writedata;                        // mm_interconnect_0:SDRAM_s1_writedata -> SDRAM:az_data
 	wire         mm_interconnect_0_timer_0_s1_chipselect;                     // mm_interconnect_0:timer_0_s1_chipselect -> timer_0:chipselect
 	wire  [15:0] mm_interconnect_0_timer_0_s1_readdata;                       // timer_0:readdata -> mm_interconnect_0:timer_0_s1_readdata
 	wire   [2:0] mm_interconnect_0_timer_0_s1_address;                        // mm_interconnect_0:timer_0_s1_address -> timer_0:address
@@ -102,13 +89,12 @@ module final_soc (
 	wire  [15:0] mm_interconnect_0_timer_0_s1_writedata;                      // mm_interconnect_0:timer_0_s1_writedata -> timer_0:writedata
 	wire         irq_mapper_receiver0_irq;                                    // timer_0:irq -> irq_mapper:receiver0_irq
 	wire         irq_mapper_receiver1_irq;                                    // jtag_uart_0:av_irq -> irq_mapper:receiver1_irq
-	wire         irq_mapper_receiver2_irq;                                    // dma_0:dma_ctl_irq -> irq_mapper:receiver2_irq
 	wire  [31:0] nios2_irq_irq;                                               // irq_mapper:sender_irq -> NIOS2:irq
-	wire         rst_controller_reset_out_reset;                              // rst_controller:reset_out -> [NIOS2:reset_n, PLL:reset, VGA_Controller_0:RESET, irq_mapper:reset, jtag_uart_0:rst_n, mm_interconnect_0:NIOS2_reset_reset_bridge_in_reset_reset, rst_translator:in_reset]
+	wire         rst_controller_reset_out_reset;                              // rst_controller:reset_out -> [NIOS2:reset_n, PLL:reset, VGA_Controller_0:RESET, irq_mapper:reset, jtag_uart_0:rst_n, mm_interconnect_0:VGA_Controller_0_RESET_reset_bridge_in_reset_reset, rst_translator:in_reset]
 	wire         rst_controller_reset_out_reset_req;                          // rst_controller:reset_req -> [NIOS2:reset_req, rst_translator:reset_req_in]
 	wire         nios2_debug_reset_request_reset;                             // NIOS2:debug_reset_request -> [rst_controller:reset_in1, rst_controller_001:reset_in1]
 	wire         rst_controller_001_reset_out_reset;                          // rst_controller_001:reset_out -> [SDRAM:reset_n, mm_interconnect_0:SDRAM_reset_reset_bridge_in_reset_reset]
-	wire         rst_controller_002_reset_out_reset;                          // rst_controller_002:reset_out -> [dma_0:system_reset_n, mm_interconnect_0:dma_0_reset_reset_bridge_in_reset_reset, timer_0:reset_n]
+	wire         rst_controller_002_reset_out_reset;                          // rst_controller_002:reset_out -> [mm_interconnect_0:timer_0_reset_reset_bridge_in_reset_reset, timer_0:reset_n]
 
 	final_soc_NIOS2 nios2 (
 		.clk                                 (clk_clk),                                             //                       clk.clk
@@ -151,7 +137,7 @@ module final_soc (
 		.c1                 (sdram_clk_clk),                             //                    c1.clk
 		.c2                 (pll_c2_clk),                                //                    c2.clk
 		.c3                 (vga_clk_clk),                               //                    c3.clk
-		.c4                 (pll_c4_clk),                                //                    c4.clk
+		.c4                 (),                                          //            c4_conduit.export
 		.scandone           (),                                          //           (terminated)
 		.scandataout        (),                                          //           (terminated)
 		.areset             (1'b0),                                      //           (terminated)
@@ -190,48 +176,29 @@ module final_soc (
 	);
 
 	avalon_vga_interface vga_controller_0 (
-		.CLK           (clk_clk),                                                 //         CLK.clk
-		.RESET         (rst_controller_reset_out_reset),                          //       RESET.reset
-		.VGA_ADDR      (mm_interconnect_0_vga_controller_0_vga_slave_address),    //   VGA_SLAVE.address
-		.VGA_BYTE_EN   (mm_interconnect_0_vga_controller_0_vga_slave_byteenable), //            .byteenable
-		.VGA_CS        (mm_interconnect_0_vga_controller_0_vga_slave_chipselect), //            .chipselect
-		.VGA_READDATA  (mm_interconnect_0_vga_controller_0_vga_slave_readdata),   //            .readdata
-		.VGA_WRITEDATA (mm_interconnect_0_vga_controller_0_vga_slave_writedata),  //            .writedata
-		.VGA_READ      (mm_interconnect_0_vga_controller_0_vga_slave_read),       //            .read
-		.VGA_WRITE     (mm_interconnect_0_vga_controller_0_vga_slave_write),      //            .write
-		.VGA_R         (vga_r_vga_r),                                             //       VGA_R.vga_r
-		.VGA_G         (vga_g_vga_g),                                             //       VGA_G.vga_g
-		.VGA_B         (vga_b_vga_b),                                             //       VGA_B.vga_b
-		.VGA_SYNC_N    (vga_sync_n_vga_sync_n),                                   //  VGA_SYNC_N.vga_sync_n
-		.VGA_BLANK_N   (vga_blank_n_vga_blank_n),                                 // VGA_BLANK_N.vga_blank_n
-		.VGA_VS        (vga_vs_vga_vs),                                           //      VGA_VS.vga_vs
-		.VGA_HS        (vga_hs_vga_hs),                                           //      VGA_HS.vga_hs
-		.VGA_CLK_clk   (pll_c2_clk),                                              //     VGA_CLK.clk
-		.RGB_CLK_clk   (pll_c4_clk),                                              //     RGB_CLK.clk
-		.DEBUG         (debug_debug)                                              //       DEBUG.debug
-	);
-
-	final_soc_dma_0 dma_0 (
-		.clk                (clk_clk),                                               //                clk.clk
-		.system_reset_n     (~rst_controller_002_reset_out_reset),                   //              reset.reset_n
-		.dma_ctl_address    (mm_interconnect_0_dma_0_control_port_slave_address),    // control_port_slave.address
-		.dma_ctl_chipselect (mm_interconnect_0_dma_0_control_port_slave_chipselect), //                   .chipselect
-		.dma_ctl_readdata   (mm_interconnect_0_dma_0_control_port_slave_readdata),   //                   .readdata
-		.dma_ctl_write_n    (~mm_interconnect_0_dma_0_control_port_slave_write),     //                   .write_n
-		.dma_ctl_writedata  (mm_interconnect_0_dma_0_control_port_slave_writedata),  //                   .writedata
-		.dma_ctl_irq        (irq_mapper_receiver2_irq),                              //                irq.irq
-		.read_address       (dma_0_read_master_address),                             //        read_master.address
-		.read_chipselect    (dma_0_read_master_chipselect),                          //                   .chipselect
-		.read_read_n        (dma_0_read_master_read),                                //                   .read_n
-		.read_readdata      (dma_0_read_master_readdata),                            //                   .readdata
-		.read_readdatavalid (dma_0_read_master_readdatavalid),                       //                   .readdatavalid
-		.read_waitrequest   (dma_0_read_master_waitrequest),                         //                   .waitrequest
-		.write_address      (dma_0_write_master_address),                            //       write_master.address
-		.write_chipselect   (dma_0_write_master_chipselect),                         //                   .chipselect
-		.write_waitrequest  (dma_0_write_master_waitrequest),                        //                   .waitrequest
-		.write_write_n      (dma_0_write_master_write),                              //                   .write_n
-		.write_writedata    (dma_0_write_master_writedata),                          //                   .writedata
-		.write_byteenable   (dma_0_write_master_byteenable)                          //                   .byteenable
+		.CLK                     (clk_clk),                                                   //         CLK.clk
+		.RESET                   (rst_controller_reset_out_reset),                            //       RESET.reset
+		.VGA_R                   (vga_r_vga_r),                                               //       VGA_R.vga_r
+		.VGA_G                   (vga_g_vga_g),                                               //       VGA_G.vga_g
+		.VGA_SYNC_N              (vga_sync_n_vga_sync_n),                                     //  VGA_SYNC_N.vga_sync_n
+		.VGA_BLANK_N             (vga_blank_n_vga_blank_n),                                   // VGA_BLANK_N.vga_blank_n
+		.VGA_VS                  (vga_vs_vga_vs),                                             //      VGA_VS.vga_vs
+		.VGA_HS                  (vga_hs_vga_hs),                                             //      VGA_HS.vga_hs
+		.DEBUG                   (debug_debug),                                               //       DEBUG.debug
+		.VGA_CLK_clk             (pll_c2_clk),                                                //     VGA_CLK.clk
+		.VGA_B                   (vga_b_vga_b),                                               //       VGA_B.vga_b
+		.VGA_ADDR                (mm_interconnect_0_vga_controller_0_vga_slave_1_address),    // VGA_SLAVE_1.address
+		.VGA_BYTE_EN             (mm_interconnect_0_vga_controller_0_vga_slave_1_byteenable), //            .byteenable
+		.VGA_CS                  (mm_interconnect_0_vga_controller_0_vga_slave_1_chipselect), //            .chipselect
+		.VGA_READDATA            (mm_interconnect_0_vga_controller_0_vga_slave_1_readdata),   //            .readdata
+		.VGA_WRITEDATA           (mm_interconnect_0_vga_controller_0_vga_slave_1_writedata),  //            .writedata
+		.VGA_READ                (mm_interconnect_0_vga_controller_0_vga_slave_1_read),       //            .read
+		.VGA_WRITE               (mm_interconnect_0_vga_controller_0_vga_slave_1_write),      //            .write
+		.VGA_MASTER_ADDR         (vga_controller_0_vga_master_address),                       //  VGA_MASTER.address
+		.VGA_MASTER_READ         (vga_controller_0_vga_master_read),                          //            .read
+		.VGA_MASTER_READDATA     (vga_controller_0_vga_master_readdata),                      //            .readdata
+		.VGA_MASTER_CS           (vga_controller_0_vga_master_chipselect),                    //            .chipselect
+		.VGA_MASTER_WAIT_REQUEST (vga_controller_0_vga_master_waitrequest)                    //            .waitrequest
 	);
 
 	final_soc_jtag_uart_0 jtag_uart_0 (
@@ -259,81 +226,69 @@ module final_soc (
 	);
 
 	final_soc_mm_interconnect_0 mm_interconnect_0 (
-		.clk_0_clk_clk                             (clk_clk),                                                     //                         clk_0_clk.clk
-		.PLL_c0_clk                                (pll_c0_clk),                                                  //                            PLL_c0.clk
-		.dma_0_reset_reset_bridge_in_reset_reset   (rst_controller_002_reset_out_reset),                          // dma_0_reset_reset_bridge_in_reset.reset
-		.NIOS2_reset_reset_bridge_in_reset_reset   (rst_controller_reset_out_reset),                              // NIOS2_reset_reset_bridge_in_reset.reset
-		.SDRAM_reset_reset_bridge_in_reset_reset   (rst_controller_001_reset_out_reset),                          // SDRAM_reset_reset_bridge_in_reset.reset
-		.dma_0_read_master_address                 (dma_0_read_master_address),                                   //                 dma_0_read_master.address
-		.dma_0_read_master_waitrequest             (dma_0_read_master_waitrequest),                               //                                  .waitrequest
-		.dma_0_read_master_chipselect              (dma_0_read_master_chipselect),                                //                                  .chipselect
-		.dma_0_read_master_read                    (~dma_0_read_master_read),                                     //                                  .read
-		.dma_0_read_master_readdata                (dma_0_read_master_readdata),                                  //                                  .readdata
-		.dma_0_read_master_readdatavalid           (dma_0_read_master_readdatavalid),                             //                                  .readdatavalid
-		.dma_0_write_master_address                (dma_0_write_master_address),                                  //                dma_0_write_master.address
-		.dma_0_write_master_waitrequest            (dma_0_write_master_waitrequest),                              //                                  .waitrequest
-		.dma_0_write_master_byteenable             (dma_0_write_master_byteenable),                               //                                  .byteenable
-		.dma_0_write_master_chipselect             (dma_0_write_master_chipselect),                               //                                  .chipselect
-		.dma_0_write_master_write                  (~dma_0_write_master_write),                                   //                                  .write
-		.dma_0_write_master_writedata              (dma_0_write_master_writedata),                                //                                  .writedata
-		.NIOS2_data_master_address                 (nios2_data_master_address),                                   //                 NIOS2_data_master.address
-		.NIOS2_data_master_waitrequest             (nios2_data_master_waitrequest),                               //                                  .waitrequest
-		.NIOS2_data_master_byteenable              (nios2_data_master_byteenable),                                //                                  .byteenable
-		.NIOS2_data_master_read                    (nios2_data_master_read),                                      //                                  .read
-		.NIOS2_data_master_readdata                (nios2_data_master_readdata),                                  //                                  .readdata
-		.NIOS2_data_master_write                   (nios2_data_master_write),                                     //                                  .write
-		.NIOS2_data_master_writedata               (nios2_data_master_writedata),                                 //                                  .writedata
-		.NIOS2_data_master_debugaccess             (nios2_data_master_debugaccess),                               //                                  .debugaccess
-		.NIOS2_instruction_master_address          (nios2_instruction_master_address),                            //          NIOS2_instruction_master.address
-		.NIOS2_instruction_master_waitrequest      (nios2_instruction_master_waitrequest),                        //                                  .waitrequest
-		.NIOS2_instruction_master_read             (nios2_instruction_master_read),                               //                                  .read
-		.NIOS2_instruction_master_readdata         (nios2_instruction_master_readdata),                           //                                  .readdata
-		.dma_0_control_port_slave_address          (mm_interconnect_0_dma_0_control_port_slave_address),          //          dma_0_control_port_slave.address
-		.dma_0_control_port_slave_write            (mm_interconnect_0_dma_0_control_port_slave_write),            //                                  .write
-		.dma_0_control_port_slave_readdata         (mm_interconnect_0_dma_0_control_port_slave_readdata),         //                                  .readdata
-		.dma_0_control_port_slave_writedata        (mm_interconnect_0_dma_0_control_port_slave_writedata),        //                                  .writedata
-		.dma_0_control_port_slave_chipselect       (mm_interconnect_0_dma_0_control_port_slave_chipselect),       //                                  .chipselect
-		.jtag_uart_0_avalon_jtag_slave_address     (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_address),     //     jtag_uart_0_avalon_jtag_slave.address
-		.jtag_uart_0_avalon_jtag_slave_write       (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write),       //                                  .write
-		.jtag_uart_0_avalon_jtag_slave_read        (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read),        //                                  .read
-		.jtag_uart_0_avalon_jtag_slave_readdata    (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_readdata),    //                                  .readdata
-		.jtag_uart_0_avalon_jtag_slave_writedata   (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_writedata),   //                                  .writedata
-		.jtag_uart_0_avalon_jtag_slave_waitrequest (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_waitrequest), //                                  .waitrequest
-		.jtag_uart_0_avalon_jtag_slave_chipselect  (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_chipselect),  //                                  .chipselect
-		.NIOS2_debug_mem_slave_address             (mm_interconnect_0_nios2_debug_mem_slave_address),             //             NIOS2_debug_mem_slave.address
-		.NIOS2_debug_mem_slave_write               (mm_interconnect_0_nios2_debug_mem_slave_write),               //                                  .write
-		.NIOS2_debug_mem_slave_read                (mm_interconnect_0_nios2_debug_mem_slave_read),                //                                  .read
-		.NIOS2_debug_mem_slave_readdata            (mm_interconnect_0_nios2_debug_mem_slave_readdata),            //                                  .readdata
-		.NIOS2_debug_mem_slave_writedata           (mm_interconnect_0_nios2_debug_mem_slave_writedata),           //                                  .writedata
-		.NIOS2_debug_mem_slave_byteenable          (mm_interconnect_0_nios2_debug_mem_slave_byteenable),          //                                  .byteenable
-		.NIOS2_debug_mem_slave_waitrequest         (mm_interconnect_0_nios2_debug_mem_slave_waitrequest),         //                                  .waitrequest
-		.NIOS2_debug_mem_slave_debugaccess         (mm_interconnect_0_nios2_debug_mem_slave_debugaccess),         //                                  .debugaccess
-		.PLL_pll_slave_address                     (mm_interconnect_0_pll_pll_slave_address),                     //                     PLL_pll_slave.address
-		.PLL_pll_slave_write                       (mm_interconnect_0_pll_pll_slave_write),                       //                                  .write
-		.PLL_pll_slave_read                        (mm_interconnect_0_pll_pll_slave_read),                        //                                  .read
-		.PLL_pll_slave_readdata                    (mm_interconnect_0_pll_pll_slave_readdata),                    //                                  .readdata
-		.PLL_pll_slave_writedata                   (mm_interconnect_0_pll_pll_slave_writedata),                   //                                  .writedata
-		.SDRAM_s1_address                          (mm_interconnect_0_sdram_s1_address),                          //                          SDRAM_s1.address
-		.SDRAM_s1_write                            (mm_interconnect_0_sdram_s1_write),                            //                                  .write
-		.SDRAM_s1_read                             (mm_interconnect_0_sdram_s1_read),                             //                                  .read
-		.SDRAM_s1_readdata                         (mm_interconnect_0_sdram_s1_readdata),                         //                                  .readdata
-		.SDRAM_s1_writedata                        (mm_interconnect_0_sdram_s1_writedata),                        //                                  .writedata
-		.SDRAM_s1_byteenable                       (mm_interconnect_0_sdram_s1_byteenable),                       //                                  .byteenable
-		.SDRAM_s1_readdatavalid                    (mm_interconnect_0_sdram_s1_readdatavalid),                    //                                  .readdatavalid
-		.SDRAM_s1_waitrequest                      (mm_interconnect_0_sdram_s1_waitrequest),                      //                                  .waitrequest
-		.SDRAM_s1_chipselect                       (mm_interconnect_0_sdram_s1_chipselect),                       //                                  .chipselect
-		.timer_0_s1_address                        (mm_interconnect_0_timer_0_s1_address),                        //                        timer_0_s1.address
-		.timer_0_s1_write                          (mm_interconnect_0_timer_0_s1_write),                          //                                  .write
-		.timer_0_s1_readdata                       (mm_interconnect_0_timer_0_s1_readdata),                       //                                  .readdata
-		.timer_0_s1_writedata                      (mm_interconnect_0_timer_0_s1_writedata),                      //                                  .writedata
-		.timer_0_s1_chipselect                     (mm_interconnect_0_timer_0_s1_chipselect),                     //                                  .chipselect
-		.VGA_Controller_0_VGA_SLAVE_address        (mm_interconnect_0_vga_controller_0_vga_slave_address),        //        VGA_Controller_0_VGA_SLAVE.address
-		.VGA_Controller_0_VGA_SLAVE_write          (mm_interconnect_0_vga_controller_0_vga_slave_write),          //                                  .write
-		.VGA_Controller_0_VGA_SLAVE_read           (mm_interconnect_0_vga_controller_0_vga_slave_read),           //                                  .read
-		.VGA_Controller_0_VGA_SLAVE_readdata       (mm_interconnect_0_vga_controller_0_vga_slave_readdata),       //                                  .readdata
-		.VGA_Controller_0_VGA_SLAVE_writedata      (mm_interconnect_0_vga_controller_0_vga_slave_writedata),      //                                  .writedata
-		.VGA_Controller_0_VGA_SLAVE_byteenable     (mm_interconnect_0_vga_controller_0_vga_slave_byteenable),     //                                  .byteenable
-		.VGA_Controller_0_VGA_SLAVE_chipselect     (mm_interconnect_0_vga_controller_0_vga_slave_chipselect)      //                                  .chipselect
+		.clk_0_clk_clk                                      (clk_clk),                                                     //                                    clk_0_clk.clk
+		.PLL_c0_clk                                         (pll_c0_clk),                                                  //                                       PLL_c0.clk
+		.SDRAM_reset_reset_bridge_in_reset_reset            (rst_controller_001_reset_out_reset),                          //            SDRAM_reset_reset_bridge_in_reset.reset
+		.timer_0_reset_reset_bridge_in_reset_reset          (rst_controller_002_reset_out_reset),                          //          timer_0_reset_reset_bridge_in_reset.reset
+		.VGA_Controller_0_RESET_reset_bridge_in_reset_reset (rst_controller_reset_out_reset),                              // VGA_Controller_0_RESET_reset_bridge_in_reset.reset
+		.NIOS2_data_master_address                          (nios2_data_master_address),                                   //                            NIOS2_data_master.address
+		.NIOS2_data_master_waitrequest                      (nios2_data_master_waitrequest),                               //                                             .waitrequest
+		.NIOS2_data_master_byteenable                       (nios2_data_master_byteenable),                                //                                             .byteenable
+		.NIOS2_data_master_read                             (nios2_data_master_read),                                      //                                             .read
+		.NIOS2_data_master_readdata                         (nios2_data_master_readdata),                                  //                                             .readdata
+		.NIOS2_data_master_write                            (nios2_data_master_write),                                     //                                             .write
+		.NIOS2_data_master_writedata                        (nios2_data_master_writedata),                                 //                                             .writedata
+		.NIOS2_data_master_debugaccess                      (nios2_data_master_debugaccess),                               //                                             .debugaccess
+		.NIOS2_instruction_master_address                   (nios2_instruction_master_address),                            //                     NIOS2_instruction_master.address
+		.NIOS2_instruction_master_waitrequest               (nios2_instruction_master_waitrequest),                        //                                             .waitrequest
+		.NIOS2_instruction_master_read                      (nios2_instruction_master_read),                               //                                             .read
+		.NIOS2_instruction_master_readdata                  (nios2_instruction_master_readdata),                           //                                             .readdata
+		.VGA_Controller_0_VGA_MASTER_address                (vga_controller_0_vga_master_address),                         //                  VGA_Controller_0_VGA_MASTER.address
+		.VGA_Controller_0_VGA_MASTER_waitrequest            (vga_controller_0_vga_master_waitrequest),                     //                                             .waitrequest
+		.VGA_Controller_0_VGA_MASTER_chipselect             (vga_controller_0_vga_master_chipselect),                      //                                             .chipselect
+		.VGA_Controller_0_VGA_MASTER_read                   (vga_controller_0_vga_master_read),                            //                                             .read
+		.VGA_Controller_0_VGA_MASTER_readdata               (vga_controller_0_vga_master_readdata),                        //                                             .readdata
+		.jtag_uart_0_avalon_jtag_slave_address              (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_address),     //                jtag_uart_0_avalon_jtag_slave.address
+		.jtag_uart_0_avalon_jtag_slave_write                (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write),       //                                             .write
+		.jtag_uart_0_avalon_jtag_slave_read                 (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read),        //                                             .read
+		.jtag_uart_0_avalon_jtag_slave_readdata             (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_readdata),    //                                             .readdata
+		.jtag_uart_0_avalon_jtag_slave_writedata            (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_writedata),   //                                             .writedata
+		.jtag_uart_0_avalon_jtag_slave_waitrequest          (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_waitrequest), //                                             .waitrequest
+		.jtag_uart_0_avalon_jtag_slave_chipselect           (mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_chipselect),  //                                             .chipselect
+		.NIOS2_debug_mem_slave_address                      (mm_interconnect_0_nios2_debug_mem_slave_address),             //                        NIOS2_debug_mem_slave.address
+		.NIOS2_debug_mem_slave_write                        (mm_interconnect_0_nios2_debug_mem_slave_write),               //                                             .write
+		.NIOS2_debug_mem_slave_read                         (mm_interconnect_0_nios2_debug_mem_slave_read),                //                                             .read
+		.NIOS2_debug_mem_slave_readdata                     (mm_interconnect_0_nios2_debug_mem_slave_readdata),            //                                             .readdata
+		.NIOS2_debug_mem_slave_writedata                    (mm_interconnect_0_nios2_debug_mem_slave_writedata),           //                                             .writedata
+		.NIOS2_debug_mem_slave_byteenable                   (mm_interconnect_0_nios2_debug_mem_slave_byteenable),          //                                             .byteenable
+		.NIOS2_debug_mem_slave_waitrequest                  (mm_interconnect_0_nios2_debug_mem_slave_waitrequest),         //                                             .waitrequest
+		.NIOS2_debug_mem_slave_debugaccess                  (mm_interconnect_0_nios2_debug_mem_slave_debugaccess),         //                                             .debugaccess
+		.PLL_pll_slave_address                              (mm_interconnect_0_pll_pll_slave_address),                     //                                PLL_pll_slave.address
+		.PLL_pll_slave_write                                (mm_interconnect_0_pll_pll_slave_write),                       //                                             .write
+		.PLL_pll_slave_read                                 (mm_interconnect_0_pll_pll_slave_read),                        //                                             .read
+		.PLL_pll_slave_readdata                             (mm_interconnect_0_pll_pll_slave_readdata),                    //                                             .readdata
+		.PLL_pll_slave_writedata                            (mm_interconnect_0_pll_pll_slave_writedata),                   //                                             .writedata
+		.SDRAM_s1_address                                   (mm_interconnect_0_sdram_s1_address),                          //                                     SDRAM_s1.address
+		.SDRAM_s1_write                                     (mm_interconnect_0_sdram_s1_write),                            //                                             .write
+		.SDRAM_s1_read                                      (mm_interconnect_0_sdram_s1_read),                             //                                             .read
+		.SDRAM_s1_readdata                                  (mm_interconnect_0_sdram_s1_readdata),                         //                                             .readdata
+		.SDRAM_s1_writedata                                 (mm_interconnect_0_sdram_s1_writedata),                        //                                             .writedata
+		.SDRAM_s1_byteenable                                (mm_interconnect_0_sdram_s1_byteenable),                       //                                             .byteenable
+		.SDRAM_s1_readdatavalid                             (mm_interconnect_0_sdram_s1_readdatavalid),                    //                                             .readdatavalid
+		.SDRAM_s1_waitrequest                               (mm_interconnect_0_sdram_s1_waitrequest),                      //                                             .waitrequest
+		.SDRAM_s1_chipselect                                (mm_interconnect_0_sdram_s1_chipselect),                       //                                             .chipselect
+		.timer_0_s1_address                                 (mm_interconnect_0_timer_0_s1_address),                        //                                   timer_0_s1.address
+		.timer_0_s1_write                                   (mm_interconnect_0_timer_0_s1_write),                          //                                             .write
+		.timer_0_s1_readdata                                (mm_interconnect_0_timer_0_s1_readdata),                       //                                             .readdata
+		.timer_0_s1_writedata                               (mm_interconnect_0_timer_0_s1_writedata),                      //                                             .writedata
+		.timer_0_s1_chipselect                              (mm_interconnect_0_timer_0_s1_chipselect),                     //                                             .chipselect
+		.VGA_Controller_0_VGA_SLAVE_1_address               (mm_interconnect_0_vga_controller_0_vga_slave_1_address),      //                 VGA_Controller_0_VGA_SLAVE_1.address
+		.VGA_Controller_0_VGA_SLAVE_1_write                 (mm_interconnect_0_vga_controller_0_vga_slave_1_write),        //                                             .write
+		.VGA_Controller_0_VGA_SLAVE_1_read                  (mm_interconnect_0_vga_controller_0_vga_slave_1_read),         //                                             .read
+		.VGA_Controller_0_VGA_SLAVE_1_readdata              (mm_interconnect_0_vga_controller_0_vga_slave_1_readdata),     //                                             .readdata
+		.VGA_Controller_0_VGA_SLAVE_1_writedata             (mm_interconnect_0_vga_controller_0_vga_slave_1_writedata),    //                                             .writedata
+		.VGA_Controller_0_VGA_SLAVE_1_byteenable            (mm_interconnect_0_vga_controller_0_vga_slave_1_byteenable),   //                                             .byteenable
+		.VGA_Controller_0_VGA_SLAVE_1_chipselect            (mm_interconnect_0_vga_controller_0_vga_slave_1_chipselect)    //                                             .chipselect
 	);
 
 	final_soc_irq_mapper irq_mapper (
@@ -341,7 +296,6 @@ module final_soc (
 		.reset         (rst_controller_reset_out_reset), // clk_reset.reset
 		.receiver0_irq (irq_mapper_receiver0_irq),       // receiver0.irq
 		.receiver1_irq (irq_mapper_receiver1_irq),       // receiver1.irq
-		.receiver2_irq (irq_mapper_receiver2_irq),       // receiver2.irq
 		.sender_irq    (nios2_irq_irq)                   //    sender.irq
 	);
 
