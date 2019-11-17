@@ -1,36 +1,5 @@
 
 
-
-module Edge(
-    input logic CLK, RESET,
-    input logic init,
-    input logic step,
-    input int bot[3],
-    input int top[3],
-    output int current_pos[3]
-);
-
-int current_pos_next[3];
-
-always_comb begin
-    current_pos_next = current_pos;
-
-    if(init) begin
-
-    end
-end
-
-
-always_ff @ (posedge CLK) begin
-    if(RESET)
-        current_pos <= '{0, 0, 0};
-    else
-        current_pos <= current_pos_next;
-end
-
-endmodule
-
-
 module project_cube(
     input int scale,
     input int pos[3],

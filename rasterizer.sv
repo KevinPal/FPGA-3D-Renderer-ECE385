@@ -1,56 +1,232 @@
 
-
-module rect_rast(
+module rast_triangle(
     input logic CLK, RESET,
-    input logic init,
-    input int vec1[3],
-    input int vec2[3],
-    input int vec3[3],
-    input int vec4[3]
+    input logic start,
+    input int v1[3],
+    input int v2[3],
+    input int v3[3],
+    output logic draw_ready,
+    output int draw_y,
+    output int draw_x1,
+    output int draw_x2
 );
 
+// Vertex soring vars
 int top[3];
+int mid[3];
 int bot[3];
-int left[3];
-int right[3];
+int temp[3];
+
+// Edge inputs/outputs
+logic init;
+logic e1_step, e2_step, e3_step;
+
+int e1_pos[3], e2_pos[3], e3_pos[3]; 
+int e1_min[3], e2_min[3], e3_min[3]; 
+int e1_max[3], e2_max[3], e3_max[3]; 
+
+
+// Edge 1 is from bot to mid, E2 is from mid to top, E3 from ot to top
+vert_edge E1(CLK, RESET, init, e1_step, bot, mid, e1_pos, e1_min, e1_max);
+vert_edge E2(CLK, RESET, init, e2_step, mid, top, e2_pos, e2_min, e2_max);
+vert_edge E3(CLK, RESET, init, e3_step, bot, top, e3_pos, e3_min, e3_max);
+
+// Ceiling functions
+
+// E1 y min ceiling, ...
+int e1_ymin_c, e1_ymax_c; 
+int e2_ymin_c, e2_ymax_c;
+// E1 x ceiling, ...
+int e1_x_c, e2_x_c, e3_x_c;
+
+ceil c1(e1_min[1], e1_ymin_c);
+ceil c2(e1_max[1], e1_ymax_c);
+ceil c3(e2_min[1], e2_ymin_c);
+ceil c4(e2_max[1], e2_ymax_c);
+
+ceil c5(e1_pos[0], e1_x_c);
+ceil c6(e2_pos[0], e2_x_c);
+ceil c7(e3_pos[0], e3_x_c);
+
+enum logic [5:0] {
+    IDLE,
+    INIT1,
+    INIT2,
+    RENDER_BOT,
+    RENDER_TOP,
+    WAIT
+} state = IDLE, next_state;
+
+// rasterization variables
+int y_cnt, y_cnt_next;
+int rast_x_min, rast_x_max;
+int rast_left_z, rast_right_z;
+
+assign draw_y = y_cnt;
 
 always_comb begin
-    // Bot has smallest Y
-    bot = vec1;
-    if(vec2[1] < bot[1])
-        bot = vec2
-    if(vec3[1] < bot[1])
-        bot = vec3
-    if(vec4[1] < bot[1])
-        bot = vec4
 
-    // Top has largest Y
-    top = vec1;
-    if(vec2[1] > top[1])
-        top = vec2
-    if(vec3[1] > top[1])
-        top = vec3
-    if(vec4[1] > top[1])
-        top = vec4
+    // defaults
+    temp[0] = 0;
+    temp[1] = 0;
+    temp[2] = 0;
+    init = 0;
+    y_cnt_next = y_cnt;
+    next_state = state;
+    rast_x_min = 0;
+    rast_x_max = 0;
+    rast_left_z = 0;
+    rast_right_z = 0;
+    draw_x1 = 0;
+    draw_x2 = 0;
+    draw_ready = 0;
+    e1_step = 0;
+    e2_step = 0;
+    e3_step = 0;
+    
+    // Sorting logic
+    // 0 is top of screen, so bot is really at the top
+    
+    top = v1;
+    mid = v2;
+    bot = v3;
 
-    // Left has smallest X
-    left = vec1;
-    if(vec2[0] < left[0])
-        left = vec2
-    if(vec3[0] < left[0])
-        left = vec3
-    if(vec4[0] < left[0])
-        left = vec4
+    if(bot[1] > mid[1]) begin // If bot 'below' mid, swap
+        temp = bot;
+        bot = mid;
+        mid = temp;
+    end
 
-    // Right has largest X
-    right = vec1;
-    if(vec2[0] > right[0])
-        right = vec2
-    if(vec3[0] > right[0])
-        right = vec3
-    if(vec4[0] > right[0])
-        right = vec4
+    if (mid[1] > top[1]) begin // If mid is below top, swap
+        temp = mid;
+        mid = top;
+        top = temp;
+    end
 
+    if (bot[1] > mid[1]) begin
+        temp = bot;
+        bot = mid;
+        mid = temp;
+    end
+
+    // State output logic
+    if((state == INIT1) | (state == INIT2))
+        init = 1;
+    else
+    if(state == RENDER_BOT) begin //TODO y clipping
+        // Find left and right edge
+        if(e1_pos[0] < e3_pos[0]) begin 
+            rast_x_min = e1_x_c;
+            rast_x_max = e3_x_c;
+            rast_left_z = e1_pos[2];
+            rast_right_z = e3_pos[2];
+        end else begin
+            rast_x_min = e3_x_c;
+            rast_x_max = e1_x_c;
+            rast_left_z = e3_pos[2];
+            rast_right_z = e1_pos[2];
+        end
+        //TODO  Draw line from x_min to x_max, and lerp z, and y=y_cnt
+        draw_x1 = rast_x_min;
+        draw_x2 = rast_x_max;
+        draw_ready = 1;
+        
+        e1_step = 1;
+        e3_step = 1;
+        y_cnt_next = y_cnt + (1<<8);
+
+    end
+    else if(state == RENDER_TOP) begin
+        if(e2_pos[0] < e3_pos[0]) begin
+            rast_x_min = e2_x_c;
+            rast_x_max = e3_x_c;
+            rast_left_z = e2_pos[2];
+            rast_right_z = e3_pos[2];
+        end else begin
+            rast_x_min = e3_x_c;
+            rast_x_max = e2_x_c;
+            rast_left_z = e3_pos[2];
+            rast_right_z = e2_pos[2];
+        end
+        //TODO  Draw line from x_min to x_max, and lerp z, and y=y_cnt
+        draw_x1 = rast_x_min;
+        draw_x2 = rast_x_max;
+        draw_ready = 1;
+        
+        e2_step = 1;
+        e3_step = 1;
+        y_cnt_next = y_cnt + (1<<8);
+    end
+    
+
+    // Next state logic
+    unique case(state)
+        IDLE: begin
+            if(start)
+                next_state = INIT1;
+            else 
+                next_state = IDLE;
+        end
+        INIT1: begin
+            next_state = INIT2;
+        end
+        INIT2: begin
+            next_state = RENDER_BOT;
+            y_cnt_next = e1_ymin_c;
+        end
+        RENDER_BOT: begin
+            if(y_cnt >= e1_ymax_c) begin
+                next_state = RENDER_TOP;
+                y_cnt_next = e2_ymin_c;
+            end
+            else begin
+                next_state = RENDER_BOT;
+            end
+        end
+        RENDER_TOP: begin
+            if(y_cnt >= e2_ymax_c)
+                next_state = WAIT;
+            else 
+                next_state = RENDER_TOP;
+        end
+        WAIT: begin
+            if(~start) 
+                next_state = IDLE;
+            else
+                next_state = WAIT;
+        end
+        default:
+            next_state = state;
+    endcase
+
+
+end
+
+always_ff @ (posedge CLK) begin
+    if(RESET) begin
+        state <= IDLE;
+        y_cnt <= 0;
+    end else begin
+        state <= next_state;
+        y_cnt <= y_cnt_next;
+    end
+        
+end
+
+endmodule
+
+module ceil(
+    input int val,
+    output int out
+);
+
+always_comb begin
+    if(val[7:0] == 0)
+        out = val;
+    else begin
+        out = val + (1 << 8);
+        out[7:0] = 0;
+    end
 end
 
 endmodule
