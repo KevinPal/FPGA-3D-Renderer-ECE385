@@ -4,7 +4,7 @@
  * Machine generated for CPU 'NIOS2' in SOPC Builder design 'final_soc'
  * SOPC Builder design path: ../../final_soc.sopcinfo
  *
- * Generated: Thu Nov 14 19:42:49 CST 2019
+ * Generated: Mon Nov 18 02:05:23 CST 2019
  */
 
 /*
@@ -62,7 +62,7 @@
 
 #define ALT_CPU_ARCHITECTURE "altera_nios2_gen2"
 #define ALT_CPU_BIG_ENDIAN 0
-#define ALT_CPU_BREAK_ADDR 0x08000820
+#define ALT_CPU_BREAK_ADDR 0x08004820
 #define ALT_CPU_CPU_ARCH_NIOS2_R1
 #define ALT_CPU_CPU_FREQ 50000000u
 #define ALT_CPU_CPU_ID_SIZE 1
@@ -99,7 +99,7 @@
  */
 
 #define NIOS2_BIG_ENDIAN 0
-#define NIOS2_BREAK_ADDR 0x08000820
+#define NIOS2_BREAK_ADDR 0x08004820
 #define NIOS2_CPU_ARCH_NIOS2_R1
 #define NIOS2_CPU_FREQ 50000000u
 #define NIOS2_CPU_ID_SIZE 1
@@ -138,7 +138,22 @@
 #define __ALTERA_AVALON_TIMER
 #define __ALTERA_NIOS2_GEN2
 #define __ALTPLL
+#define __GPU_CORE
 #define __VGA_CONTROLLER
+
+
+/*
+ * GPU_CORE_0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_GPU_CORE_0 GPU_CORE
+#define GPU_CORE_0_BASE 0x8002000
+#define GPU_CORE_0_IRQ -1
+#define GPU_CORE_0_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define GPU_CORE_0_NAME "/dev/GPU_CORE_0"
+#define GPU_CORE_0_SPAN 8192
+#define GPU_CORE_0_TYPE "GPU_CORE"
 
 
 /*
@@ -147,7 +162,7 @@
  */
 
 #define ALT_MODULE_CLASS_PLL altpll
-#define PLL_BASE 0x8001060
+#define PLL_BASE 0x8005060
 #define PLL_IRQ -1
 #define PLL_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PLL_NAME "/dev/PLL"
@@ -210,7 +225,7 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart_0"
-#define ALT_STDERR_BASE 0x8001088
+#define ALT_STDERR_BASE 0x8005088
 #define ALT_STDERR_DEV jtag_uart_0
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
@@ -220,7 +235,7 @@
 #define ALT_STDIN_DEV null
 #define ALT_STDIN_TYPE ""
 #define ALT_STDOUT "/dev/jtag_uart_0"
-#define ALT_STDOUT_BASE 0x8001088
+#define ALT_STDOUT_BASE 0x8005088
 #define ALT_STDOUT_DEV jtag_uart_0
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -234,7 +249,7 @@
  */
 
 #define ALT_MODULE_CLASS_VGA_Controller_0 VGA_Controller
-#define VGA_CONTROLLER_0_BASE 0x8001070
+#define VGA_CONTROLLER_0_BASE 0x8005070
 #define VGA_CONTROLLER_0_IRQ -1
 #define VGA_CONTROLLER_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define VGA_CONTROLLER_0_NAME "/dev/VGA_Controller_0"
@@ -259,7 +274,7 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart_0 altera_avalon_jtag_uart
-#define JTAG_UART_0_BASE 0x8001088
+#define JTAG_UART_0_BASE 0x8005088
 #define JTAG_UART_0_IRQ 0
 #define JTAG_UART_0_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_0_NAME "/dev/jtag_uart_0"
@@ -278,7 +293,7 @@
 
 #define ALT_MODULE_CLASS_timer_0 altera_avalon_timer
 #define TIMER_0_ALWAYS_RUN 0
-#define TIMER_0_BASE 0x8001020
+#define TIMER_0_BASE 0x8005020
 #define TIMER_0_COUNTER_SIZE 32
 #define TIMER_0_FIXED_PERIOD 0
 #define TIMER_0_FREQ 50000000

@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Nov 15, 2019 10:37:03 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1573879023781</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Nov 18, 2019 5:21:13 AM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1574076073900</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Users\kpalani\Desktop\ece385_finalprj\software\final_app_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\final_soc.sopcinfo</SopcDesignFile>
@@ -905,26 +905,32 @@
                 <attributes>memory</attributes>
         </MemoryMap>
         <MemoryMap>
+                <slaveDescriptor>GPU_CORE_0</slaveDescriptor>
+                <addressRange>0x08002000 - 0x08003FFF</addressRange>
+                <addressSpan>8192</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
                 <slaveDescriptor>timer_0</slaveDescriptor>
-                <addressRange>0x08001020 - 0x0800103F</addressRange>
+                <addressRange>0x08005020 - 0x0800503F</addressRange>
                 <addressSpan>32</addressSpan>
                 <attributes>timer</attributes>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>PLL</slaveDescriptor>
-                <addressRange>0x08001060 - 0x0800106F</addressRange>
+                <addressRange>0x08005060 - 0x0800506F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>VGA_Controller_0</slaveDescriptor>
-                <addressRange>0x08001070 - 0x0800107F</addressRange>
+                <addressRange>0x08005070 - 0x0800507F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>jtag_uart_0</slaveDescriptor>
-                <addressRange>0x08001088 - 0x0800108F</addressRange>
+                <addressRange>0x08005088 - 0x0800508F</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes>printable</attributes>
         </MemoryMap>

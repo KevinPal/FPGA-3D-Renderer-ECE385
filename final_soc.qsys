@@ -9,6 +9,22 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
+   element GPU_CORE_0
+   {
+      datum _sortIndex
+      {
+         value = "8";
+         type = "int";
+      }
+   }
+   element GPU_CORE_0.GPU_SLAVE
+   {
+      datum baseAddress
+      {
+         value = "134225920";
+         type = "String";
+      }
+   }
    element NIOS2
    {
       datum _sortIndex
@@ -21,7 +37,7 @@
    {
       datum baseAddress
       {
-         value = "134219776";
+         value = "134236160";
          type = "String";
       }
    }
@@ -37,7 +53,7 @@
    {
       datum baseAddress
       {
-         value = "134221920";
+         value = "134238304";
          type = "String";
       }
    }
@@ -74,7 +90,7 @@
    {
       datum baseAddress
       {
-         value = "134221936";
+         value = "134238320";
          type = "String";
       }
    }
@@ -154,7 +170,7 @@
    {
       datum baseAddress
       {
-         value = "134221960";
+         value = "134238344";
          type = "String";
       }
    }
@@ -170,7 +186,7 @@
    {
       datum baseAddress
       {
-         value = "134221856";
+         value = "134238240";
          type = "String";
       }
    }
@@ -240,6 +256,7 @@
    internal="VGA_Controller_0.VGA_VS"
    type="conduit"
    dir="end" />
+ <module name="GPU_CORE_0" kind="GPU_CORE" version="1.0" enabled="1" />
  <module name="NIOS2" kind="altera_nios2_gen2" version="18.1" enabled="1">
   <parameter name="AUTO_CLK_CLOCK_DOMAIN" value="1" />
   <parameter name="AUTO_CLK_RESET_DOMAIN" value="1" />
@@ -260,7 +277,7 @@
   <parameter name="dataAddrWidth" value="28" />
   <parameter name="dataMasterHighPerformanceAddrWidth" value="1" />
   <parameter name="dataMasterHighPerformanceMapParam" value="" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='NIOS2.debug_mem_slave' start='0x8000800' end='0x8001000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='timer_0.s1' start='0x8001020' end='0x8001040' type='altera_avalon_timer.s1' /><slave name='PLL.pll_slave' start='0x8001060' end='0x8001070' type='altpll.pll_slave' /><slave name='VGA_Controller_0.VGA_SLAVE_1' start='0x8001070' end='0x8001080' type='VGA_Controller.VGA_SLAVE_1' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x8001088' end='0x8001090' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='GPU_CORE_0.GPU_SLAVE' start='0x8002000' end='0x8004000' type='GPU_CORE.GPU_SLAVE' /><slave name='NIOS2.debug_mem_slave' start='0x8004800' end='0x8005000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='timer_0.s1' start='0x8005020' end='0x8005040' type='altera_avalon_timer.s1' /><slave name='PLL.pll_slave' start='0x8005060' end='0x8005070' type='altpll.pll_slave' /><slave name='VGA_Controller_0.VGA_SLAVE_1' start='0x8005070' end='0x8005080' type='VGA_Controller.VGA_SLAVE_1' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x8005088' end='0x8005090' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
   <parameter name="data_master_high_performance_paddr_base" value="0" />
   <parameter name="data_master_high_performance_paddr_size" value="0" />
   <parameter name="data_master_paddr_base" value="0" />
@@ -299,7 +316,7 @@
   <parameter name="icache_tagramBlockType" value="Automatic" />
   <parameter name="impl" value="Tiny" />
   <parameter name="instAddrWidth" value="28" />
-  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='NIOS2.debug_mem_slave' start='0x8000800' end='0x8001000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='timer_0.s1' start='0x8001020' end='0x8001040' type='altera_avalon_timer.s1' /><slave name='PLL.pll_slave' start='0x8001060' end='0x8001070' type='altpll.pll_slave' /><slave name='VGA_Controller_0.VGA_SLAVE_1' start='0x8001070' end='0x8001080' type='VGA_Controller.VGA_SLAVE_1' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x8001088' end='0x8001090' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
+  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='GPU_CORE_0.GPU_SLAVE' start='0x8002000' end='0x8004000' type='GPU_CORE.GPU_SLAVE' /><slave name='NIOS2.debug_mem_slave' start='0x8004800' end='0x8005000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='timer_0.s1' start='0x8005020' end='0x8005040' type='altera_avalon_timer.s1' /><slave name='PLL.pll_slave' start='0x8005060' end='0x8005070' type='altpll.pll_slave' /><slave name='VGA_Controller_0.VGA_SLAVE_1' start='0x8005070' end='0x8005080' type='VGA_Controller.VGA_SLAVE_1' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x8005088' end='0x8005090' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
   <parameter name="instructionMasterHighPerformanceAddrWidth" value="1" />
   <parameter name="instructionMasterHighPerformanceMapParam" value="" />
   <parameter name="instruction_master_high_performance_paddr_base" value="0" />
@@ -680,6 +697,15 @@
  <connection
    kind="avalon"
    version="18.1"
+   start="GPU_CORE_0.GPU_MASTER"
+   end="SDRAM.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="18.1"
    start="VGA_Controller_0.VGA_MASTER"
    end="SDRAM.s1">
   <parameter name="arbitrationPriority" value="1" />
@@ -690,9 +716,18 @@
    kind="avalon"
    version="18.1"
    start="NIOS2.data_master"
+   end="GPU_CORE_0.GPU_SLAVE">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x08002000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="18.1"
+   start="NIOS2.data_master"
    end="VGA_Controller_0.VGA_SLAVE_1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001070" />
+  <parameter name="baseAddress" value="0x08005070" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -701,7 +736,7 @@
    start="NIOS2.data_master"
    end="jtag_uart_0.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001088" />
+  <parameter name="baseAddress" value="0x08005088" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -719,7 +754,7 @@
    start="NIOS2.data_master"
    end="NIOS2.debug_mem_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08000800" />
+  <parameter name="baseAddress" value="0x08004800" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -728,7 +763,7 @@
    start="NIOS2.data_master"
    end="PLL.pll_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001060" />
+  <parameter name="baseAddress" value="0x08005060" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="avalon" version="18.1" start="NIOS2.data_master" end="SDRAM.s1">
@@ -742,7 +777,16 @@
    start="NIOS2.data_master"
    end="timer_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001020" />
+  <parameter name="baseAddress" value="0x08005020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="18.1"
+   start="NIOS2.instruction_master"
+   end="GPU_CORE_0.GPU_SLAVE">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x08002000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -751,7 +795,7 @@
    start="NIOS2.instruction_master"
    end="VGA_Controller_0.VGA_SLAVE_1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001070" />
+  <parameter name="baseAddress" value="0x08005070" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -760,7 +804,7 @@
    start="NIOS2.instruction_master"
    end="jtag_uart_0.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001088" />
+  <parameter name="baseAddress" value="0x08005088" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -778,7 +822,7 @@
    start="NIOS2.instruction_master"
    end="NIOS2.debug_mem_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08000800" />
+  <parameter name="baseAddress" value="0x08004800" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -787,7 +831,7 @@
    start="NIOS2.instruction_master"
    end="PLL.pll_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001060" />
+  <parameter name="baseAddress" value="0x08005060" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -805,7 +849,7 @@
    start="NIOS2.instruction_master"
    end="timer_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001020" />
+  <parameter name="baseAddress" value="0x08005020" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="avalon" version="18.1" start="dma_0.read_master" end="SDRAM.s1">
@@ -824,6 +868,7 @@
    version="18.1"
    start="clk_0.clk"
    end="VGA_Controller_0.CLK" />
+ <connection kind="clock" version="18.1" start="clk_0.clk" end="GPU_CORE_0.CLK" />
  <connection kind="clock" version="18.1" start="clk_0.clk" end="NIOS2.clk" />
  <connection kind="clock" version="18.1" start="clk_0.clk" end="timer_0.clk" />
  <connection kind="clock" version="18.1" start="clk_0.clk" end="jtag_uart_0.clk" />
@@ -855,6 +900,11 @@
    kind="reset"
    version="18.1"
    start="clk_0.clk_reset"
+   end="GPU_CORE_0.RESET" />
+ <connection
+   kind="reset"
+   version="18.1"
+   start="clk_0.clk_reset"
    end="PLL.inclk_interface_reset" />
  <connection kind="reset" version="18.1" start="clk_0.clk_reset" end="NIOS2.reset" />
  <connection kind="reset" version="18.1" start="clk_0.clk_reset" end="SDRAM.reset" />
@@ -874,6 +924,11 @@
    version="18.1"
    start="NIOS2.debug_reset_request"
    end="VGA_Controller_0.RESET" />
+ <connection
+   kind="reset"
+   version="18.1"
+   start="NIOS2.debug_reset_request"
+   end="GPU_CORE_0.RESET" />
  <connection
    kind="reset"
    version="18.1"

@@ -109,7 +109,7 @@ end
 
 endmodule
 
-
+// Rasterizes a triangle
 module rast_triangle(
     input logic CLK, RESET,
     input logic start,
@@ -117,6 +117,7 @@ module rast_triangle(
     input int v1[3],
     input int v2[3],
     input int v3[3],
+    input byte test_rgb[3],
     output logic draw_ready,
     output byte rgb[3],
     output int  xyz[3],
@@ -168,7 +169,6 @@ int rast_left_z, rast_right_z;
 
 // horizontal rasterization variables
 logic h_rast_init;
-byte test_rgb[3] = '{0, 255, 0};
 logic line_done;
 logic h_rast_valid;
 rast_line h_rast(CLK, RESET, h_rast_init, cont, y_cnt, rast_x_min, rast_left_z, rast_x_max, rast_right_z, test_rgb, rgb, xyz, h_rast_valid, line_done);
@@ -374,10 +374,10 @@ always_comb begin
     dzBdyNext = dzBdy;
 
     // helper vars during init, not needed other times
-    yPreStep = 4'hxxxx; 
-    steps[0] = 8'hxxxxxxxx;
-    steps[1] = 8'hxxxxxxxx;
-    steps[2] = 8'hxxxxxxxx;
+    yPreStep = 32'hxxxx; 
+    steps[0] = 32'hxxxxxxxx;
+    steps[1] = 32'hxxxxxxxx;
+    steps[2] = 32'hxxxxxxxx;
 
     if(init) begin
         steps[0] = top[0] - bot[0];

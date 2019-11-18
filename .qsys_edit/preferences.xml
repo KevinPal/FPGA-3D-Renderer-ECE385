@@ -3,10 +3,10 @@
  <debug showDebugMenu="0" />
  <systemtable filter="All Interfaces">
   <columns>
-   <connections preferredWidth="239" />
+   <connections preferredWidth="255" />
    <irq preferredWidth="34" />
   </columns>
  </systemtable>
- <library expandedCategories="Project,Project/ECE_385_Final,Library" />
- <window width="1924" height="1030" x="0" y="0" />
+ <library expandedCategories="Project,Library,Project/ECE_385_Final" />
+ <window width="1898" height="961" x="0" y="69" />
 </preferences>

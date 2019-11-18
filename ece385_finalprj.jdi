@@ -1,6 +1,6 @@
 <sld_project_info>
   <project>
-    <hash md5_digest_80b="366a1f5a0c993d3301b5"/>
+    <hash md5_digest_80b="d420ce700984855720cf"/>
   </project>
   <file_info>
     <file device="EP4CE115F29C7" path="ece385_finalprj.sof" usercode="0xFFFFFFFF"/>
@@ -139,8 +139,7 @@
   <sld_infos>
     <sld_info hpath="final_soc:final_subsystem" name="final_subsystem">
       <assignment_values>
-        <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1573878064"/>
-        <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1573878836"/>
+        <assignment_value text="QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1574062483"/>
       </assignment_values>
       <parameters/>
     </sld_info>
