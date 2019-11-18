@@ -1,5 +1,4 @@
 
-
 module project_cube(
     input int scale,
     input int pos[3],

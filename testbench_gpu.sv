@@ -11,6 +11,10 @@ int prj[4][4];
 int vec[3] = {30 * (1<< 8), 0 * (1<< 8) , -7 * (1<< 8)};
 int out[8][3];
 
+logic test_sig;
+logic test_sig_p;
+pos_edge_detect test123(CLK, RESET, test_sig, test_sig_p);
+
 //int back_top_left[3];
 //int back_bot_left[3];
 
@@ -36,6 +40,8 @@ assign v3 = '{227 * (1<<8), 172 * (1<<8), 0};
 assign draw_y_s = draw_y / (1<<8);
 assign draw_x1_s = draw_x1 / (1<<8);
 assign draw_x2_s = draw_x2 / (1<<8);
+
+
 //assign shift[0][0] = (out[0][0] / ( 1 << 8));
 //assign shift[0][1] = (out[0][1] / ( 1 << 8));
 //assign shift[0][2] = (out[0][2]);// / ( 1 << 8));
@@ -72,10 +78,15 @@ initial begin: CLOCK_INITIALIZATION
 end 
 
 initial begin: TEST_VECTORS
-start = 0;
+//start = 0;
+test_sig = 0;
 RESET = 1;
 #1 RESET = 0;
-#1 start = 1;
-#2 start = 0;
+//#1 start = 1;
+//#2 start = 0;
+#3
+test_sig = 0;
+#1
+test_sig = 1;
 end
 endmodule

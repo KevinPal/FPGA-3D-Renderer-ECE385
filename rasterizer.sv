@@ -1,14 +1,126 @@
 
+module rast_line(
+    input logic CLK, RESET,
+    input logic init,
+    input logic cont,
+    input int y,
+    input int left_x,
+    input int left_z,
+    input int right_x,
+    input int right_z,
+//    input int top_vert[3],
+//    input int mid_vert[3],
+//    input int bot_vert[3],
+    input  byte test_rgb[3],
+    output byte rgb[3],
+    output int xyz[3],
+    output logic output_valid,
+    output logic done
+);
+
+int x_cnt, x_cnt_next;
+int z_cnt, z_cnt_next;
+int dzBdx, dzBdx_next; // dz by dx
+
+logic init_p;
+
+pos_edge_detect pos_detect(CLK, RESET, init, init_p);
+
+
+enum logic [5:0] {
+    IDLE,
+    INIT,
+    RENDERING,
+    DONE
+} state = IDLE, next_state;
+
+always_comb begin
+    //default
+    x_cnt_next = x_cnt;
+    z_cnt_next = z_cnt;
+    dzBdx_next = dzBdx;
+    next_state = state;
+    rgb = '{0, 0, 0};
+    xyz = '{0, 0, 0};
+    done = 0;
+    output_valid = 0;
+
+    if(state == INIT) begin
+        x_cnt_next = left_x;
+        dzBdx_next = ((right_z - left_z) * (1<<8))  / (right_x - left_x);
+    end else if(state == RENDERING) begin
+        if(cont) begin
+            x_cnt_next = x_cnt + (1<<8);
+            z_cnt_next = z_cnt + dzBdx;
+        end
+        xyz = '{x_cnt, y, z_cnt};
+        rgb = test_rgb;
+        output_valid = 1;
+    end else if(state == DONE) begin
+        done = 1;
+    end
+
+    unique case(state)
+        IDLE: begin
+            if(init_p)
+                next_state = INIT;
+            else
+                next_state = IDLE;
+        end
+        INIT: begin
+            if(~init_p)
+                next_state = RENDERING;
+            else
+                next_state = INIT;
+        end
+        RENDERING: begin
+            if(x_cnt >= right_x)
+                next_state = DONE;
+            else
+                next_state = RENDERING;
+        end
+        DONE: begin
+            if(init)
+                next_state = DONE;
+            else
+                next_state = IDLE;
+        end
+
+
+    endcase
+
+end
+
+
+always_ff @ (posedge CLK) begin
+    if(RESET) begin
+        x_cnt <= 0;
+        z_cnt <= 0;
+        dzBdx <= 0;
+        state <= IDLE;
+    end else begin
+        x_cnt <= x_cnt_next;
+        z_cnt <= z_cnt_next;
+        dzBdx <= dzBdx_next;
+        state <= next_state;
+    end
+
+end
+
+endmodule
+
+
 module rast_triangle(
     input logic CLK, RESET,
     input logic start,
+    input logic cont,
     input int v1[3],
     input int v2[3],
     input int v3[3],
     output logic draw_ready,
-    output int draw_y,
-    output int draw_x1,
-    output int draw_x2
+    output byte rgb[3],
+    output int  xyz[3],
+    output logic done
 );
 
 // Vertex soring vars
@@ -48,6 +160,21 @@ ceil c5(e1_pos[0], e1_x_c);
 ceil c6(e2_pos[0], e2_x_c);
 ceil c7(e3_pos[0], e3_x_c);
 
+
+// vertical rasterization variables
+int y_cnt, y_cnt_next;
+int rast_x_min, rast_x_max;
+int rast_left_z, rast_right_z;
+
+// horizontal rasterization variables
+logic h_rast_init;
+byte test_rgb[3] = '{0, 255, 0};
+logic line_done;
+logic h_rast_valid;
+rast_line h_rast(CLK, RESET, h_rast_init, cont, y_cnt, rast_x_min, rast_left_z, rast_x_max, rast_right_z, test_rgb, rgb, xyz, h_rast_valid, line_done);
+
+assign draw_ready = h_rast_valid;
+
 enum logic [5:0] {
     IDLE,
     INIT1,
@@ -57,12 +184,7 @@ enum logic [5:0] {
     WAIT
 } state = IDLE, next_state;
 
-// rasterization variables
-int y_cnt, y_cnt_next;
-int rast_x_min, rast_x_max;
-int rast_left_z, rast_right_z;
 
-assign draw_y = y_cnt;
 
 always_comb begin
 
@@ -77,12 +199,11 @@ always_comb begin
     rast_x_max = 0;
     rast_left_z = 0;
     rast_right_z = 0;
-    draw_x1 = 0;
-    draw_x2 = 0;
-    draw_ready = 0;
     e1_step = 0;
     e2_step = 0;
     e3_step = 0;
+    h_rast_init = 0;
+    done = 0;
     
     // Sorting logic
     // 0 is top of screen, so bot is really at the top
@@ -127,13 +248,15 @@ always_comb begin
             rast_right_z = e1_pos[2];
         end
         //TODO  Draw line from x_min to x_max, and lerp z, and y=y_cnt
-        draw_x1 = rast_x_min;
-        draw_x2 = rast_x_max;
-        draw_ready = 1;
+        if(line_done) begin
+            e1_step = 1;
+            e3_step = 1;
+            y_cnt_next = y_cnt + (1<<8);
+            h_rast_init = 0;
+        end else begin
+            h_rast_init = 1;
+        end
         
-        e1_step = 1;
-        e3_step = 1;
-        y_cnt_next = y_cnt + (1<<8);
 
     end
     else if(state == RENDER_TOP) begin
@@ -149,13 +272,16 @@ always_comb begin
             rast_right_z = e2_pos[2];
         end
         //TODO  Draw line from x_min to x_max, and lerp z, and y=y_cnt
-        draw_x1 = rast_x_min;
-        draw_x2 = rast_x_max;
-        draw_ready = 1;
-        
-        e2_step = 1;
-        e3_step = 1;
-        y_cnt_next = y_cnt + (1<<8);
+        if(line_done) begin
+            e2_step = 1;
+            e3_step = 1;
+            y_cnt_next = y_cnt + (1<<8);
+            h_rast_init = 0;
+        end else begin
+            h_rast_init = 1;
+        end
+    end else if(state == WAIT) begin
+        done = 1;
     end
     
 
@@ -215,22 +341,7 @@ end
 
 endmodule
 
-module ceil(
-    input int val,
-    output int out
-);
-
-always_comb begin
-    if(val[7:0] == 0)
-        out = val;
-    else begin
-        out = val + (1 << 8);
-        out[7:0] = 0;
-    end
-end
-
-endmodule
-
+// TODO figure out why init takes 2 cycles
 module vert_edge(
     input logic CLK, RESET,
     input logic init,
@@ -305,59 +416,3 @@ end
 
 endmodule
 
-module pos_edge_detect(
-    input logic CLK,
-    input logic RESET,
-    input logic signal,
-    output logic pe
-);
-
-logic delayed_sig = 0;
-
-always_ff @ (posedge CLK) begin
-    if(RESET)
-        delayed_sig <= 0;
-    else
-        delayed_sig <= signal;
-end
-
-assign pe = signal & (~delayed_sig);
-
-endmodule
-
-//  Ceiling of the min and max of 2 24.8 fixed point numbers
-module ceil_min_max(
-    input int a,
-    input int b,
-    output int min,
-    output int max
-);
-
-int min_raw;
-int max_raw;
-
-always_comb begin
-    if(a < b) begin
-        min_raw = a;
-        max_raw = b;
-    end else begin
-        min_raw = b;
-        max_raw = a;
-    end
-
-    if(min_raw[7:0] == 0)
-        min = min_raw;
-    else begin
-        min = min_raw + (1 << 8);
-        min[7:0] = 0;
-    end
-
-    if(max_raw[7:0] == 0)
-        max = max_raw;
-    else begin
-        max = max_raw + (1 << 8);
-        max[7:0] = 0;
-    end
-end
-
-endmodule
