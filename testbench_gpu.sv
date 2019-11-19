@@ -17,7 +17,7 @@ int out[8][3];
 
 gen_prj_mat m1(320 * (1<< 8), 240 * (1<< 8), 5 * (1<< 8), 100 * (1<< 8), prj);
 int test_vec[3] = '{30 * (1<< 8), 0 * (1<< 8) ,  -70* (1<< 8)};
-project_cube cb(.scale(256 * (1<< 8)), .pos(test_vec), .prj, .out);
+project_cube cb(.scale(32 * (1<< 8)), .pos(test_vec), .prj, .out);
 
 //rast_triangle test(CLK, RESET, start, v1, v2, v3, draw_ready, draw_y, draw_x1, draw_x2);
 

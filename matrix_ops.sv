@@ -17,12 +17,12 @@ assign prj[1][2] = 0;
 assign prj[1][3] = 0;
 assign prj[2][0] = 0;
 assign prj[2][1] = 0;
-assign prj[2][2] = -((far + near) * (1<<8))/ (far - near);
-assign prj[2][3] =  ((  ((((-2*(1<<8)) * far)/(1<<8)) * near) / (1<<8)) * (1<<8)) / (far - near);
+assign prj[2][2] = (far * (1<<8)) / (near - far);
+assign prj[2][3] = (-1) * (1<<8);
 assign prj[3][0] = 0;
 assign prj[3][1] = 0;
-assign prj[3][2] = -1 * (1<<8);
-assign prj[3][3] = 1 * (1<<8);
+assign prj[3][2] = (near*far/(1<<8))/(near-far);
+assign prj[3][3] = 0;
 
 endmodule
 
