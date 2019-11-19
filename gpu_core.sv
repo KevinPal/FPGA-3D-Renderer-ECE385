@@ -32,6 +32,7 @@ int scale, scale_next;
 int x, x_next;
 int y, y_next;
 int z, z_next;
+int mode, mode_next;
 
 // rasterization variables
 logic rast_start;
@@ -53,9 +54,8 @@ gen_prj_mat m1(320 * (1<< 8), 240 * (1<< 8), 5 * (1<< 8), 200 * (1<< 8), prj);
 rast_cube cube_renderer(CLK_clk, RESET_reset, rast_start, rast_cont, 
     scale, '{x, y, z}, prj, rast_ready, rast_rgb, rast_xyz, rast_done);
 
-//rast_triangle triangle_renderer(CLK_clk, RESET_reset, rast_start, rast_cont,
-//    tv1, tv2, tv3, frag_rgb, rast_ready, rast_rgb, rast_xyz, rast_done);
 
+int clear_counter, clear_counter_next;
 
 enum logic [5:0] {
     IDLE,
@@ -83,6 +83,8 @@ always_comb begin
     x_next = x;
     y_next = y;
     z_next = z;
+    clear_counter_next = clear_counter;
+    mode_next = mode;
 
     // rast defaults
     rast_start = 0;
@@ -101,6 +103,7 @@ always_comb begin
                 5: GPU_SLAVE_readdata = x;
                 6: GPU_SLAVE_readdata = y;
                 7: GPU_SLAVE_readdata = z;
+                8: GPU_SLAVE_readdata = mode;
             endcase
         end
 
@@ -115,19 +118,29 @@ always_comb begin
                 5: x_next                = GPU_SLAVE_writedata;
                 6: y_next                = GPU_SLAVE_writedata;
                 7: z_next                = GPU_SLAVE_writedata;
+                8: mode_next             = GPU_SLAVE_writedata;
             endcase
         end
 
     end
 
     if(state == RUNNING) begin
-        if(rast_ready) begin
+        if(mode == 1) begin // Cube rendering
+            if(rast_ready) begin
+                GPU_MASTER_chipselect = 1;
+                GPU_MASTER_write = 1;
+                GPU_MASTER_writedata = {2'h00, rast_rgb[2], rast_rgb[1], rast_rgb[0]};
+                GPU_MASTER_address = frame_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
+                if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
+                    rast_cont = 1;
+            end
+        end else if(mode == 2) begin // Clearing
             GPU_MASTER_chipselect = 1;
             GPU_MASTER_write = 1;
-            GPU_MASTER_writedata = {2'h00, rast_rgb[2], rast_rgb[1], rast_rgb[0]};
-            GPU_MASTER_address = frame_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
-            if(GPU_MASTER_writeresponsevalid)
-                rast_cont = 1;
+            GPU_MASTER_writedata = {8'h00, 8'h20, 8'h20, 8'h20};
+            GPU_MASTER_address = frame_pointer + clear_counter*4;
+            if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
+                clear_counter_next = clear_counter + 1;
         end
     end
 
@@ -136,16 +149,30 @@ always_comb begin
         IDLE: begin
             if(start) begin
                 next_state = RUNNING;
-                rast_start = 1; //rast
+                if(mode == 1)
+                    rast_start = 1; //rast
+                else if(mode == 2)
+                    clear_counter_next = 0; // clear
+                else
+                    next_state = DONE;
             end
             else
                 next_state = IDLE;
         end
         RUNNING: begin
-            rast_start = 1;
-            if(rast_done) begin //rast
-                done_next = 1; 
-                next_state = DONE;
+            if(mode == 1) begin //rast
+                rast_start = 1;
+                if(rast_done) begin 
+                    done_next = 1; 
+                    next_state = DONE;
+                end
+            end else if(mode == 2) begin //clear
+                if(clear_counter > (640 * 480)) begin
+                    next_state = DONE;
+                    done_next = 1;
+                end
+                else
+                    next_state = RUNNING;
             end
             else
                 next_state = RUNNING;
@@ -172,6 +199,8 @@ always_ff @ (posedge CLK_clk) begin
         x <= 0;
         y <= 0;
         z <= 0;
+        clear_counter <= 0;
+        mode <= 0;
     end else begin
         frame_pointer <= frame_pointer_next;
         start <= start_next;
@@ -182,6 +211,8 @@ always_ff @ (posedge CLK_clk) begin
         x <= x_next;
         y <= y_next;
         z <= z_next;
+        clear_counter <= clear_counter_next;
+        mode <= mode_next;
     end
 end
 
@@ -209,6 +240,7 @@ enum logic [5:0] { //TODO back
     FRONT_1, FRONT_2,
     LEFT_1, LEFT_2,
     RIGHT_1, RIGHT_2,
+    BACK_1, BACK_2,
     DONE
 } state = IDLE, next_state;
 
@@ -223,10 +255,10 @@ enum logic [5:0] { //TODO back
 //7 -> front_bot_right
 int verticies[8][3];
 
-int test_scale = 64 * (1<<8);
-int test_vec[3] = '{30 * (1<< 8), 0 * (1<< 8) , -7 * (1<< 8)};
+int test_scale = 16 * (1<<8);
+int test_vec[3] = '{15 * (1<< 8), 0 * (1<< 8) ,  -70* (1<< 8)};
 
-project_cube projector(test_scale, test_vec, prj, verticies);
+project_cube projector(scale, pos, prj, verticies);
 
 // Rasterization variables
 logic rast_done;
@@ -260,13 +292,10 @@ always_comb begin
             end
         end
         TOP_1: begin
-            tv1 = '{300 * (1<<8), 100 * (1<<8), 5 * (1<<8)};
-            tv2 = '{350 * (1<<8), 300 * (1<<8), 10 * (1<<8)};
-            tv3 = '{250 * (1<<8), 200 * (1<<8), 20 * (1<<8)};
-            //tv1 = verticies[4];
-            //tv2 = verticies[6];
-            //tv3 = verticies[7];
-            frag_rgb = '{255, 255, 0};
+            tv1 = verticies[0];
+            tv2 = verticies[1];
+            tv3 = verticies[4];
+            frag_rgb = '{255, 255, 255};
             if(rast_done) begin
                 rast_start = 0;
                 next_state = TOP_2;
@@ -274,9 +303,119 @@ always_comb begin
         end
         TOP_2: begin
             rast_start = 1;
-            tv1 = '{100 * (1<<8), 100 * (1<<8), 0};
-            tv2 = '{50 * (1<<8), 300 * (1<<8), 0};
-            tv3 = '{250 * (1<<8), 200 * (1<<8), 0};
+            tv1 = verticies[1];
+            tv2 = verticies[5];
+            tv3 = verticies[4];
+            frag_rgb = '{255, 255, 255};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = BOT_1;
+            end
+        end
+        BOT_1: begin
+            rast_start = 1;
+            tv1 = verticies[2];
+            tv2 = verticies[3];
+            tv3 = verticies[6];
+            frag_rgb = '{0, 0, 0};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = BOT_2;
+            end
+        end
+        BOT_2: begin
+            rast_start = 1;
+            tv1 = verticies[3];
+            tv2 = verticies[7];
+            tv3 = verticies[6];
+            frag_rgb = '{0, 0, 0};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = BACK_1; 
+            end
+        end
+        BACK_1: begin
+            rast_start = 1;
+            tv1 = verticies[0];
+            tv2 = verticies[1];
+            tv3 = verticies[2];
+            frag_rgb = '{255, 0, 255};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = BACK_2;
+            end
+        end
+        BACK_2: begin
+            rast_start = 1;
+            tv1 = verticies[1];
+            tv2 = verticies[3];
+            tv3 = verticies[2];
+            frag_rgb = '{255, 0, 255};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = FRONT_1;  // --
+            end
+        end
+        LEFT_1: begin
+            rast_start = 1;
+            tv1 = verticies[0];
+            tv2 = verticies[2];
+            tv3 = verticies[4];
+            frag_rgb = '{0, 255, 0};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = LEFT_2;
+            end
+        end
+        LEFT_2: begin
+            rast_start = 1;
+            tv1 = verticies[4];
+            tv2 = verticies[6];
+            tv3 = verticies[7];
+            frag_rgb = '{0, 255, 0};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = RIGHT_1;
+            end
+        end
+        RIGHT_1: begin
+            rast_start = 1;
+            tv1 = verticies[1];
+            tv2 = verticies[3];
+            tv3 = verticies[7];
+            frag_rgb = '{255, 0, 0};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = RIGHT_2;
+            end
+        end
+        RIGHT_2: begin
+            rast_start = 1;
+            tv1 = verticies[1];
+            tv2 = verticies[5];
+            tv3 = verticies[7];
+            frag_rgb = '{255, 0, 0};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = FRONT_1;
+            end
+        end
+        FRONT_1: begin
+            rast_start = 1;
+            tv1 = verticies[4];
+            tv2 = verticies[5];
+            tv3 = verticies[7];
+            frag_rgb = '{0, 255, 255};
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = FRONT_2;
+            end
+        end
+        FRONT_2: begin
+            rast_start = 1;
+            tv1 = verticies[4];
+            tv2 = verticies[6];
+            tv3 = verticies[7];
             frag_rgb = '{0, 255, 255};
             if(rast_done) begin
                 rast_start = 0;

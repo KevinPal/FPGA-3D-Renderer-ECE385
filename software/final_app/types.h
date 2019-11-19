@@ -4,6 +4,10 @@
 #define SCREEN_HEIGHT 480
 #define BYTES_PER_PIXEL 4
 
+#define GPU_MODE_IDLE 0
+#define GPU_MODE_RENDER 1
+#define GPU_MODE_CLEAR 2
+
 typedef struct pixel_t {
 	char r;
 	char g;
@@ -35,6 +39,7 @@ typedef struct vga_controller_t {
 	volatile alt_32 should_draw;
 } vga_controller_t ;
 
+
 typedef struct gpu_core_t {
 	volatile frame_buffer_t* frame_pointer;
 	volatile int start;
@@ -44,6 +49,7 @@ typedef struct gpu_core_t {
 	volatile int x;
 	volatile int y;
 	volatile int z;
+	volatile int mode;
 } gpu_core_t;
 
 
