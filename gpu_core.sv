@@ -223,28 +223,31 @@ enum logic [5:0] { //TODO back
 //7 -> front_bot_right
 int verticies[8][3];
 
-project_cube projector(scale, pos, prj, verticies);
+int test_scale = 64 * (1<<8);
+int test_vec[3] = '{30 * (1<< 8), 0 * (1<< 8) , -7 * (1<< 8)};
+
+project_cube projector(test_scale, test_vec, prj, verticies);
 
 // Rasterization variables
 logic rast_done;
-logic rast_start;
+logic rast_start = 0;
 int v1[3];
 int v2[3];
 int v3[3];
 byte frag_rgb[3];
-int tv1[3] = '{100 * (1<<8), 100 * (1<<8), 0};
-int tv2[3] = '{50 * (1<<8), 300 * (1<<8), 0};
-int tv3[3] = '{250 * (1<<8), 200 * (1<<8), 0};
+int tv1[3] = '{0, 0, 0};
+int tv2[3] = '{0, 0, 0};
+int tv3[3] = '{0, 0, 0};
 
 rast_triangle triangle_renderer(CLK, RESET, rast_start, cont,
-    tv1, tv2, tv3, frag_rgb, rast_ready, rgb, xyz, rast_done);
+    tv3, tv2, tv1, frag_rgb, rast_ready, rgb, xyz, rast_done);
 
 always_comb begin
     next_state = state;
     rast_start = 0;
-    v1 = '{0, 0, 0};
-    v2 = '{0, 0, 0};
-    v3 = '{0, 0, 0};
+    tv1 = '{0, 0, 0};
+    tv2 = '{0, 0, 0};
+    tv3 = '{0, 0, 0};
     frag_rgb = '{0, 0, 0};
     done = 0;
 
@@ -257,11 +260,24 @@ always_comb begin
             end
         end
         TOP_1: begin
-            v1 = verticies[6];
-            v2 = verticies[7];
-            v3 = verticies[4];
+            tv1 = '{300 * (1<<8), 100 * (1<<8), 5 * (1<<8)};
+            tv2 = '{350 * (1<<8), 300 * (1<<8), 10 * (1<<8)};
+            tv3 = '{250 * (1<<8), 200 * (1<<8), 20 * (1<<8)};
+            //tv1 = verticies[4];
+            //tv2 = verticies[6];
+            //tv3 = verticies[7];
             frag_rgb = '{255, 255, 0};
-            rast_start = 0;
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = TOP_2;
+            end
+        end
+        TOP_2: begin
+            rast_start = 1;
+            tv1 = '{100 * (1<<8), 100 * (1<<8), 0};
+            tv2 = '{50 * (1<<8), 300 * (1<<8), 0};
+            tv3 = '{250 * (1<<8), 200 * (1<<8), 0};
+            frag_rgb = '{0, 255, 255};
             if(rast_done) begin
                 rast_start = 0;
                 next_state = DONE;
@@ -269,8 +285,7 @@ always_comb begin
         end
         DONE: begin
             done = 1;
-            if(~start)
-                next_state = IDLE;
+            next_state = IDLE;
         end
     endcase
 end
@@ -286,7 +301,7 @@ end
 
 endmodule
 
-
+// TODO make sequencial
 module project_cube(
     input int scale,
     input int pos[3],
