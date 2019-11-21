@@ -8,10 +8,9 @@ module rast_line(
     input int left_z,
     input int right_x,
     input int right_z,
-//    input int top_vert[3],
-//    input int mid_vert[3],
-//    input int bot_vert[3],
-    input  byte test_rgb[3],
+    input int top[4], // x y z bytes(r g b a)
+    input int mid[4],
+    input int bot[4],
     output byte rgb[3],
     output int xyz[3],
     output logic output_valid,
@@ -25,6 +24,61 @@ int dzBdx, dzBdx_next; // dz by dx
 logic init_p;
 
 pos_edge_detect pos_detect(CLK, RESET, init, init_p);
+
+// Unpacked vertex data
+int top_vert[3];
+int mid_vert[3];
+int bot_vert[3];
+
+int top_rgb[3];
+int mid_rgb[3];
+int bot_rgb[3];
+
+// Normal Calc
+int bot_minus_mid[3];
+int top_minus_mid[3];
+int normal[3];
+int area;
+
+vec_sub norm_sub1(bot_vert, mid_vert, bot_minus_mid);
+vec_sub norm_sub2(top_vert, mid_vert, top_minus_mid);
+vec_cross norm_cross(top_minus_mid, bot_minus_mid, normal);
+vec_norm norm_area(normal, area);
+
+//barycentric interpolation calculation
+int bot_minus_pos[3];
+int mid_minus_pos[3];
+int top_minus_pos[3];
+
+int bot_area, bot_area_norm, bot_area_raw[3];
+int mid_area, mid_area_norm, mid_area_raw[3];
+int top_area, top_area_norm, top_area_raw[3];
+
+vec_sub b_sub1(bot_vert, xyz, bot_minus_pos);
+vec_sub b_sub2(mid_vert, xyz, mid_minus_pos);
+vec_sub b_sub3(top_vert, xyz, top_minus_pos);
+
+vec_cross b_cross1(mid_minus_pos, top_minus_pos, bot_area_raw);
+vec_cross b_cross2(top_minus_pos, bot_minus_pos, mid_area_raw);
+vec_cross b_cross3(bot_minus_pos, mid_minus_pos, top_area_raw);
+
+vec_norm b_norm1(bot_area_raw, bot_area_norm);
+vec_norm b_norm2(mid_area_raw, mid_area_norm);
+vec_norm b_norm3(top_area_raw, top_area_norm);
+
+//RGB interpolation
+int bot_rgb_inter[3];
+int mid_rgb_inter[3];
+int top_rgb_inter[3];
+int rgb_inter_temp[3];
+int rgb_inter[3];
+
+vec_mul mul_inter1(bot_rgb, bot_area, bot_rgb_inter);
+vec_mul mul_inter2(mid_rgb, mid_area, mid_rgb_inter);
+vec_mul mul_inter3(top_rgb, top_area, top_rgb_inter);
+
+vec_add add_inter1(bot_rgb_inter, mid_rgb_inter, rgb_inter_temp);
+vec_add add_inter2(rgb_inter_temp, top_rgb_inter, rgb_inter);
 
 
 enum logic [5:0] {
@@ -45,6 +99,31 @@ always_comb begin
     done = 0;
     output_valid = 0;
 
+    // barycentric finish
+    bot_area = (bot_area_norm * (1<<8))/ area;
+    mid_area = (mid_area_norm * (1<<8))/ area;
+    top_area = (top_area_norm * (1<<8))/ area;
+
+
+
+    // Unpack vertex data
+    top_vert[0] = top[0];
+    top_vert[1] = top[1];
+    top_vert[2] = top[2];
+    mid_vert[0] = mid[0];
+    mid_vert[1] = mid[1];
+    mid_vert[2] = mid[2];
+    bot_vert[0] = bot[0];
+    bot_vert[1] = bot[1];
+    bot_vert[2] = bot[2];
+
+    top_rgb = '{top[3][31:24]*(1<<8), top[3][23:16]*(1<<8), top[3][15:8]*(1<<8)};
+    mid_rgb = '{mid[3][31:24]*(1<<8), mid[3][23:16]*(1<<8), mid[3][15:8]*(1<<8)};
+    bot_rgb = '{bot[3][31:24]*(1<<8), bot[3][23:16]*(1<<8), bot[3][15:8]*(1<<8)};
+
+    // Repack RGB
+    rgb = '{rgb_inter[0][15:8], rgb_inter[1][15:8], rgb_inter[2][15:8]};
+
     if(state == INIT) begin
         x_cnt_next = left_x;
         dzBdx_next = ((right_z - left_z) * (1<<8))  / (right_x - left_x);
@@ -54,7 +133,6 @@ always_comb begin
             z_cnt_next = z_cnt + dzBdx;
         end
         xyz = '{x_cnt, y, z_cnt};
-        rgb = test_rgb;
         output_valid = 1;
     end else if(state == DONE) begin
         done = 1;
@@ -114,21 +192,29 @@ module rast_triangle(
     input logic CLK, RESET,
     input logic start,
     input logic cont,
-    input int v1[3],
-    input int v2[3],
-    input int v3[3],
-    input byte test_rgb[3],
+    input int v1_p[4], // x y z int(r g b a)
+    input int v2_p[4],
+    input int v3_p[4],
     output logic draw_ready,
     output byte rgb[3],
     output int  xyz[3],
     output logic done
 );
 
+int v1[3];
+int v2[3];
+int v3[3];
+
 // Vertex soring vars
+int top_p[4];
+int mid_p[4];
+int bot_p[4];
+int temp_p[4];
+
+// Unpacked verticies
 int top[3];
 int mid[3];
 int bot[3];
-int temp[3];
 
 // Edge inputs/outputs
 logic init;
@@ -171,7 +257,8 @@ int rast_left_z, rast_right_z;
 logic h_rast_init;
 logic line_done;
 logic h_rast_valid;
-rast_line h_rast(CLK, RESET, h_rast_init, cont, y_cnt, rast_x_min, rast_left_z, rast_x_max, rast_right_z, test_rgb, rgb, xyz, h_rast_valid, line_done);
+rast_line h_rast(CLK, RESET, h_rast_init, cont, y_cnt, rast_x_min, rast_left_z, rast_x_max, rast_right_z,
+                            top_p, mid_p, bot_p, rgb, xyz, h_rast_valid, line_done);
 
 assign draw_ready = h_rast_valid;
 
@@ -189,9 +276,9 @@ enum logic [5:0] {
 always_comb begin
 
     // defaults
-    temp[0] = 0;
-    temp[1] = 0;
-    temp[2] = 0;
+    temp_p[0] = 0;
+    temp_p[1] = 0;
+    temp_p[2] = 0;
     init = 0;
     y_cnt_next = y_cnt;
     next_state = state;
@@ -204,31 +291,42 @@ always_comb begin
     e3_step = 0;
     h_rast_init = 0;
     done = 0;
-    
+
     // Sorting logic
     // 0 is top of screen, so bot is really at the top
     
-    top = v1;
-    mid = v2;
-    bot = v3;
+    top_p = v1_p;
+    mid_p = v2_p;
+    bot_p = v3_p;
 
-    if(bot[1] > mid[1]) begin // If bot 'below' mid, swap
-        temp = bot;
-        bot = mid;
-        mid = temp;
+    if(bot_p[1] > mid_p[1]) begin // If bot 'below' mid, swap
+        temp_p = bot_p;
+        bot_p = mid_p;
+        mid_p = temp_p;
     end
 
-    if (mid[1] > top[1]) begin // If mid is below top, swap
-        temp = mid;
-        mid = top;
-        top = temp;
+    if (mid_p[1] > top_p[1]) begin // If mid is below top, swap
+        temp_p = mid_p;
+        mid_p = top_p;
+        top_p = temp_p;
     end
 
-    if (bot[1] > mid[1]) begin
-        temp = bot;
-        bot = mid;
-        mid = temp;
+    if (bot_p[1] > mid_p[1]) begin
+        temp_p = bot_p;
+        bot_p = mid_p;
+        mid_p = temp_p;
     end
+
+    // Unpack verticies
+    bot[0] = bot_p[0];
+    bot[1] = bot_p[1];
+    bot[2] = bot_p[2];
+    mid[0] = mid_p[0];
+    mid[1] = mid_p[1];
+    mid[2] = mid_p[2];
+    top[0] = top_p[0];
+    top[1] = top_p[1];
+    top[2] = top_p[2];
 
     // State output logic
     if((state == INIT1) | (state == INIT2))

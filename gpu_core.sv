@@ -233,7 +233,7 @@ module rast_cube(
     output logic done
 );
 
-enum logic [5:0] { //TODO back
+enum logic [5:0] {
     IDLE,
     TOP_1, TOP_2,
     BOT_1, BOT_2,
@@ -245,6 +245,7 @@ enum logic [5:0] { //TODO back
 } state = IDLE, next_state;
 
 
+
 //0 -> back_top_left
 //1 -> back_top_right
 //2 -> back_bot_left
@@ -254,6 +255,7 @@ enum logic [5:0] { //TODO back
 //6 -> front_bot_left
 //7 -> front_bot_right
 int verticies[8][3];
+int verticies_color[8][4];
 
 int test_scale = 16 * (1<<8);
 int test_vec[3] = '{15 * (1<< 8), 0 * (1<< 8) ,  -70* (1<< 8)};
@@ -267,34 +269,46 @@ int v1[3];
 int v2[3];
 int v3[3];
 byte frag_rgb[3];
-int tv1[3] = '{0, 0, 0};
-int tv2[3] = '{0, 0, 0};
-int tv3[3] = '{0, 0, 0};
+int tv1[4] = '{0, 0, 0, 0};
+int tv2[4] = '{0, 0, 0, 0};
+int tv3[4] = '{0, 0, 0, 0};
 
 rast_triangle triangle_renderer(CLK, RESET, rast_start, cont,
-    tv3, tv2, tv1, frag_rgb, rast_ready, rgb, xyz, rast_done);
+    tv3, tv2, tv1, rast_ready, rgb, xyz, rast_done);
 
 always_comb begin
     next_state = state;
     rast_start = 0;
-    tv1 = '{0, 0, 0};
-    tv2 = '{0, 0, 0};
-    tv3 = '{0, 0, 0};
+    tv1 = '{0, 0, 0, 0};
+    tv2 = '{0, 0, 0, 0};
+    tv3 = '{0, 0, 0, 0};
     frag_rgb = '{0, 0, 0};
     done = 0;
+
+    // Append vertex colors
+    //
+    verticies_color[0] = '{verticies[0][0], verticies[0][1], verticies[0][2], 32'h00FF0000}; // back_top_left
+    verticies_color[1] = '{verticies[1][0], verticies[1][1], verticies[1][2], 32'hFF000000}; // back_top_right
+    verticies_color[2] = '{verticies[2][0], verticies[2][1], verticies[2][2], 32'h0000FF00}; // back_bot_left
+    verticies_color[3] = '{verticies[3][0], verticies[3][1], verticies[3][2], 32'hFFFF0000}; // back_bot_right
+    verticies_color[4] = '{verticies[4][0], verticies[4][1], verticies[4][2], 32'h00FF0000}; // front_top_left
+    verticies_color[5] = '{verticies[5][0], verticies[5][1], verticies[5][2], 32'hFF000000}; // front_top_right
+    verticies_color[6] = '{verticies[6][0], verticies[6][1], verticies[6][2], 32'h0000FF00}; // front_bot_left
+    verticies_color[7] = '{verticies[7][0], verticies[7][1], verticies[7][2], 32'h0000FF00}; // front_bot_right
+
 
     // state logic
     unique case(state)
         IDLE: begin
             if(start) begin
                 next_state = TOP_1;
-                rast_start = 1;
             end
         end
         TOP_1: begin
-            tv1 = verticies[0];
-            tv2 = verticies[1];
-            tv3 = verticies[4];
+            rast_start = 1;
+            tv1 = verticies_color[0];
+            tv2 = verticies_color[1];
+            tv3 = verticies_color[4];
             frag_rgb = '{255, 255, 255};
             if(rast_done) begin
                 rast_start = 0;
@@ -303,9 +317,9 @@ always_comb begin
         end
         TOP_2: begin
             rast_start = 1;
-            tv1 = verticies[1];
-            tv2 = verticies[5];
-            tv3 = verticies[4];
+            tv1 = verticies_color[1];
+            tv2 = verticies_color[5];
+            tv3 = verticies_color[4];
             frag_rgb = '{255, 255, 255};
             if(rast_done) begin
                 rast_start = 0;
@@ -314,9 +328,9 @@ always_comb begin
         end
         BOT_1: begin
             rast_start = 1;
-            tv1 = verticies[2];
-            tv2 = verticies[3];
-            tv3 = verticies[6];
+            tv1 = verticies_color[2];
+            tv2 = verticies_color[3];
+            tv3 = verticies_color[6];
             frag_rgb = '{0, 0, 0};
             if(rast_done) begin
                 rast_start = 0;
@@ -325,9 +339,9 @@ always_comb begin
         end
         BOT_2: begin
             rast_start = 1;
-            tv1 = verticies[3];
-            tv2 = verticies[7];
-            tv3 = verticies[6];
+            tv1 = verticies_color[3];
+            tv2 = verticies_color[7];
+            tv3 = verticies_color[6];
             frag_rgb = '{0, 0, 0};
             if(rast_done) begin
                 rast_start = 0;
@@ -336,9 +350,9 @@ always_comb begin
         end
         BACK_1: begin
             rast_start = 1;
-            tv1 = verticies[0];
-            tv2 = verticies[1];
-            tv3 = verticies[2];
+            tv1 = verticies_color[0];
+            tv2 = verticies_color[1];
+            tv3 = verticies_color[2];
             frag_rgb = '{255, 0, 255};
             if(rast_done) begin
                 rast_start = 0;
@@ -347,20 +361,20 @@ always_comb begin
         end
         BACK_2: begin
             rast_start = 1;
-            tv1 = verticies[1];
-            tv2 = verticies[3];
-            tv3 = verticies[2];
+            tv1 = verticies_color[1];
+            tv2 = verticies_color[3];
+            tv3 = verticies_color[2];
             frag_rgb = '{255, 0, 255};
             if(rast_done) begin
                 rast_start = 0;
-                next_state = FRONT_1;  // --
+                next_state = LEFT_1;  // --
             end
         end
         LEFT_1: begin
             rast_start = 1;
-            tv1 = verticies[0];
-            tv2 = verticies[2];
-            tv3 = verticies[4];
+            tv1 = verticies_color[0];
+            tv2 = verticies_color[2];
+            tv3 = verticies_color[4];
             frag_rgb = '{0, 255, 0};
             if(rast_done) begin
                 rast_start = 0;
@@ -369,9 +383,9 @@ always_comb begin
         end
         LEFT_2: begin
             rast_start = 1;
-            tv1 = verticies[4];
-            tv2 = verticies[6];
-            tv3 = verticies[7];
+            tv1 = verticies_color[4];
+            tv2 = verticies_color[6];
+            tv3 = verticies_color[7];
             frag_rgb = '{0, 255, 0};
             if(rast_done) begin
                 rast_start = 0;
@@ -380,9 +394,9 @@ always_comb begin
         end
         RIGHT_1: begin
             rast_start = 1;
-            tv1 = verticies[1];
-            tv2 = verticies[3];
-            tv3 = verticies[7];
+            tv1 = verticies_color[1];
+            tv2 = verticies_color[3];
+            tv3 = verticies_color[7];
             frag_rgb = '{255, 0, 0};
             if(rast_done) begin
                 rast_start = 0;
@@ -391,9 +405,9 @@ always_comb begin
         end
         RIGHT_2: begin
             rast_start = 1;
-            tv1 = verticies[1];
-            tv2 = verticies[5];
-            tv3 = verticies[7];
+            tv1 = verticies_color[1];
+            tv2 = verticies_color[5];
+            tv3 = verticies_color[7];
             frag_rgb = '{255, 0, 0};
             if(rast_done) begin
                 rast_start = 0;
@@ -402,9 +416,9 @@ always_comb begin
         end
         FRONT_1: begin
             rast_start = 1;
-            tv1 = verticies[4];
-            tv2 = verticies[5];
-            tv3 = verticies[7];
+            tv1 = verticies_color[7];
+            tv2 = verticies_color[5];
+            tv3 = verticies_color[4];
             frag_rgb = '{0, 255, 255};
             if(rast_done) begin
                 rast_start = 0;
@@ -413,9 +427,9 @@ always_comb begin
         end
         FRONT_2: begin
             rast_start = 1;
-            tv1 = verticies[4];
-            tv2 = verticies[6];
-            tv3 = verticies[7];
+            tv1 = verticies_color[4];
+            tv2 = verticies_color[6];
+            tv3 = verticies_color[7];
             frag_rgb = '{0, 255, 255};
             if(rast_done) begin
                 rast_start = 0;
@@ -509,11 +523,11 @@ always_comb begin
     front_bot_left[3] = 1 * (1<<8);
     front_bot_right[3] = 1 * (1<<8);
 
-    // All right verticies need to be shifted to the right by scale
-    back_top_right[0] += scale;
-    back_bot_right[0] += scale;
-    front_top_right[0] += scale;
-    front_bot_right[0] += scale;
+    // All left verticies need to be shifted to the right by scale
+    back_top_left[0] += scale;
+    back_bot_left[0] += scale;
+    front_top_left[0] += scale;
+    front_bot_left[0] += scale;
 
     // All bot verticies need to be shifted down by scale
     back_bot_left[1] -= scale;

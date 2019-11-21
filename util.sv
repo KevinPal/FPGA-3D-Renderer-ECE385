@@ -79,3 +79,12 @@ always_comb begin
 end
 
 endmodule
+
+module abs(
+    input int a,
+    output int b
+);
+
+assign b = (a < 0) ? (-1 * a) : a;
+
+endmodule
