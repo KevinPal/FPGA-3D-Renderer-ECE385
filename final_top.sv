@@ -38,8 +38,28 @@ module final_top (
     output logic        VGA_HS,           //      vga_hs.vga_hs
     output logic [7:0]  VGA_R,             //       vga_r.vga_r
     output logic        VGA_SYNC_N,   //  vga_sync_n.vga_sync_n
-    output logic        VGA_VS            //      vga_vs.vga_vs
+    output logic        VGA_VS,            //      vga_vs.vga_vs
+    // CY7C67200 Interface
+    inout  wire  [15:0] OTG_DATA,     //CY7C67200 Data bus 16 Bits
+    output logic [1:0]  OTG_ADDR,     //CY7C67200 Address 2 Bits
+    output logic        OTG_CS_N,     //CY7C67200 Chip Select
+                        OTG_RD_N,     //CY7C67200 Write
+                        OTG_WR_N,     //CY7C67200 Read
+                        OTG_RST_N,    //CY7C67200 Reset
+    input               OTG_INT      //CY7C67200 Interrupt
 );
+
+logic Reset_h, Clk;
+logic [7:0] keycode;
+
+assign Clk = CLOCK_50;
+always_ff @ (posedge Clk) begin
+    Reset_h <= ~(KEY[0]);        // The push buttons are active low
+end
+
+logic [1:0] hpi_addr;
+logic [15:0] hpi_data_in, hpi_data_out;
+logic hpi_r, hpi_w, hpi_cs, hpi_reset;
 
 logic [7:0] debug;
 // Instantiation of Qsys design
@@ -64,8 +84,39 @@ final_soc final_subsystem (
     .vga_r_vga_r(VGA_R),             //       vga_r.vga_r
     .vga_sync_n_vga_sync_n(VGA_SYNC_N),   //  vga_sync_n.vga_sync_n
     .vga_vs_vga_vs(VGA_VS),            //      vga_vs.vga_vs
-    .debug_debug(debug)
+    .debug_debug(debug),
+    .keycode_export(keycode),  
+    .otg_hpi_address_export(hpi_addr),
+    .otg_hpi_data_in_port(hpi_data_in),
+    .otg_hpi_data_out_port(hpi_data_out),
+    .otg_hpi_cs_export(hpi_cs),
+    .otg_hpi_r_export(hpi_r),
+    .otg_hpi_w_export(hpi_w),
+    .otg_hpi_reset_export(hpi_reset)
 );
+
+
+
+    // Interface between NIOS II and EZ-OTG chip
+    hpi_io_intf hpi_io_inst(
+        .Clk(Clk),
+        .Reset(Reset_h),
+        // signals connected to NIOS II
+        .from_sw_address(hpi_addr),
+        .from_sw_data_in(hpi_data_in),
+        .from_sw_data_out(hpi_data_out),
+        .from_sw_r(hpi_r),
+        .from_sw_w(hpi_w),
+        .from_sw_cs(hpi_cs),
+        .from_sw_reset(hpi_reset),
+        // signals connected to EZ-OTG chip
+        .OTG_DATA(OTG_DATA),    
+        .OTG_ADDR(OTG_ADDR),    
+        .OTG_RD_N(OTG_RD_N),    
+        .OTG_WR_N(OTG_WR_N),    
+        .OTG_CS_N(OTG_CS_N),
+        .OTG_RST_N(OTG_RST_N)
+    );
 
 
 
@@ -106,3 +157,50 @@ HexDriver hexdrv1 (
 
 endmodule
 
+
+
+// Interface between NIOS II and EZ-OTG chip
+module hpi_io_intf( input        Clk, Reset,
+                    input [1:0]  from_sw_address,
+                    output[15:0] from_sw_data_in,
+                    input [15:0] from_sw_data_out,
+                    input        from_sw_r, from_sw_w, from_sw_cs, from_sw_reset, // Active low
+                    inout [15:0] OTG_DATA,
+                    output[1:0]  OTG_ADDR,
+                    output       OTG_RD_N, OTG_WR_N, OTG_CS_N, OTG_RST_N // Active low
+                   );
+
+// Buffer (register) for from_sw_data_out because inout bus should be driven 
+//   by a register, not combinational logic.
+logic [15:0] from_sw_data_out_buffer;
+
+// TODO: Fill in the blanks below. 
+always_ff @ (posedge Clk)
+begin
+    if(Reset)
+    begin
+        from_sw_data_out_buffer <= 16'h0000;
+        OTG_ADDR                <= 2'b00;
+        OTG_RD_N                <= 1'b1;
+        OTG_WR_N                <= 1'b1;
+        OTG_CS_N                <= 1'b1;
+        OTG_RST_N               <= 1'b1;
+        from_sw_data_in         <= 16'h0000;
+    end
+    else 
+    begin
+        from_sw_data_out_buffer <=  from_sw_data_out;
+        OTG_ADDR                <=  from_sw_address;
+        OTG_RD_N                <=  from_sw_r;
+        OTG_WR_N                <=  from_sw_w;
+        OTG_CS_N                <=  from_sw_cs;
+        OTG_RST_N               <=  from_sw_reset;
+        from_sw_data_in         <=  OTG_DATA;
+    end
+end
+
+// OTG_DATA should be high Z (tristated) when NIOS is not writing to OTG_DATA inout bus.
+// Look at tristate.sv in lab 6 for an example.
+assign OTG_DATA = ~from_sw_w ? from_sw_data_out_buffer : {16{1'bZ}};
+
+endmodule 

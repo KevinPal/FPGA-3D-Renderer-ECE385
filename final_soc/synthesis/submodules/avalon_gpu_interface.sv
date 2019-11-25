@@ -10,6 +10,7 @@ module avalon_gpu_interface (
     input  logic GPU_SLAVE_chipselect,
     // avalon master signals
     output logic [31:0] GPU_MASTER_address,
+    //output logic [18:0] GPU_MASTER_burstcount,
     output logic GPU_MASTER_read,
     input  logic [31:0] GPU_MASTER_readdata,
     output logic GPU_MASTER_chipselect,

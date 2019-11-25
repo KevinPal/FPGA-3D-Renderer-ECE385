@@ -217,7 +217,8 @@ module VGA_mapper(
                     copy_counter_next = 0;
                     offset_counter_next = offset_counter + 1;
                 end else begin
-                    if (VGA_MASTER_READDATAVALID) begin
+                    //if (VGA_MASTER_READDATAVALID) begin
+                    if (~VGA_MASTER_WAIT_REQUEST) begin
                         Next_state = COPYING1;
                     end else begin
                         Next_state = COPYING;

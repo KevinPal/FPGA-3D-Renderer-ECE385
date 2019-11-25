@@ -2,6 +2,14 @@
 		port (
 			clk_clk                 : in    std_logic                     := 'X';             -- clk
 			debug_debug             : out   std_logic_vector(7 downto 0);                     -- debug
+			keycode_export          : out   std_logic_vector(7 downto 0);                     -- export
+			otg_hpi_address_export  : out   std_logic_vector(1 downto 0);                     -- export
+			otg_hpi_cs_export       : out   std_logic;                                        -- export
+			otg_hpi_data_in_port    : in    std_logic_vector(15 downto 0) := (others => 'X'); -- in_port
+			otg_hpi_data_out_port   : out   std_logic_vector(15 downto 0);                    -- out_port
+			otg_hpi_r_export        : out   std_logic;                                        -- export
+			otg_hpi_reset_export    : out   std_logic;                                        -- export
+			otg_hpi_w_export        : out   std_logic;                                        -- export
 			reset_reset_n           : in    std_logic                     := 'X';             -- reset_n
 			sdram_clk_clk           : out   std_logic;                                        -- clk
 			sdram_wire_addr         : out   std_logic_vector(12 downto 0);                    -- addr

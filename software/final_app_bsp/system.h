@@ -4,7 +4,7 @@
  * Machine generated for CPU 'NIOS2' in SOPC Builder design 'final_soc'
  * SOPC Builder design path: ../../final_soc.sopcinfo
  *
- * Generated: Mon Nov 18 02:05:23 CST 2019
+ * Generated: Sun Nov 24 01:16:57 PST 2019
  */
 
 /*
@@ -62,7 +62,7 @@
 
 #define ALT_CPU_ARCHITECTURE "altera_nios2_gen2"
 #define ALT_CPU_BIG_ENDIAN 0
-#define ALT_CPU_BREAK_ADDR 0x08004820
+#define ALT_CPU_BREAK_ADDR 0x08002820
 #define ALT_CPU_CPU_ARCH_NIOS2_R1
 #define ALT_CPU_CPU_FREQ 50000000u
 #define ALT_CPU_CPU_ID_SIZE 1
@@ -99,7 +99,7 @@
  */
 
 #define NIOS2_BIG_ENDIAN 0
-#define NIOS2_BREAK_ADDR 0x08004820
+#define NIOS2_BREAK_ADDR 0x08002820
 #define NIOS2_CPU_ARCH_NIOS2_R1
 #define NIOS2_CPU_FREQ 50000000u
 #define NIOS2_CPU_ID_SIZE 1
@@ -135,6 +135,7 @@
 
 #define __ALTERA_AVALON_JTAG_UART
 #define __ALTERA_AVALON_NEW_SDRAM_CONTROLLER
+#define __ALTERA_AVALON_PIO
 #define __ALTERA_AVALON_TIMER
 #define __ALTERA_NIOS2_GEN2
 #define __ALTPLL
@@ -148,7 +149,7 @@
  */
 
 #define ALT_MODULE_CLASS_GPU_CORE_0 GPU_CORE
-#define GPU_CORE_0_BASE 0x8002000
+#define GPU_CORE_0_BASE 0x8000000
 #define GPU_CORE_0_IRQ -1
 #define GPU_CORE_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define GPU_CORE_0_NAME "/dev/GPU_CORE_0"
@@ -162,7 +163,7 @@
  */
 
 #define ALT_MODULE_CLASS_PLL altpll
-#define PLL_BASE 0x8005060
+#define PLL_BASE 0x8003090
 #define PLL_IRQ -1
 #define PLL_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PLL_NAME "/dev/PLL"
@@ -225,7 +226,7 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart_0"
-#define ALT_STDERR_BASE 0x8005088
+#define ALT_STDERR_BASE 0x80030b0
 #define ALT_STDERR_DEV jtag_uart_0
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
@@ -235,7 +236,7 @@
 #define ALT_STDIN_DEV null
 #define ALT_STDIN_TYPE ""
 #define ALT_STDOUT "/dev/jtag_uart_0"
-#define ALT_STDOUT_BASE 0x8005088
+#define ALT_STDOUT_BASE 0x80030b0
 #define ALT_STDOUT_DEV jtag_uart_0
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -249,7 +250,7 @@
  */
 
 #define ALT_MODULE_CLASS_VGA_Controller_0 VGA_Controller
-#define VGA_CONTROLLER_0_BASE 0x8005070
+#define VGA_CONTROLLER_0_BASE 0x80030a0
 #define VGA_CONTROLLER_0_IRQ -1
 #define VGA_CONTROLLER_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define VGA_CONTROLLER_0_NAME "/dev/VGA_Controller_0"
@@ -274,7 +275,7 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart_0 altera_avalon_jtag_uart
-#define JTAG_UART_0_BASE 0x8005088
+#define JTAG_UART_0_BASE 0x80030b0
 #define JTAG_UART_0_IRQ 0
 #define JTAG_UART_0_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_0_NAME "/dev/jtag_uart_0"
@@ -287,13 +288,202 @@
 
 
 /*
+ * keycode configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_keycode altera_avalon_pio
+#define KEYCODE_BASE 0x8003080
+#define KEYCODE_BIT_CLEARING_EDGE_REGISTER 0
+#define KEYCODE_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define KEYCODE_CAPTURE 0
+#define KEYCODE_DATA_WIDTH 8
+#define KEYCODE_DO_TEST_BENCH_WIRING 0
+#define KEYCODE_DRIVEN_SIM_VALUE 0
+#define KEYCODE_EDGE_TYPE "NONE"
+#define KEYCODE_FREQ 50000000
+#define KEYCODE_HAS_IN 0
+#define KEYCODE_HAS_OUT 1
+#define KEYCODE_HAS_TRI 0
+#define KEYCODE_IRQ -1
+#define KEYCODE_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define KEYCODE_IRQ_TYPE "NONE"
+#define KEYCODE_NAME "/dev/keycode"
+#define KEYCODE_RESET_VALUE 0
+#define KEYCODE_SPAN 16
+#define KEYCODE_TYPE "altera_avalon_pio"
+
+
+/*
+ * otg_hpi_address configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_otg_hpi_address altera_avalon_pio
+#define OTG_HPI_ADDRESS_BASE 0x8003070
+#define OTG_HPI_ADDRESS_BIT_CLEARING_EDGE_REGISTER 0
+#define OTG_HPI_ADDRESS_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define OTG_HPI_ADDRESS_CAPTURE 0
+#define OTG_HPI_ADDRESS_DATA_WIDTH 2
+#define OTG_HPI_ADDRESS_DO_TEST_BENCH_WIRING 0
+#define OTG_HPI_ADDRESS_DRIVEN_SIM_VALUE 0
+#define OTG_HPI_ADDRESS_EDGE_TYPE "NONE"
+#define OTG_HPI_ADDRESS_FREQ 50000000
+#define OTG_HPI_ADDRESS_HAS_IN 0
+#define OTG_HPI_ADDRESS_HAS_OUT 1
+#define OTG_HPI_ADDRESS_HAS_TRI 0
+#define OTG_HPI_ADDRESS_IRQ -1
+#define OTG_HPI_ADDRESS_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define OTG_HPI_ADDRESS_IRQ_TYPE "NONE"
+#define OTG_HPI_ADDRESS_NAME "/dev/otg_hpi_address"
+#define OTG_HPI_ADDRESS_RESET_VALUE 0
+#define OTG_HPI_ADDRESS_SPAN 16
+#define OTG_HPI_ADDRESS_TYPE "altera_avalon_pio"
+
+
+/*
+ * otg_hpi_cs configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_otg_hpi_cs altera_avalon_pio
+#define OTG_HPI_CS_BASE 0x8003030
+#define OTG_HPI_CS_BIT_CLEARING_EDGE_REGISTER 0
+#define OTG_HPI_CS_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define OTG_HPI_CS_CAPTURE 0
+#define OTG_HPI_CS_DATA_WIDTH 1
+#define OTG_HPI_CS_DO_TEST_BENCH_WIRING 0
+#define OTG_HPI_CS_DRIVEN_SIM_VALUE 0
+#define OTG_HPI_CS_EDGE_TYPE "NONE"
+#define OTG_HPI_CS_FREQ 50000000
+#define OTG_HPI_CS_HAS_IN 0
+#define OTG_HPI_CS_HAS_OUT 1
+#define OTG_HPI_CS_HAS_TRI 0
+#define OTG_HPI_CS_IRQ -1
+#define OTG_HPI_CS_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define OTG_HPI_CS_IRQ_TYPE "NONE"
+#define OTG_HPI_CS_NAME "/dev/otg_hpi_cs"
+#define OTG_HPI_CS_RESET_VALUE 0
+#define OTG_HPI_CS_SPAN 16
+#define OTG_HPI_CS_TYPE "altera_avalon_pio"
+
+
+/*
+ * otg_hpi_data configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_otg_hpi_data altera_avalon_pio
+#define OTG_HPI_DATA_BASE 0x8003060
+#define OTG_HPI_DATA_BIT_CLEARING_EDGE_REGISTER 0
+#define OTG_HPI_DATA_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define OTG_HPI_DATA_CAPTURE 0
+#define OTG_HPI_DATA_DATA_WIDTH 16
+#define OTG_HPI_DATA_DO_TEST_BENCH_WIRING 0
+#define OTG_HPI_DATA_DRIVEN_SIM_VALUE 0
+#define OTG_HPI_DATA_EDGE_TYPE "NONE"
+#define OTG_HPI_DATA_FREQ 50000000
+#define OTG_HPI_DATA_HAS_IN 1
+#define OTG_HPI_DATA_HAS_OUT 1
+#define OTG_HPI_DATA_HAS_TRI 0
+#define OTG_HPI_DATA_IRQ -1
+#define OTG_HPI_DATA_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define OTG_HPI_DATA_IRQ_TYPE "NONE"
+#define OTG_HPI_DATA_NAME "/dev/otg_hpi_data"
+#define OTG_HPI_DATA_RESET_VALUE 0
+#define OTG_HPI_DATA_SPAN 16
+#define OTG_HPI_DATA_TYPE "altera_avalon_pio"
+
+
+/*
+ * otg_hpi_r configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_otg_hpi_r altera_avalon_pio
+#define OTG_HPI_R_BASE 0x8003050
+#define OTG_HPI_R_BIT_CLEARING_EDGE_REGISTER 0
+#define OTG_HPI_R_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define OTG_HPI_R_CAPTURE 0
+#define OTG_HPI_R_DATA_WIDTH 1
+#define OTG_HPI_R_DO_TEST_BENCH_WIRING 0
+#define OTG_HPI_R_DRIVEN_SIM_VALUE 0
+#define OTG_HPI_R_EDGE_TYPE "NONE"
+#define OTG_HPI_R_FREQ 50000000
+#define OTG_HPI_R_HAS_IN 0
+#define OTG_HPI_R_HAS_OUT 1
+#define OTG_HPI_R_HAS_TRI 0
+#define OTG_HPI_R_IRQ -1
+#define OTG_HPI_R_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define OTG_HPI_R_IRQ_TYPE "NONE"
+#define OTG_HPI_R_NAME "/dev/otg_hpi_r"
+#define OTG_HPI_R_RESET_VALUE 0
+#define OTG_HPI_R_SPAN 16
+#define OTG_HPI_R_TYPE "altera_avalon_pio"
+
+
+/*
+ * otg_hpi_reset configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_otg_hpi_reset altera_avalon_pio
+#define OTG_HPI_RESET_BASE 0x8003020
+#define OTG_HPI_RESET_BIT_CLEARING_EDGE_REGISTER 0
+#define OTG_HPI_RESET_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define OTG_HPI_RESET_CAPTURE 0
+#define OTG_HPI_RESET_DATA_WIDTH 1
+#define OTG_HPI_RESET_DO_TEST_BENCH_WIRING 0
+#define OTG_HPI_RESET_DRIVEN_SIM_VALUE 0
+#define OTG_HPI_RESET_EDGE_TYPE "NONE"
+#define OTG_HPI_RESET_FREQ 50000000
+#define OTG_HPI_RESET_HAS_IN 0
+#define OTG_HPI_RESET_HAS_OUT 1
+#define OTG_HPI_RESET_HAS_TRI 0
+#define OTG_HPI_RESET_IRQ -1
+#define OTG_HPI_RESET_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define OTG_HPI_RESET_IRQ_TYPE "NONE"
+#define OTG_HPI_RESET_NAME "/dev/otg_hpi_reset"
+#define OTG_HPI_RESET_RESET_VALUE 0
+#define OTG_HPI_RESET_SPAN 16
+#define OTG_HPI_RESET_TYPE "altera_avalon_pio"
+
+
+/*
+ * otg_hpi_w configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_otg_hpi_w altera_avalon_pio
+#define OTG_HPI_W_BASE 0x8003040
+#define OTG_HPI_W_BIT_CLEARING_EDGE_REGISTER 0
+#define OTG_HPI_W_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define OTG_HPI_W_CAPTURE 0
+#define OTG_HPI_W_DATA_WIDTH 1
+#define OTG_HPI_W_DO_TEST_BENCH_WIRING 0
+#define OTG_HPI_W_DRIVEN_SIM_VALUE 0
+#define OTG_HPI_W_EDGE_TYPE "NONE"
+#define OTG_HPI_W_FREQ 50000000
+#define OTG_HPI_W_HAS_IN 0
+#define OTG_HPI_W_HAS_OUT 1
+#define OTG_HPI_W_HAS_TRI 0
+#define OTG_HPI_W_IRQ -1
+#define OTG_HPI_W_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define OTG_HPI_W_IRQ_TYPE "NONE"
+#define OTG_HPI_W_NAME "/dev/otg_hpi_w"
+#define OTG_HPI_W_RESET_VALUE 0
+#define OTG_HPI_W_SPAN 16
+#define OTG_HPI_W_TYPE "altera_avalon_pio"
+
+
+/*
  * timer_0 configuration
  *
  */
 
 #define ALT_MODULE_CLASS_timer_0 altera_avalon_timer
 #define TIMER_0_ALWAYS_RUN 0
-#define TIMER_0_BASE 0x8005020
+#define TIMER_0_BASE 0x8003000
 #define TIMER_0_COUNTER_SIZE 32
 #define TIMER_0_FIXED_PERIOD 0
 #define TIMER_0_FREQ 50000000

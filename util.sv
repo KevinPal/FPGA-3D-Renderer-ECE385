@@ -23,14 +23,14 @@ always_comb begin
     if(min_raw[7:0] == 0)
         min = min_raw;
     else begin
-        min = min_raw + (1 << 8);
+        min = min_raw + (1 <<8);
         min[7:0] = 0;
     end
 
     if(max_raw[7:0] == 0)
         max = max_raw;
     else begin
-        max = max_raw + (1 << 8);
+        max = max_raw + (1 <<8);
         max[7:0] = 0;
     end
 end
@@ -73,7 +73,7 @@ always_comb begin
     if(val[7:0] == 0)
         out = val;
     else begin
-        out = val + (1 << 8);
+        out = val + (1 <<8);
         out[7:0] = 0;
     end
 end

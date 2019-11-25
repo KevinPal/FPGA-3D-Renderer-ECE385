@@ -142,7 +142,10 @@ ACDS_VERSION := 18.1
 ELF := final_app.elf
 
 # Paths to C, C++, and assembly source files.
-C_SRCS := main.c
+C_SRCS += main.c
+C_SRCS += io_handler.c
+C_SRCS += keyboard.c
+C_SRCS += usb.c
 CXX_SRCS :=
 ASM_SRCS :=
 

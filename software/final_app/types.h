@@ -8,6 +8,8 @@
 #define GPU_MODE_RENDER 1
 #define GPU_MODE_CLEAR 2
 
+#define FP_SCALE (1<<8)
+
 typedef struct pixel_t {
 	char r;
 	char g;

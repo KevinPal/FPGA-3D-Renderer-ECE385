@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Nov 18, 2019 11:33:29 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1574141609840</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Nov 24, 2019 1:53:46 AM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1574589226890</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Users\kpalani\Desktop\ece385_finalprj\software\final_app_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\final_soc.sopcinfo</SopcDesignFile>
@@ -906,31 +906,73 @@
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>GPU_CORE_0</slaveDescriptor>
-                <addressRange>0x08002000 - 0x08003FFF</addressRange>
+                <addressRange>0x08000000 - 0x08001FFF</addressRange>
                 <addressSpan>8192</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>timer_0</slaveDescriptor>
-                <addressRange>0x08005020 - 0x0800503F</addressRange>
+                <addressRange>0x08003000 - 0x0800301F</addressRange>
                 <addressSpan>32</addressSpan>
                 <attributes>timer</attributes>
         </MemoryMap>
         <MemoryMap>
+                <slaveDescriptor>otg_hpi_reset</slaveDescriptor>
+                <addressRange>0x08003020 - 0x0800302F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>otg_hpi_cs</slaveDescriptor>
+                <addressRange>0x08003030 - 0x0800303F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>otg_hpi_w</slaveDescriptor>
+                <addressRange>0x08003040 - 0x0800304F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>otg_hpi_r</slaveDescriptor>
+                <addressRange>0x08003050 - 0x0800305F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>otg_hpi_data</slaveDescriptor>
+                <addressRange>0x08003060 - 0x0800306F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>otg_hpi_address</slaveDescriptor>
+                <addressRange>0x08003070 - 0x0800307F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>keycode</slaveDescriptor>
+                <addressRange>0x08003080 - 0x0800308F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
                 <slaveDescriptor>PLL</slaveDescriptor>
-                <addressRange>0x08005060 - 0x0800506F</addressRange>
+                <addressRange>0x08003090 - 0x0800309F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>VGA_Controller_0</slaveDescriptor>
-                <addressRange>0x08005070 - 0x0800507F</addressRange>
+                <addressRange>0x080030A0 - 0x080030AF</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>jtag_uart_0</slaveDescriptor>
-                <addressRange>0x08005088 - 0x0800508F</addressRange>
+                <addressRange>0x080030B0 - 0x080030B7</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes>printable</attributes>
         </MemoryMap>
