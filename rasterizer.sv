@@ -126,6 +126,7 @@ always_comb begin
 
     if(state == INIT) begin
         x_cnt_next = left_x;
+	z_cnt_next = left_z;
         dzBdx_next = ((right_z - left_z) * (1<<8))  / (right_x - left_x);
     end else if(state == RENDERING) begin
         if(cont) begin
