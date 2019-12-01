@@ -1,0 +1,56 @@
+//ad.uillinois.edu/engr-ews/kevinrp2/Desktop/385_FinalPrj/util.sv {1 {vlog -work work -sv -stats=none //ad.uillinois.edu/engr-ews/kevinrp2/Desktop/385_FinalPrj/util.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module ceil_min_max
+-- Compiling module pos_edge_detect
+-- Compiling module ceil
+-- Compiling module abs
+
+Top level modules:
+	ceil_min_max
+	pos_edge_detect
+	ceil
+	abs
+
+} {} {}} //ad.uillinois.edu/engr-ews/kevinrp2/Desktop/385_FinalPrj/matrix_ops.sv {1 {vlog -work work -sv -stats=none //ad.uillinois.edu/engr-ews/kevinrp2/Desktop/385_FinalPrj/matrix_ops.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module gen_prj_mat
+-- Compiling module gen_trans_mat
+-- Compiling module mat_vec_mul
+-- Compiling module mat_mat_mul
+-- Compiling module mat_reg
+-- Compiling module vec_cross
+-- Compiling module vec_sub
+-- Compiling module vec2d_norm
+-- Compiling module vec_norm
+-- Compiling module vec_mul
+-- Compiling module vec_add
+
+Top level modules:
+	gen_prj_mat
+	gen_trans_mat
+	mat_vec_mul
+	mat_mat_mul
+	mat_reg
+	vec_cross
+	vec_sub
+	vec_norm
+	vec_mul
+	vec_add
+
+} {} {}} //ad.uillinois.edu/engr-ews/kevinrp2/Desktop/385_FinalPrj/rasterizer.sv {1 {vlog -work work -sv -stats=none //ad.uillinois.edu/engr-ews/kevinrp2/Desktop/385_FinalPrj/rasterizer.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module rast_line
+-- Compiling module rast_triangle
+-- Compiling module vert_edge
+
+Top level modules:
+	rast_triangle
+
+} {} {}} //ad.uillinois.edu/engr-ews/kevinrp2/Desktop/385_FinalPrj/testbench_gpu.sv {1 {vlog -work work -sv -stats=none //ad.uillinois.edu/engr-ews/kevinrp2/Desktop/385_FinalPrj/testbench_gpu.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+-- Compiling module testbench_gpu
+
+Top level modules:
+	testbench_gpu
+
+} {} {}}
