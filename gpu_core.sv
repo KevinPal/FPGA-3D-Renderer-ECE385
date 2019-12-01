@@ -33,6 +33,7 @@ int x, x_next;
 int y, y_next;
 int z, z_next;
 int mode, mode_next;
+int block_id, block_id_next;
 
 // rasterization variables
 logic rast_start;
@@ -47,12 +48,11 @@ int prj[4][4];
 int tv1[3] = '{100 * (1<<8), 100 * (1<<8), 0};
 int tv2[3] = '{50 * (1<<8), 300 * (1<<8), 0};
 int tv3[3] = '{250 * (1<<8), 200 * (1<<8), 0};
-byte frag_rgb[3] = '{255, 255, 0};
 
 gen_prj_mat m1(320 * (1<< 8), 240 * (1<< 8), 5 * (1<< 8), 200 * (1<< 8), prj);
 
 rast_cube cube_renderer(CLK_clk, RESET_reset, rast_start, rast_cont, 
-    scale, '{x, y, z}, prj, rast_ready, rast_rgb, rast_xyz, rast_done);
+    scale, '{x, y, z}, block_id, prj, rast_ready, rast_rgb, rast_xyz, rast_done);
 
 
 int clear_counter, clear_counter_next;
@@ -111,6 +111,7 @@ always_comb begin
                 6: GPU_SLAVE_readdata = y;
                 7: GPU_SLAVE_readdata = z;
                 8: GPU_SLAVE_readdata = mode;
+                9: GPU_SLAVE_readdata = block_id;
             endcase
         end
 
@@ -126,6 +127,7 @@ always_comb begin
                 6: y_next                = GPU_SLAVE_writedata;
                 7: z_next                = GPU_SLAVE_writedata;
                 8: mode_next             = GPU_SLAVE_writedata;
+                9: block_id_next         = GPU_SLAVE_writedata;
             endcase
         end
 
@@ -238,6 +240,7 @@ always_ff @ (posedge CLK_clk) begin
         z <= 0;
         clear_counter <= 0;
         mode <= 0;
+        block_id <= 0;
     end else begin
         frame_pointer <= frame_pointer_next;
         start <= start_next;
@@ -251,6 +254,7 @@ always_ff @ (posedge CLK_clk) begin
         z <= z_next;
         clear_counter <= clear_counter_next;
         mode <= mode_next;
+        block_id <= block_id_next;
     end
 end
 
@@ -264,6 +268,7 @@ module rast_cube(
     input logic cont,
     input int scale,
     input int pos[3],
+    input int block_id,
     input int prj[4][4],
     output logic rast_ready,
     output byte rgb[3],
@@ -293,7 +298,7 @@ enum logic [5:0] {
 //6 -> front_bot_left
 //7 -> front_bot_right
 int verticies[8][3];
-int verticies_color[8][4];
+int face_uv[6][4][4];
 
 int test_scale = 16 * (1<<8);
 int test_vec[3] = '{15 * (1<< 8), 0 * (1<< 8) ,  -70* (1<< 8)};
@@ -306,7 +311,6 @@ logic rast_start = 0;
 int v1[3];
 int v2[3];
 int v3[3];
-byte frag_rgb[3];
 int tv1[4] = '{0, 0, 0, 0};
 int tv2[4] = '{0, 0, 0, 0};
 int tv3[4] = '{0, 0, 0, 0};
@@ -314,25 +318,67 @@ int tv3[4] = '{0, 0, 0, 0};
 rast_triangle triangle_renderer(CLK, RESET, rast_start, cont,
     tv3, tv2, tv1, rast_ready, rgb, xyz, rast_done);
 
+int offset;
+
 always_comb begin
     next_state = state;
     rast_start = 0;
     tv1 = '{0, 0, 0, 0};
     tv2 = '{0, 0, 0, 0};
     tv3 = '{0, 0, 0, 0};
-    frag_rgb = '{0, 0, 0};
     done = 0;
 
+    offset = block_id * 32;
+
     // Append vertex colors
+    // vertex 0 => back_top_left
+    // vertex 1 => back_top_right
+    // vertex 2 => back_bot_left
+    // vertex 3 => back_bot_right
+    // vertex 4 => front_top_left
+    // vertex 5 => front_top_right
+    // vertex 6 => front_bot_left
+    // vertex 7 => front_bot_right
     //
-    verticies_color[0] = '{verticies[0][0], verticies[0][1], verticies[0][2], 32'h00FF0000}; // back_top_left
-    verticies_color[1] = '{verticies[1][0], verticies[1][1], verticies[1][2], 32'hFF000000}; // back_top_right
-    verticies_color[2] = '{verticies[2][0], verticies[2][1], verticies[2][2], 32'h0000FF00}; // back_bot_left
-    verticies_color[3] = '{verticies[3][0], verticies[3][1], verticies[3][2], 32'hFFFF0000}; // back_bot_right
-    verticies_color[4] = '{verticies[4][0], verticies[4][1], verticies[4][2], 32'h00FFFF00}; // front_top_left
-    verticies_color[5] = '{verticies[5][0], verticies[5][1], verticies[5][2], 32'h0FFFF000}; // front_top_right
-    verticies_color[6] = '{verticies[6][0], verticies[6][1], verticies[6][2], 32'hF0000F00}; // front_bot_left
-    verticies_color[7] = '{verticies[7][0], verticies[7][1], verticies[7][2], 32'hFFFFFF00}; // front_bot_right
+    // face 0 => top
+    // face 1 => bottom
+    // face 2 => back
+    // face 3 => left
+    // face 4 => right
+    // face 5 => front
+
+    // Group into faces and append UV
+    //
+    // top
+    face_uv[0][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd00 + offset, 16'd00}}; // back_top_left
+    face_uv[0][1] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd15 + offset, 16'd00}}; // back_top_right
+    face_uv[0][2] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd00 + offset, 16'd15}}; // front_top_left
+    face_uv[0][3] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd15 + offset, 16'd15}}; // front_top_right
+    // bot
+    face_uv[1][0] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd00}}; // back_bot_left
+    face_uv[1][1] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd31 + offset, 16'd00}}; // back_bot_right
+    face_uv[1][2] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd16 + offset, 16'd15}}; // front_bot_left
+    face_uv[1][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd31 + offset, 16'd15}}; // front_bot_right
+    // back
+    face_uv[2][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd16 + offset, 16'd16}}; // back_top_left
+    face_uv[2][1] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd31 + offset, 16'd16}}; // back_top_right
+    face_uv[2][2] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd31}}; // back_bot_left
+    face_uv[2][3] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd31 + offset, 16'd31}}; // back_bot_right
+    // left
+    face_uv[3][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd16 + offset, 16'd16}}; // back_top_left
+    face_uv[3][1] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd31}}; // back_bot_left
+    face_uv[3][2] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd31 + offset, 16'd16}}; // front_top_left
+    face_uv[3][3] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd31 + offset, 16'd31}}; // front_bot_left
+    // right
+    face_uv[4][0] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd16 + offset, 16'd16}}; // back_top_right
+    face_uv[4][1] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd16 + offset, 16'd31}}; // back_bot_right
+    face_uv[4][2] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd31 + offset, 16'd16}}; // front_top_right
+    face_uv[4][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd31 + offset, 16'd31}}; // front_bot_right
+    // front
+    face_uv[5][0] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd00 + offset, 16'd16}}; // front_top_left
+    face_uv[5][1] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd15 + offset, 16'd16}}; // front_top_right
+    face_uv[5][2] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd00 + offset, 16'd31}}; // front_bot_left
+    face_uv[5][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd15 + offset, 16'd31}}; // front_bot_right
 
 
     // state logic
@@ -344,10 +390,9 @@ always_comb begin
         end
         TOP_1: begin
             rast_start = 1;
-            tv1 = verticies_color[0];
-            tv2 = verticies_color[1];
-            tv3 = verticies_color[4];
-            frag_rgb = '{255, 255, 255};
+            tv1 = face_uv[0][0];
+            tv2 = face_uv[0][1];
+            tv3 = face_uv[0][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = TOP_2;
@@ -355,10 +400,9 @@ always_comb begin
         end
         TOP_2: begin
             rast_start = 1;
-            tv1 = verticies_color[1];
-            tv2 = verticies_color[5];
-            tv3 = verticies_color[4];
-            frag_rgb = '{255, 255, 255};
+            tv1 = face_uv[0][0];
+            tv2 = face_uv[0][2];
+            tv3 = face_uv[0][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = BOT_1;
@@ -366,10 +410,9 @@ always_comb begin
         end
         BOT_1: begin
             rast_start = 1;
-            tv1 = verticies_color[2];
-            tv2 = verticies_color[3];
-            tv3 = verticies_color[6];
-            frag_rgb = '{0, 0, 0};
+            tv1 = face_uv[1][0];
+            tv2 = face_uv[1][1];
+            tv3 = face_uv[1][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = BOT_2;
@@ -377,10 +420,9 @@ always_comb begin
         end
         BOT_2: begin
             rast_start = 1;
-            tv1 = verticies_color[3];
-            tv2 = verticies_color[7];
-            tv3 = verticies_color[6];
-            frag_rgb = '{0, 0, 0};
+            tv1 = face_uv[1][0];
+            tv2 = face_uv[1][2];
+            tv3 = face_uv[1][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = BACK_1; 
@@ -388,10 +430,9 @@ always_comb begin
         end
         BACK_1: begin
             rast_start = 1;
-            tv1 = verticies_color[0];
-            tv2 = verticies_color[1];
-            tv3 = verticies_color[2];
-            frag_rgb = '{255, 0, 255};
+            tv1 = face_uv[2][0];
+            tv2 = face_uv[2][1];
+            tv3 = face_uv[2][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = BACK_2;
@@ -399,10 +440,9 @@ always_comb begin
         end
         BACK_2: begin
             rast_start = 1;
-            tv1 = verticies_color[1];
-            tv2 = verticies_color[3];
-            tv3 = verticies_color[2];
-            frag_rgb = '{255, 0, 255};
+            tv1 = face_uv[2][0];
+            tv2 = face_uv[2][2];
+            tv3 = face_uv[2][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = LEFT_1;  // --
@@ -410,10 +450,9 @@ always_comb begin
         end
         LEFT_1: begin
             rast_start = 1;
-            tv1 = verticies_color[0];
-            tv2 = verticies_color[2];
-            tv3 = verticies_color[4];
-            frag_rgb = '{0, 255, 0};
+            tv1 = face_uv[3][0];
+            tv2 = face_uv[3][1];
+            tv3 = face_uv[3][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = LEFT_2;
@@ -421,10 +460,9 @@ always_comb begin
         end
         LEFT_2: begin
             rast_start = 1;
-            tv1 = verticies_color[4];
-            tv2 = verticies_color[6];
-            tv3 = verticies_color[7];
-            frag_rgb = '{0, 255, 0};
+            tv1 = face_uv[3][0];
+            tv2 = face_uv[3][2];
+            tv3 = face_uv[3][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = RIGHT_1;
@@ -432,10 +470,9 @@ always_comb begin
         end
         RIGHT_1: begin
             rast_start = 1;
-            tv1 = verticies_color[1];
-            tv2 = verticies_color[3];
-            tv3 = verticies_color[7];
-            frag_rgb = '{255, 0, 0};
+            tv1 = face_uv[4][0];
+            tv2 = face_uv[4][1];
+            tv3 = face_uv[4][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = RIGHT_2;
@@ -443,10 +480,9 @@ always_comb begin
         end
         RIGHT_2: begin
             rast_start = 1;
-            tv1 = verticies_color[1];
-            tv2 = verticies_color[5];
-            tv3 = verticies_color[7];
-            frag_rgb = '{255, 0, 0};
+            tv1 = face_uv[4][0];
+            tv2 = face_uv[4][2];
+            tv3 = face_uv[4][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = FRONT_1;
@@ -454,10 +490,9 @@ always_comb begin
         end
         FRONT_1: begin
             rast_start = 1;
-            tv1 = verticies_color[7];
-            tv2 = verticies_color[5];
-            tv3 = verticies_color[4];
-            frag_rgb = '{0, 255, 255};
+            tv1 = face_uv[5][0];
+            tv2 = face_uv[5][1];
+            tv3 = face_uv[5][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = FRONT_2;
@@ -465,10 +500,9 @@ always_comb begin
         end
         FRONT_2: begin
             rast_start = 1;
-            tv1 = verticies_color[4];
-            tv2 = verticies_color[6];
-            tv3 = verticies_color[7];
-            frag_rgb = '{0, 255, 255};
+            tv1 = face_uv[5][0];
+            tv2 = face_uv[5][2];
+            tv3 = face_uv[5][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = DONE;

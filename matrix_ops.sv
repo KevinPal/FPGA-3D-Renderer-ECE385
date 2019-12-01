@@ -186,6 +186,17 @@ assign out[2] = (a[2]/(1<<8)) * b;
 
 endmodule
 
+module vec2_mul(
+    input int a[2],
+    input int b,
+    output int out[2]
+);
+
+assign out[0] = (a[0]/(1<<8)) * b;
+assign out[1] = (a[1]/(1<<8)) * b;
+
+endmodule
+
 module vec_add(
     input int a[3],
     input int b[3],
@@ -195,5 +206,17 @@ module vec_add(
 assign out[0] = a[0] + b[0];
 assign out[1] = a[1] + b[1];
 assign out[2] = a[2] + b[2];
+
+endmodule
+
+
+module vec2_add(
+    input int a[2],
+    input int b[2],
+    output int out[2]
+);
+
+assign out[0] = a[0] + b[0];
+assign out[1] = a[1] + b[1];
 
 endmodule
