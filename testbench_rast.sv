@@ -11,7 +11,7 @@ logic cont;
 logic done;
 int prj[4][4];
 
-int scale = (25 * (1<<8));
+int scale = (8 * (1<<8));
 int pos[3] = '{-25 * (1<<8), 20 * (1<<8), -70 * (1<<8)};
 int i = 0;
 int f;
@@ -159,36 +159,72 @@ initial begin: TEST_VECTORS
 ready = 1;
 cont = 0;
 start = 0;
+GPU_MASTER_writeresponsevalid = 1;
+GPU_MASTER_waitrequest = 0;
 RESET = 0;
 #1 RESET = 1;
 #2
 RESET = 0;
 #2
+// Set mode to clear
+GPU_SLAVE_chipselect = 1;
+GPU_SLAVE_write = 1;
+GPU_SLAVE_address = 8;
+GPU_SLAVE_writedata= 2;
+#4
+// Set start
+GPU_SLAVE_chipselect = 1;
+GPU_SLAVE_write = 1;
+GPU_SLAVE_address = 1;
+GPU_SLAVE_writedata= 1;
+
+@(posedge rast_done)
+$display("Clear done");
+#4
+for(int i=0;i<5;i++) begin
+// unSet start
+GPU_SLAVE_chipselect = 1;
+GPU_SLAVE_write = 1;
+GPU_SLAVE_address = 1;
+GPU_SLAVE_writedata= 0;
+#4
+// unSet done
+GPU_SLAVE_chipselect = 1;
+GPU_SLAVE_write = 1;
+GPU_SLAVE_address = 2;
+GPU_SLAVE_writedata= 0;
+#4
+// Set mode to render
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 8;
 GPU_SLAVE_writedata= 1;
 #4
+// Set scale
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 4;
 GPU_SLAVE_writedata= scale;
 #4
+// Set x
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 5;
-GPU_SLAVE_writedata = 25 * (1<<8);
+GPU_SLAVE_writedata = (i*scale/(1<<8)) * (1<<8);
 #4
+// Set y
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 6;
 GPU_SLAVE_writedata = (-20) * (1<<8);
 #4
+// Set z
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 7;
-GPU_SLAVE_writedata = (-70) * (1<<8);
+GPU_SLAVE_writedata = (-70 + (i*scale/(1<<8)) ) * (1<<8);
 #4
+// Set start
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 1;
@@ -201,10 +237,14 @@ GPU_MASTER_waitrequest = 0;
 GPU_MASTER_writeresponsevalid = 1;
 
 @(posedge rast_done)
+$display("Render %d Done", i);
+end
+
 f = $fopen("output.txt","wb+");
 for (i = 0; i<(480*640); i=i+1)
     $fwrite(f,"%h\n",color_data[i]);
 
 $fclose(f);
+$display("done");
 end
 endmodule
