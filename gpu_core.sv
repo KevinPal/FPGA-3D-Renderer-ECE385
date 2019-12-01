@@ -34,6 +34,7 @@ int x, x_next;
 int y, y_next;
 int z, z_next;
 int mode, mode_next;
+int block_id, block_id_next;
 
 // rasterization variables
 logic rast_start;
@@ -48,12 +49,11 @@ int prj[4][4];
 int tv1[3] = '{100 * (1<<8), 100 * (1<<8), 0};
 int tv2[3] = '{50 * (1<<8), 300 * (1<<8), 0};
 int tv3[3] = '{250 * (1<<8), 200 * (1<<8), 0};
-byte frag_rgb[3] = '{255, 255, 0};
 
 gen_prj_mat m1(320 * (1<<8), 240 * (1<<8), 5 * (1<<8), 200 * (1<<8), prj);
 
 rast_cube cube_renderer(CLK_clk, RESET_reset, rast_start, rast_cont, 
-    scale, '{x, y, z}, prj, rast_ready, rast_rgb, rast_xyz, rast_done);
+    scale, '{x, y, z}, block_id, prj, rast_ready, rast_rgb, rast_xyz, rast_done);
 
 
 int clear_counter, clear_counter_next;
@@ -63,6 +63,12 @@ enum logic [5:0] {
     RUNNING,
     DONE
 } state = IDLE, next_state;
+
+enum logic [5:0] {
+    Z_READ,
+    Z_WRITE,
+    RGB_WRITE
+} rast_state = Z_READ, rast_next_state;
 
 always_comb begin
 
@@ -77,6 +83,7 @@ always_comb begin
     //GPU_MASTER_burstcount = 19'hzzzz;
     //'next' defaults
     frame_pointer_next = frame_pointer;
+    rast_next_state = rast_state;
     next_state = state;
     start_next = start;
     done_next = done;
@@ -106,6 +113,7 @@ always_comb begin
                 6: GPU_SLAVE_readdata = y;
                 7: GPU_SLAVE_readdata = z;
                 8: GPU_SLAVE_readdata = mode;
+                9: GPU_SLAVE_readdata = block_id;
             endcase
         end
 
@@ -121,6 +129,7 @@ always_comb begin
                 6: y_next                = GPU_SLAVE_writedata;
                 7: z_next                = GPU_SLAVE_writedata;
                 8: mode_next             = GPU_SLAVE_writedata;
+                9: block_id_next         = GPU_SLAVE_writedata;
             endcase
         end
 
@@ -129,24 +138,48 @@ always_comb begin
     if(state == RUNNING) begin
         if(mode == 1) begin // Cube rendering
             if(rast_ready) begin
-                //if((x > 0) & (x < 640) & (y > 0) & (y < 480)) begin
-                    GPU_MASTER_chipselect = 1;
+                GPU_MASTER_chipselect = 1;
+                if(rast_state == Z_READ) begin // Check depth buffer and frame bounds
+                    GPU_MASTER_read = 1;
+                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
+
+                    if(GPU_MASTER_readdatavalid & ~GPU_MASTER_waitrequest) begin
+                        if((GPU_MASTER_readdata > rast_xyz[2]) & (rast_xyz[0] > 0) & (rast_xyz[0] < (640*(1<<8))) & (rast_xyz[1] > 0) & (rast_xyz[1] < (480*(1<<8)))) begin
+                            rast_next_state = RGB_WRITE;
+                        end else begin
+                            rast_cont = 1; // Skip pixel
+                            rast_next_state = Z_READ;
+                        end
+                    end
+
+                end else if(rast_state == RGB_WRITE) begin // Write rgb to frame buffer
                     GPU_MASTER_write = 1;
                     GPU_MASTER_writedata = {2'h00, rast_rgb[2], rast_rgb[1], rast_rgb[0]};
-                    GPU_MASTER_address = frame_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8))))*4;
+                    GPU_MASTER_address = frame_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
                     if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
+                        rast_next_state = Z_WRITE;
+
+                end else if(rast_state == Z_WRITE) begin // Write z to depth buffer
+                    GPU_MASTER_write = 1;
+                    GPU_MASTER_writedata = rast_xyz[2];
+                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
+                    if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest) begin
+                        rast_next_state = Z_READ;
                         rast_cont = 1;
-                //end else begin
-                //    rast_cont = 1;
-                //end
+                    end
+                end
             end
-        end else if(mode == 2) begin // Clearing
-            //GPU_MASTER_burstcount = (640 * 480);
+        end else if((mode == 2) | (mode == 3)) begin // Clearing
             GPU_MASTER_chipselect = 1;
             GPU_MASTER_write = 1;
-            GPU_MASTER_writedata = {8'h00, 8'h20, 8'h20, 8'h20};
-            GPU_MASTER_address = frame_pointer + clear_counter*4;
-            if(~GPU_MASTER_waitrequest)
+            if(mode == 2) begin // Clear frame buffer
+                GPU_MASTER_writedata = {8'h00, 8'h20, 8'h30, 8'h20};
+                GPU_MASTER_address = frame_pointer + clear_counter*4;
+            end else begin // Clear depth buffer
+                GPU_MASTER_writedata = {8'h7F, 8'hFF, 8'hFF, 8'hFF};
+                GPU_MASTER_address = z_buffer_pointer + clear_counter*4;
+            end
+            if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
                 clear_counter_next = clear_counter + 1;
         end
     end
@@ -158,7 +191,7 @@ always_comb begin
                 next_state = RUNNING;
                 if(mode == 1)
                     rast_start = 1; //rast
-                else if(mode == 2)
+                else if((mode == 2) | (mode == 3))
                     clear_counter_next = 0; // clear
                 else
                     next_state = DONE;
@@ -173,7 +206,7 @@ always_comb begin
                     done_next = 1; 
                     next_state = DONE;
                 end
-            end else if(mode == 2) begin //clear
+            end else if((mode == 2) | (mode == 3)) begin //clear
                 if(clear_counter > (640 * 480)) begin
                     next_state = DONE;
                     done_next = 1;
@@ -201,6 +234,7 @@ always_ff @ (posedge CLK_clk) begin
         start <= 0;
         done <= 0;
         state <= IDLE;
+        rast_state <= Z_READ;
         z_buffer_pointer <= 0;
         scale <= 0;
         x <= 0;
@@ -208,11 +242,13 @@ always_ff @ (posedge CLK_clk) begin
         z <= 0;
         clear_counter <= 0;
         mode <= 0;
+        block_id <= 0;
     end else begin
         frame_pointer <= frame_pointer_next;
         start <= start_next;
         done <= done_next;
         state <= next_state;
+        rast_state <= rast_next_state;
         z_buffer_pointer <= z_buffer_pointer_next;
         scale <= scale_next;
         x <= x_next;
@@ -220,6 +256,7 @@ always_ff @ (posedge CLK_clk) begin
         z <= z_next;
         clear_counter <= clear_counter_next;
         mode <= mode_next;
+        block_id <= block_id_next;
     end
 end
 
@@ -233,6 +270,7 @@ module rast_cube(
     input logic cont,
     input int scale,
     input int pos[3],
+    input int block_id,
     input int prj[4][4],
     output logic rast_ready,
     output byte rgb[3],
@@ -240,7 +278,7 @@ module rast_cube(
     output logic done
 );
 
-enum logic [5:0] { //TODO back
+enum logic [5:0] {
     IDLE,
     TOP_1, TOP_2,
     BOT_1, BOT_2,
@@ -252,6 +290,7 @@ enum logic [5:0] { //TODO back
 } state = IDLE, next_state;
 
 
+
 //0 -> back_top_left
 //1 -> back_top_right
 //2 -> back_bot_left
@@ -261,6 +300,7 @@ enum logic [5:0] { //TODO back
 //6 -> front_bot_left
 //7 -> front_bot_right
 int verticies[8][3];
+int face_uv[6][4][4];
 
 int test_scale = 16 * (1<<8);
 int test_vec[3] = '{15 * (1<<8), 0 * (1<<8) ,  -70* (1<<8)};
@@ -273,29 +313,81 @@ logic rast_start = 0;
 int v1[3];
 int v2[3];
 int v3[3];
-byte frag_rgb[3];
-int tv1[3] = '{0, 0, 0};
-int tv2[3] = '{0, 0, 0};
-int tv3[3] = '{0, 0, 0};
+int tv1[4] = '{0, 0, 0, 0};
+int tv2[4] = '{0, 0, 0, 0};
+int tv3[4] = '{0, 0, 0, 0};
 
 rast_triangle triangle_renderer(CLK, RESET, rast_start, cont,
-    tv3, tv2, tv1, frag_rgb, rast_ready, rgb, xyz, rast_done);
+    tv3, tv2, tv1, rast_ready, rgb, xyz, rast_done);
+
+int offset;
 
 always_comb begin
     next_state = state;
     rast_start = 0;
-    tv1 = '{0, 0, 0};
-    tv2 = '{0, 0, 0};
-    tv3 = '{0, 0, 0};
-    frag_rgb = '{0, 0, 0};
+    tv1 = '{0, 0, 0, 0};
+    tv2 = '{0, 0, 0, 0};
+    tv3 = '{0, 0, 0, 0};
     done = 0;
+
+    offset = block_id * 32;
+
+    // Append vertex colors
+    // vertex 0 => back_top_left
+    // vertex 1 => back_top_right
+    // vertex 2 => back_bot_left
+    // vertex 3 => back_bot_right
+    // vertex 4 => front_top_left
+    // vertex 5 => front_top_right
+    // vertex 6 => front_bot_left
+    // vertex 7 => front_bot_right
+    //
+    // face 0 => top
+    // face 1 => bottom
+    // face 2 => back
+    // face 3 => left
+    // face 4 => right
+    // face 5 => front
+
+    // Group into faces and append UV
+    //
+    // top
+    face_uv[0][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd00 + offset, 16'd00}}; // back_top_left
+    face_uv[0][1] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd15 + offset, 16'd00}}; // back_top_right
+    face_uv[0][2] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd00 + offset, 16'd15}}; // front_top_left
+    face_uv[0][3] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd15 + offset, 16'd15}}; // front_top_right
+    // bot
+    face_uv[1][0] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd00}}; // back_bot_left
+    face_uv[1][1] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd31 + offset, 16'd00}}; // back_bot_right
+    face_uv[1][2] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd16 + offset, 16'd15}}; // front_bot_left
+    face_uv[1][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd31 + offset, 16'd15}}; // front_bot_right
+    // back
+    face_uv[2][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd16 + offset, 16'd16}}; // back_top_left
+    face_uv[2][1] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd31 + offset, 16'd16}}; // back_top_right
+    face_uv[2][2] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd31}}; // back_bot_left
+    face_uv[2][3] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd31 + offset, 16'd31}}; // back_bot_right
+    // left
+    face_uv[3][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd16 + offset, 16'd16}}; // back_top_left
+    face_uv[3][1] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd31}}; // back_bot_left
+    face_uv[3][2] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd31 + offset, 16'd16}}; // front_top_left
+    face_uv[3][3] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd31 + offset, 16'd31}}; // front_bot_left
+    // right
+    face_uv[4][0] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd16 + offset, 16'd16}}; // back_top_right
+    face_uv[4][1] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd16 + offset, 16'd31}}; // back_bot_right
+    face_uv[4][2] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd31 + offset, 16'd16}}; // front_top_right
+    face_uv[4][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd31 + offset, 16'd31}}; // front_bot_right
+    // front
+    face_uv[5][0] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd00 + offset, 16'd16}}; // front_top_left
+    face_uv[5][1] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd15 + offset, 16'd16}}; // front_top_right
+    face_uv[5][2] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd00 + offset, 16'd31}}; // front_bot_left
+    face_uv[5][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd15 + offset, 16'd31}}; // front_bot_right
+
 
     // state logic
     unique case(state)
         IDLE: begin
             if(start) begin
-                next_state = BACK_1;
-                rast_start = 1;
+                next_state = TOP_1;
             end
         end
         BACK_1: begin
@@ -322,10 +414,9 @@ always_comb begin
         end
         TOP_1: begin
             rast_start = 1;
-            tv1 = verticies[0];
-            tv2 = verticies[1];
-            tv3 = verticies[4];
-            frag_rgb = '{255, 255, 255};
+            tv1 = face_uv[0][0];
+            tv2 = face_uv[0][1];
+            tv3 = face_uv[0][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = TOP_2;
@@ -333,10 +424,9 @@ always_comb begin
         end
         TOP_2: begin
             rast_start = 1;
-            tv1 = verticies[1];
-            tv2 = verticies[5];
-            tv3 = verticies[4];
-            frag_rgb = '{255, 255, 255};
+            tv1 = face_uv[0][0];
+            tv2 = face_uv[0][2];
+            tv3 = face_uv[0][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = BOT_1;
@@ -344,10 +434,9 @@ always_comb begin
         end
         BOT_1: begin
             rast_start = 1;
-            tv1 = verticies[2];
-            tv2 = verticies[3];
-            tv3 = verticies[6];
-            frag_rgb = '{0, 255, 0};
+            tv1 = face_uv[1][0];
+            tv2 = face_uv[1][1];
+            tv3 = face_uv[1][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = BOT_2;
@@ -355,21 +444,39 @@ always_comb begin
         end
         BOT_2: begin
             rast_start = 1;
-            tv1 = verticies[3];
-            tv2 = verticies[7];
-            tv3 = verticies[6];
-            frag_rgb = '{0, 255, 0};
+            tv1 = face_uv[1][0];
+            tv2 = face_uv[1][2];
+            tv3 = face_uv[1][3];
             if(rast_done) begin
                 rast_start = 0;
-                next_state = LEFT_1; 
+                next_state = BACK_1; 
+            end
+        end
+        BACK_1: begin
+            rast_start = 1;
+            tv1 = face_uv[2][0];
+            tv2 = face_uv[2][1];
+            tv3 = face_uv[2][3];
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = BACK_2;
+            end
+        end
+        BACK_2: begin
+            rast_start = 1;
+            tv1 = face_uv[2][0];
+            tv2 = face_uv[2][2];
+            tv3 = face_uv[2][3];
+            if(rast_done) begin
+                rast_start = 0;
+                next_state = LEFT_1;  // --
             end
         end
         LEFT_1: begin
             rast_start = 1;
-            tv1 = verticies[0];
-            tv2 = verticies[2];
-            tv3 = verticies[4];
-            frag_rgb = '{0, 255, 0};
+            tv1 = face_uv[3][0];
+            tv2 = face_uv[3][1];
+            tv3 = face_uv[3][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = LEFT_2;
@@ -377,10 +484,9 @@ always_comb begin
         end
         LEFT_2: begin
             rast_start = 1;
-            tv1 = verticies[4];
-            tv2 = verticies[6];
-            tv3 = verticies[7];
-            frag_rgb = '{0, 255, 0};
+            tv1 = face_uv[3][0];
+            tv2 = face_uv[3][2];
+            tv3 = face_uv[3][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = RIGHT_1;
@@ -388,10 +494,9 @@ always_comb begin
         end
         RIGHT_1: begin
             rast_start = 1;
-            tv1 = verticies[1];
-            tv2 = verticies[3];
-            tv3 = verticies[7];
-            frag_rgb = '{255, 0, 0};
+            tv1 = face_uv[4][0];
+            tv2 = face_uv[4][1];
+            tv3 = face_uv[4][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = RIGHT_2;
@@ -399,10 +504,9 @@ always_comb begin
         end
         RIGHT_2: begin
             rast_start = 1;
-            tv1 = verticies[1];
-            tv2 = verticies[5];
-            tv3 = verticies[7];
-            frag_rgb = '{255, 0, 0};
+            tv1 = face_uv[4][0];
+            tv2 = face_uv[4][2];
+            tv3 = face_uv[4][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = FRONT_1;
@@ -410,10 +514,9 @@ always_comb begin
         end
         FRONT_1: begin
             rast_start = 1;
-            tv1 = verticies[4];
-            tv2 = verticies[5];
-            tv3 = verticies[7];
-            frag_rgb = '{0, 255, 255};
+            tv1 = face_uv[5][0];
+            tv2 = face_uv[5][1];
+            tv3 = face_uv[5][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = FRONT_2;
@@ -421,10 +524,9 @@ always_comb begin
         end
         FRONT_2: begin
             rast_start = 1;
-            tv1 = verticies[4];
-            tv2 = verticies[6];
-            tv3 = verticies[7];
-            frag_rgb = '{0, 255, 255};
+            tv1 = face_uv[5][0];
+            tv2 = face_uv[5][2];
+            tv3 = face_uv[5][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = DONE;
@@ -517,11 +619,11 @@ always_comb begin
     front_bot_left[3] = 1 * (1<<8);
     front_bot_right[3] = 1 * (1<<8);
 
-    // All right verticies need to be shifted to the right by scale
-    back_top_right[0] += scale;
-    back_bot_right[0] += scale;
-    front_top_right[0] += scale;
-    front_bot_right[0] += scale;
+    // All left verticies need to be shifted to the right by scale
+    back_top_left[0] += scale;
+    back_bot_left[0] += scale;
+    front_top_left[0] += scale;
+    front_bot_left[0] += scale;
 
     // All bot verticies need to be shifted down by scale
     back_bot_left[1] -= scale;

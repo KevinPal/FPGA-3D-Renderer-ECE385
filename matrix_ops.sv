@@ -106,4 +106,117 @@ module mat_reg(
 
 endmodule
 
+module vec_cross(
+    input int a[3],
+    input int b[3],
+    output int out[3]
+);
 
+assign out[0] = (a[1]/(1<<8))*b[2] - (a[2]/(1<<8))*b[1];
+assign out[1] = (a[2]/(1<<8))*b[0] - (a[0]/(1<<8))*b[2];
+assign out[2] = ((a[0]*b[1])/(1<<8)) + (-1 * ((a[1]*b[0])/(1<<8)));
+
+int temp1;
+int temp2;
+assign temp1 = ((a[0]*b[1])/(1<<8));
+assign temp2 = ((a[1]*b[0])/(1<<8));
+
+endmodule
+
+module vec_sub(
+    input int a[3],
+    input int b[3],
+    output int out[3]
+);
+
+assign out[0] = a[0] - b[0];
+assign out[1] = a[1] - b[1];
+assign out[2] = a[2] - b[2];
+
+endmodule
+
+//https://dspguru.com/dsp/tricks/magnitude-estimator/
+// Estimates vel 2D vec len
+module vec2d_norm(
+    input int a,
+    input int b,
+    output int out
+);
+
+int abs_x, abs_y;
+
+abs a1(a, abs_x);
+abs a2(b, abs_y);
+
+int min, max;
+
+always_comb begin
+    if(abs_x > abs_y) begin
+        min = abs_y;
+        max = abs_x;
+    end else begin
+        min = abs_x;
+        max = abs_y;
+    end
+    out = ((243 * max) / (1<<8)) + ((100 * min)/(1<<8));
+end
+
+endmodule
+
+module vec_norm(
+    input int a[3],
+    output int out
+);
+
+int temp;
+vec2d_norm n1(a[0], a[1], temp);
+vec2d_norm n2(temp, a[2], out);
+
+endmodule
+
+module vec_mul(
+    input int a[3],
+    input int b,
+    output int out[3]
+);
+
+assign out[0] = (a[0]/(1<<8)) * b;
+assign out[1] = (a[1]/(1<<8)) * b;
+assign out[2] = (a[2]/(1<<8)) * b;
+
+endmodule
+
+module vec2_mul(
+    input int a[2],
+    input int b,
+    output int out[2]
+);
+
+assign out[0] = (a[0]/(1<<8)) * b;
+assign out[1] = (a[1]/(1<<8)) * b;
+
+endmodule
+
+module vec_add(
+    input int a[3],
+    input int b[3],
+    output int out[3]
+);
+
+assign out[0] = a[0] + b[0];
+assign out[1] = a[1] + b[1];
+assign out[2] = a[2] + b[2];
+
+endmodule
+
+
+module vec2_add(
+    input int a[2],
+    input int b[2],
+    output int out[2]
+);
+
+assign out[0] = a[0] + b[0];
+assign out[1] = a[1] + b[1];
+
+endmodule
