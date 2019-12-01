@@ -63,6 +63,12 @@ enum logic [5:0] {
     DONE
 } state = IDLE, next_state;
 
+enum logic [5:0] {
+    Z_READ,
+    Z_WRITE,
+    RGB_WRITE
+} rast_state = Z_READ, rast_next_state;
+
 always_comb begin
 
     //default slave
@@ -75,6 +81,7 @@ always_comb begin
     GPU_MASTER_writedata = 32'hzzzz;
     //'next' defaults
     frame_pointer_next = frame_pointer;
+    rast_next_state = rast_state;
     next_state = state;
     start_next = start;
     done_next = done;
@@ -128,17 +135,46 @@ always_comb begin
         if(mode == 1) begin // Cube rendering
             if(rast_ready) begin
                 GPU_MASTER_chipselect = 1;
-                GPU_MASTER_write = 1;
-                GPU_MASTER_writedata = {2'h00, rast_rgb[2], rast_rgb[1], rast_rgb[0]};
-                GPU_MASTER_address = frame_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
-                if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
-                    rast_cont = 1;
+                if(rast_state == Z_READ) begin // Check depth buffer and frame bounds
+                    GPU_MASTER_read = 1;
+                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
+
+                    if(GPU_MASTER_readdatavalid & ~GPU_MASTER_waitrequest) begin
+                        if((GPU_MASTER_readdata > rast_xyz[2]) & (rast_xyz[0] > 0) & (rast_xyz[0] < (640*(1<<8))) & (rast_xyz[1] > 0) & (rast_xyz[1] < (480*(1<<8)))) begin
+                            rast_next_state = RGB_WRITE;
+                        end else begin
+                            rast_cont = 1; // Skip pixel
+                            rast_next_state = Z_READ;
+                        end
+                    end
+
+                end else if(rast_state == RGB_WRITE) begin // Write rgb to frame buffer
+                    GPU_MASTER_write = 1;
+                    GPU_MASTER_writedata = {2'h00, rast_rgb[2], rast_rgb[1], rast_rgb[0]};
+                    GPU_MASTER_address = frame_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
+                    if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
+                        rast_next_state = Z_WRITE;
+
+                end else if(rast_state == Z_WRITE) begin // Write z to depth buffer
+                    GPU_MASTER_write = 1;
+                    GPU_MASTER_writedata = rast_xyz[2];
+                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
+                    if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest) begin
+                        rast_next_state = Z_READ;
+                        rast_cont = 1;
+                    end
+                end
             end
-        end else if(mode == 2) begin // Clearing
+        end else if((mode == 2) | (mode == 3)) begin // Clearing
             GPU_MASTER_chipselect = 1;
             GPU_MASTER_write = 1;
-            GPU_MASTER_writedata = {8'h00, 8'h20, 8'h20, 8'h20};
-            GPU_MASTER_address = frame_pointer + clear_counter*4;
+            if(mode == 2) begin // Clear frame buffer
+                GPU_MASTER_writedata = {8'h00, 8'h20, 8'h30, 8'h20};
+                GPU_MASTER_address = frame_pointer + clear_counter*4;
+            end else begin // Clear depth buffer
+                GPU_MASTER_writedata = {8'h7F, 8'hFF, 8'hFF, 8'hFF};
+                GPU_MASTER_address = z_buffer_pointer + clear_counter*4;
+            end
             if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
                 clear_counter_next = clear_counter + 1;
         end
@@ -151,7 +187,7 @@ always_comb begin
                 next_state = RUNNING;
                 if(mode == 1)
                     rast_start = 1; //rast
-                else if(mode == 2)
+                else if((mode == 2) | (mode == 3))
                     clear_counter_next = 0; // clear
                 else
                     next_state = DONE;
@@ -166,7 +202,7 @@ always_comb begin
                     done_next = 1; 
                     next_state = DONE;
                 end
-            end else if(mode == 2) begin //clear
+            end else if((mode == 2) | (mode == 3)) begin //clear
                 if(clear_counter > (640 * 480)) begin
                     next_state = DONE;
                     done_next = 1;
@@ -194,6 +230,7 @@ always_ff @ (posedge CLK_clk) begin
         start <= 0;
         done <= 0;
         state <= IDLE;
+        rast_state <= Z_READ;
         z_buffer_pointer <= 0;
         scale <= 0;
         x <= 0;
@@ -206,6 +243,7 @@ always_ff @ (posedge CLK_clk) begin
         start <= start_next;
         done <= done_next;
         state <= next_state;
+        rast_state <= rast_next_state;
         z_buffer_pointer <= z_buffer_pointer_next;
         scale <= scale_next;
         x <= x_next;
@@ -291,10 +329,10 @@ always_comb begin
     verticies_color[1] = '{verticies[1][0], verticies[1][1], verticies[1][2], 32'hFF000000}; // back_top_right
     verticies_color[2] = '{verticies[2][0], verticies[2][1], verticies[2][2], 32'h0000FF00}; // back_bot_left
     verticies_color[3] = '{verticies[3][0], verticies[3][1], verticies[3][2], 32'hFFFF0000}; // back_bot_right
-    verticies_color[4] = '{verticies[4][0], verticies[4][1], verticies[4][2], 32'h00FF0000}; // front_top_left
-    verticies_color[5] = '{verticies[5][0], verticies[5][1], verticies[5][2], 32'hFF000000}; // front_top_right
-    verticies_color[6] = '{verticies[6][0], verticies[6][1], verticies[6][2], 32'h0000FF00}; // front_bot_left
-    verticies_color[7] = '{verticies[7][0], verticies[7][1], verticies[7][2], 32'h0000FF00}; // front_bot_right
+    verticies_color[4] = '{verticies[4][0], verticies[4][1], verticies[4][2], 32'h00FFFF00}; // front_top_left
+    verticies_color[5] = '{verticies[5][0], verticies[5][1], verticies[5][2], 32'h0FFFF000}; // front_top_right
+    verticies_color[6] = '{verticies[6][0], verticies[6][1], verticies[6][2], 32'hF0000F00}; // front_bot_left
+    verticies_color[7] = '{verticies[7][0], verticies[7][1], verticies[7][2], 32'hFFFFFF00}; // front_bot_right
 
 
     // state logic

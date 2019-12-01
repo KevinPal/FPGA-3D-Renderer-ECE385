@@ -80,14 +80,21 @@ assign v2 = verticies[6];
 assign v3 = verticies[7];
 logic ready;
 byte in_rgb[3] = '{255, 255, 255};
-int color_data[480*640];
+int color_data[480*640*2];
 
 assign rast_done = core.done;
 
 always_ff @ (posedge CLK) begin
-    color_data[GPU_MASTER_address/4] <= GPU_MASTER_writedata;
+    if(GPU_MASTER_write)
+        color_data[GPU_MASTER_address/4] <= GPU_MASTER_writedata;
 end
 
+always_comb begin
+    if(GPU_MASTER_read)
+        GPU_MASTER_readdata = color_data[GPU_MASTER_address/4];
+    else
+        GPU_MASTER_readdata = 32'hxxxx;
+end
 //rast_triangle test(CLK, RESET, start, cont, v3, v2, v1, in_rgb, draw_ready, rgb, xyz, done);
 
 project_cube projector(scale, pos, prj, verticies);
@@ -161,16 +168,25 @@ cont = 0;
 start = 0;
 GPU_MASTER_writeresponsevalid = 1;
 GPU_MASTER_waitrequest = 0;
+GPU_MASTER_readdatavalid = 1;
 RESET = 0;
 #1 RESET = 1;
 #2
 RESET = 0;
 #2
-// Set mode to clear
+
+
+// Set depth buffer pointer
+GPU_SLAVE_chipselect = 1;
+GPU_SLAVE_write = 1;
+GPU_SLAVE_address = 3;
+GPU_SLAVE_writedata= (640*480*4);
+#4
+// Set mode to clear depth
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 8;
-GPU_SLAVE_writedata= 2;
+GPU_SLAVE_writedata= 3;
 #4
 // Set start
 GPU_SLAVE_chipselect = 1;
@@ -179,9 +195,7 @@ GPU_SLAVE_address = 1;
 GPU_SLAVE_writedata= 1;
 
 @(posedge rast_done)
-$display("Clear done");
-#4
-for(int i=0;i<5;i++) begin
+$display("Depth Clear done");
 // unSet start
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
@@ -194,54 +208,95 @@ GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 2;
 GPU_SLAVE_writedata= 0;
 #4
-// Set mode to render
+// Set mode to clear frame
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 8;
-GPU_SLAVE_writedata= 1;
-#4
-// Set scale
-GPU_SLAVE_chipselect = 1;
-GPU_SLAVE_write = 1;
-GPU_SLAVE_address = 4;
-GPU_SLAVE_writedata= scale;
-#4
-// Set x
-GPU_SLAVE_chipselect = 1;
-GPU_SLAVE_write = 1;
-GPU_SLAVE_address = 5;
-GPU_SLAVE_writedata = (i*scale/(1<<8)) * (1<<8);
-#4
-// Set y
-GPU_SLAVE_chipselect = 1;
-GPU_SLAVE_write = 1;
-GPU_SLAVE_address = 6;
-GPU_SLAVE_writedata = (-20) * (1<<8);
-#4
-// Set z
-GPU_SLAVE_chipselect = 1;
-GPU_SLAVE_write = 1;
-GPU_SLAVE_address = 7;
-GPU_SLAVE_writedata = (-70 + (i*scale/(1<<8)) ) * (1<<8);
+GPU_SLAVE_writedata= 2;
 #4
 // Set start
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 1;
 GPU_SLAVE_writedata= 1;
-#4
-GPU_SLAVE_chipselect = 0;
-GPU_SLAVE_write = 0;
-#4
-GPU_MASTER_waitrequest = 0;
-GPU_MASTER_writeresponsevalid = 1;
 
 @(posedge rast_done)
-$display("Render %d Done", i);
+$display("Frame Clear done");
+// unSet start
+GPU_SLAVE_chipselect = 1;
+GPU_SLAVE_write = 1;
+GPU_SLAVE_address = 1;
+GPU_SLAVE_writedata= 0;
+#4
+// unSet done
+GPU_SLAVE_chipselect = 1;
+GPU_SLAVE_write = 1;
+GPU_SLAVE_address = 2;
+GPU_SLAVE_writedata= 0;
+#4
+for(int i=-5;i<5;i++) begin
+for(int j=-5;j<5;j++) begin
+	// unSet start
+	GPU_SLAVE_chipselect = 1;
+	GPU_SLAVE_write = 1;
+	GPU_SLAVE_address = 1;
+	GPU_SLAVE_writedata= 0;
+	#4
+	// unSet done
+	GPU_SLAVE_chipselect = 1;
+	GPU_SLAVE_write = 1;
+	GPU_SLAVE_address = 2;
+	GPU_SLAVE_writedata= 0;
+	#4
+	// Set mode to render
+	GPU_SLAVE_chipselect = 1;
+	GPU_SLAVE_write = 1;
+	GPU_SLAVE_address = 8;
+	GPU_SLAVE_writedata= 1;
+	#4
+	// Set scale
+	GPU_SLAVE_chipselect = 1;
+	GPU_SLAVE_write = 1;
+	GPU_SLAVE_address = 4;
+	GPU_SLAVE_writedata= scale;
+	#4
+	// Set x
+	GPU_SLAVE_chipselect = 1;
+	GPU_SLAVE_write = 1;
+	GPU_SLAVE_address = 5;
+	GPU_SLAVE_writedata = (0 + (j*scale/(1<<8)) ) * (1<<8);
+	#4
+	// Set y
+	GPU_SLAVE_chipselect = 1;
+	GPU_SLAVE_write = 1;
+	GPU_SLAVE_address = 6;
+	GPU_SLAVE_writedata = (-20) * (1<<8);
+	#4
+	// Set z
+	GPU_SLAVE_chipselect = 1;
+	GPU_SLAVE_write = 1;
+	GPU_SLAVE_address = 7;
+	GPU_SLAVE_writedata = (-70 + (i*scale/(1<<8)) ) * (1<<8);
+	#4
+	// Set start
+	GPU_SLAVE_chipselect = 1;
+	GPU_SLAVE_write = 1;
+	GPU_SLAVE_address = 1;
+	GPU_SLAVE_writedata= 1;
+	#4
+	GPU_SLAVE_chipselect = 0;
+	GPU_SLAVE_write = 0;
+	#4
+	GPU_MASTER_waitrequest = 0;
+	GPU_MASTER_writeresponsevalid = 1;
+
+	@(posedge rast_done)
+	$display("Render %d %d Done", i, j);
+end
 end
 
 f = $fopen("output.txt","wb+");
-for (i = 0; i<(480*640); i=i+1)
+for (i = 0; i<(480*640*2); i=i+1)
     $fwrite(f,"%h\n",color_data[i]);
 
 $fclose(f);
