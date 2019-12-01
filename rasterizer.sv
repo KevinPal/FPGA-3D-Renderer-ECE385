@@ -8,7 +8,7 @@ module rast_line(
     input int left_z,
     input int right_x,
     input int right_z,
-    input int top[4], // x y z bytes(r g b a)
+    input int top[4], // x y z shorts(u v)
     input int mid[4],
     input int bot[4],
     output byte rgb[3],
@@ -30,9 +30,9 @@ int top_vert[3];
 int mid_vert[3];
 int bot_vert[3];
 
-int top_rgb[3];
-int mid_rgb[3];
-int bot_rgb[3];
+int top_uv[2];
+int mid_uv[2];
+int bot_uv[2];
 
 // Normal Calc
 int bot_minus_mid[3];
@@ -66,25 +66,28 @@ vec_norm b_norm1(bot_area_raw, bot_area_norm);
 vec_norm b_norm2(mid_area_raw, mid_area_norm);
 vec_norm b_norm3(top_area_raw, top_area_norm);
 
-//RGB interpolation
-int bot_rgb_inter[3];
-int mid_rgb_inter[3];
-int top_rgb_inter[3];
-int rgb_inter_temp[3];
-int rgb_inter[3];
+//UV interpolation
+int bot_uv_inter[2];
+int mid_uv_inter[2];
+int top_uv_inter[2];
+int uv_inter_temp[2];
+int uv_inter[2];
 
-vec_mul mul_inter1(bot_rgb, bot_area, bot_rgb_inter);
-vec_mul mul_inter2(mid_rgb, mid_area, mid_rgb_inter);
-vec_mul mul_inter3(top_rgb, top_area, top_rgb_inter);
+vec2_mul mul_inter1(bot_uv, bot_area, bot_uv_inter);
+vec2_mul mul_inter2(mid_uv, mid_area, mid_uv_inter);
+vec2_mul mul_inter3(top_uv, top_area, top_uv_inter);
 
-vec_add add_inter1(bot_rgb_inter, mid_rgb_inter, rgb_inter_temp);
-vec_add add_inter2(rgb_inter_temp, top_rgb_inter, rgb_inter);
+vec2_add add_inter1(bot_uv_inter, mid_uv_inter, uv_inter_temp);
+vec2_add add_inter2(uv_inter_temp, top_uv_inter, uv_inter);
 
+// Texture lookup
+texture text(CLK, uv_inter, rgb);
 
 enum logic [5:0] {
     IDLE,
     INIT,
-    RENDERING,
+    RENDERING_CALC,
+    RENDERING_TEXT,
     DONE
 } state = IDLE, next_state;
 
@@ -94,7 +97,6 @@ always_comb begin
     z_cnt_next = z_cnt;
     dzBdx_next = dzBdx;
     next_state = state;
-    rgb = '{0, 0, 0};
     xyz = '{0, 0, 0};
     done = 0;
     output_valid = 0;
@@ -117,24 +119,23 @@ always_comb begin
     bot_vert[1] = bot[1];
     bot_vert[2] = bot[2];
 
-    top_rgb = '{top[3][31:24]*(1<<8), top[3][23:16]*(1<<8), top[3][15:8]*(1<<8)};
-    mid_rgb = '{mid[3][31:24]*(1<<8), mid[3][23:16]*(1<<8), mid[3][15:8]*(1<<8)};
-    bot_rgb = '{bot[3][31:24]*(1<<8), bot[3][23:16]*(1<<8), bot[3][15:8]*(1<<8)};
+    top_uv = '{top[3][31:16]*(1<<8), top[3][15:0]*(1<<8)};
+    mid_uv = '{mid[3][31:16]*(1<<8), mid[3][15:0]*(1<<8)};
+    bot_uv = '{bot[3][31:16]*(1<<8), bot[3][15:0]*(1<<8)};
 
-    // Repack RGB
-    rgb = '{rgb_inter[0][15:8], rgb_inter[1][15:8], rgb_inter[2][15:8]};
 
     if(state == INIT) begin
         x_cnt_next = left_x;
-	z_cnt_next = left_z;
+        z_cnt_next = left_z;
         dzBdx_next = ((right_z - left_z) * (1<<8))  / (right_x - left_x);
-    end else if(state == RENDERING) begin
+    end else if((state == RENDERING_CALC) | (state == RENDERING_TEXT)) begin
         if(cont) begin
             x_cnt_next = x_cnt + (1<<8);
             z_cnt_next = z_cnt + dzBdx;
         end
         xyz = '{x_cnt, y, z_cnt};
-        output_valid = 1;
+        if(state == RENDERING_TEXT)
+            output_valid = 1;
     end else if(state == DONE) begin
         done = 1;
     end
@@ -148,15 +149,18 @@ always_comb begin
         end
         INIT: begin
             if(~init_p)
-                next_state = RENDERING;
+                next_state = RENDERING_CALC;
             else
                 next_state = INIT;
         end
-        RENDERING: begin
+        RENDERING_CALC: begin
+            next_state = RENDERING_TEXT;
+        end
+        RENDERING_TEXT: begin
             if(x_cnt >= right_x)
                 next_state = DONE;
             else
-                next_state = RENDERING;
+                next_state = RENDERING_CALC;
         end
         DONE: begin
             if(init)

@@ -236,6 +236,10 @@ GPU_SLAVE_writedata= 0;
 #4
 for(int i=-5;i<5;i++) begin
 for(int j=-5;j<5;j++) begin
+    if(i%2 == 0)
+        continue;
+    if(j%2 == 0)
+        continue;
 	// unSet start
 	GPU_SLAVE_chipselect = 1;
 	GPU_SLAVE_write = 1;
@@ -254,6 +258,12 @@ for(int j=-5;j<5;j++) begin
 	GPU_SLAVE_address = 8;
 	GPU_SLAVE_writedata= 1;
 	#4
+	// Set block id
+	GPU_SLAVE_chipselect = 1;
+	GPU_SLAVE_write = 1;
+	GPU_SLAVE_address = 9;
+	GPU_SLAVE_writedata= $urandom_range(7,0);
+	#4
 	// Set scale
 	GPU_SLAVE_chipselect = 1;
 	GPU_SLAVE_write = 1;
@@ -270,7 +280,7 @@ for(int j=-5;j<5;j++) begin
 	GPU_SLAVE_chipselect = 1;
 	GPU_SLAVE_write = 1;
 	GPU_SLAVE_address = 6;
-	GPU_SLAVE_writedata = (-20) * (1<<8);
+	GPU_SLAVE_writedata = (0 + ((i+j)*scale/(1<<8)) ) * (1<<8);
 	#4
 	// Set z
 	GPU_SLAVE_chipselect = 1;
@@ -301,5 +311,9 @@ for (i = 0; i<(480*640*2); i=i+1)
 
 $fclose(f);
 $display("done");
+
+$system("python \\u\Desktop\385_FinalPrj\sim_files\convert.py");
+$display("done converting");
+
 end
 endmodule
