@@ -180,7 +180,7 @@ always_comb begin
                 GPU_MASTER_writedata = {8'h7F, 8'hFF, 8'hFF, 8'hFF};
                 GPU_MASTER_address = z_buffer_pointer + clear_counter*4;
             end
-            if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest) // removed writeresponsevalid
+            if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
                 clear_counter_next = clear_counter + 1;
         end
     end
