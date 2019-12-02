@@ -30,7 +30,7 @@ logic [11:0] mem[8192];
 initial
 begin
     $display("Loading texture rom");
-    $readmemb("sprite_pallet.txt", mem, 0, 8192);
+    $readmemb("sprite_pallet.txt", mem, 0, 8191);
 end
 
 always_ff @ (posedge CLK) begin

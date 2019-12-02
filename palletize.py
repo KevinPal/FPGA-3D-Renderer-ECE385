@@ -58,7 +58,7 @@ always_ff @ (posedge CLK) begin
     output_data <= mem[read_address];
 end
 endmodule
-''' % (addres_bits-1, data_bits-1, data_bits-1, num_pixels, num_pixels)
+''' % (addres_bits-1, data_bits-1, data_bits-1, num_pixels, num_pixels-1)
 
 glue = '''
 // AUTO GENERATED MODULE

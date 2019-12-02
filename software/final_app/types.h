@@ -6,7 +6,8 @@
 
 #define GPU_MODE_IDLE 0
 #define GPU_MODE_RENDER 1
-#define GPU_MODE_CLEAR 2
+#define GPU_MODE_CLEAR_FRAME 2
+#define GPU_MODE_CLEAR_DEPTH 3
 
 #define FP_SCALE (1<<8)
 
@@ -52,6 +53,7 @@ typedef struct gpu_core_t {
 	volatile int y;
 	volatile int z;
 	volatile int mode;
+	volatile int block_id;
 } gpu_core_t;
 
 

@@ -15,8 +15,8 @@
 
 
 void draw_cube(volatile gpu_core_t* gpu, int scale, int x, int y, int z) {
-	time_t start = clock();
 	gpu->mode = GPU_MODE_RENDER;
+	gpu->block_id = 2;
 	gpu->scale = scale * (FP_SCALE);
 	gpu->x = x * (FP_SCALE);
 	gpu->y = y * (FP_SCALE);
@@ -24,26 +24,39 @@ void draw_cube(volatile gpu_core_t* gpu, int scale, int x, int y, int z) {
 	gpu->done = 0;
 	gpu->start = 0;
 	gpu->start = 1;
-	printf("Render Setup ticks %d\n", clock() - start);
-	start = clock();
+	time_t start = clock();
 	while(gpu->done == 0) {
 
 	}
-	printf("Render render ticks %d\n", clock() - start);
+	printf("Render ticks %d\n", clock() - start);
 	gpu->done = 0;
 	gpu->mode = GPU_MODE_IDLE;
 
 }
 
 void clear_screen(volatile gpu_core_t* gpu, int should_wait) {
-	gpu->mode = GPU_MODE_CLEAR;
+	gpu->mode = GPU_MODE_CLEAR_FRAME;
 	gpu->done = 0;
 	gpu->start = 0;
 	gpu->start = 1;
 	//printf("start clear");
 	if(should_wait == 1) {
 		while(gpu->done == 0) {
-			usleep(1);
+		}
+	}
+	//printf("end clear");
+	//gpu->done = 0;
+	gpu->mode = GPU_MODE_IDLE;
+}
+
+void clear_depth(volatile gpu_core_t* gpu, int should_wait) {
+	gpu->mode = GPU_MODE_CLEAR_DEPTH;
+	gpu->done = 0;
+	gpu->start = 0;
+	gpu->start = 1;
+	//printf("start clear");
+	if(should_wait == 1) {
+		while(gpu->done == 0) {
 		}
 	}
 	//printf("end clear");
@@ -69,8 +82,10 @@ int main()
 
 	union frame_buffer_t* frame1 =  malloc(sizeof(frame_buffer_t));
 	union frame_buffer_t* frame2 =  malloc(sizeof(frame_buffer_t));
+	union z_buffer_t* z_buffer = malloc(sizeof(z_buffer_t));
 
 	gpu->frame_pointer = frame2;
+	gpu->z_buffer = z_buffer;
 	vga_cont->frame_pointer = frame1;
 
 	printf("Done");
@@ -78,20 +93,22 @@ int main()
 	int x = 0;
 	int y = 0;
 	clear_screen(gpu, 1);
+	clear_depth(gpu, 1);
 	printf("Initing keyboard");
-	init_keyboard();
+	//init_keyboard();
 
 	int keycode = 0;
 
 	while(1) {
 		time_t start_time = clock();
 		clear_screen(gpu, 1);
+		clear_depth(gpu, 1);
 		printf("Clear ticks %d\n", clock() - start_time);
 		start_time = clock();
 
-		//draw_cube(gpu, 2, 0, 0, -depth);
+		draw_cube(gpu, 2, 0, 0, -depth);
 		draw_cube(gpu, 12, -35+x, 30+y, -depth);
-		//draw_cube(gpu, 250, -25+x, -10+y, depth);
+		draw_cube(gpu, 25, -25+x, -10+y, -depth);
 
 		printf("Render ticks %d\n", clock() - start_time);
 		start_time = clock();
@@ -99,16 +116,16 @@ int main()
 		//printf("swaping");
 		swap_buffers();
 
-		loop_keyboard(&keycode);
-		if(keycode == 79) {
-			x += 5;
-		} else if (keycode == 80) {
-			x -= 5;
-		} else if(keycode == 82) {
-			y -= 5;
-		} else if(keycode == 81) {
-			y += 5;
-		}
+//		loop_keyboard(&keycode);
+//		if(keycode == 79) {
+//			x += 5;
+//		} else if (keycode == 80) {
+//			x -= 5;
+//		} else if(keycode == 82) {
+//			y -= 5;
+//		} else if(keycode == 81) {
+//			y += 5;
+//		}
 
 	}
 

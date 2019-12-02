@@ -94,6 +94,7 @@ always_comb begin
     z_next = z;
     clear_counter_next = clear_counter;
     mode_next = mode;
+    block_id_next = block_id;
 
     // rast defaults
     rast_start = 0;
@@ -172,14 +173,14 @@ always_comb begin
         end else if((mode == 2) | (mode == 3)) begin // Clearing
             GPU_MASTER_chipselect = 1;
             GPU_MASTER_write = 1;
-            if(mode == 2) begin // Clear frame buffer
-                GPU_MASTER_writedata = {8'h00, 8'h20, 8'h30, 8'h20};
+            if(mode == 2) begin // Clear frame buffer to 87CEEB
+                GPU_MASTER_writedata = {8'h00, 8'hEB, 8'hCE, 8'h87};
                 GPU_MASTER_address = frame_pointer + clear_counter*4;
             end else begin // Clear depth buffer
                 GPU_MASTER_writedata = {8'h7F, 8'hFF, 8'hFF, 8'hFF};
                 GPU_MASTER_address = z_buffer_pointer + clear_counter*4;
             end
-            if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
+            if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest) // removed writeresponsevalid
                 clear_counter_next = clear_counter + 1;
         end
     end
@@ -388,28 +389,6 @@ always_comb begin
         IDLE: begin
             if(start) begin
                 next_state = TOP_1;
-            end
-        end
-        BACK_1: begin
-            rast_start = 1;
-            tv1 = verticies[0];
-            tv2 = verticies[1];
-            tv3 = verticies[2];
-            frag_rgb = '{255, 0, 255};
-            if(rast_done) begin
-                rast_start = 0;
-                next_state = BACK_2;
-            end
-        end
-        BACK_2: begin
-            rast_start = 1;
-            tv1 = verticies[1];
-            tv2 = verticies[3];
-            tv3 = verticies[2];
-            frag_rgb = '{255, 0, 255};
-            if(rast_done) begin
-                rast_start = 0;
-                next_state = TOP_1; 
             end
         end
         TOP_1: begin
