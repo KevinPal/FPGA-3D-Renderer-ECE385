@@ -14,9 +14,9 @@
 
 
 
-void draw_cube(volatile gpu_core_t* gpu, int scale, int x, int y, int z) {
+void draw_cube(volatile gpu_core_t* gpu, int scale, int x, int y, int z, int block_id) {
 	gpu->mode = GPU_MODE_RENDER;
-	gpu->block_id = 2;
+	gpu->block_id = block_id;
 	gpu->scale = scale * (FP_SCALE);
 	gpu->x = x * (FP_SCALE);
 	gpu->y = y * (FP_SCALE);
@@ -84,31 +84,36 @@ int main()
 	union frame_buffer_t* frame2 =  malloc(sizeof(frame_buffer_t));
 	union z_buffer_t* z_buffer = malloc(sizeof(z_buffer_t));
 
-	gpu->frame_pointer = frame2;
+	gpu->frame_pointer = frame1;
 	gpu->z_buffer = z_buffer;
 	vga_cont->frame_pointer = frame1;
 
-	printf("Done");
+	printf("Allocation Done. Frame 1: %h, Frame2: %h, Z Buffer: %h\n", frame1, frame2, z_buffer);
 	int depth = 70;
 	int x = 0;
 	int y = 0;
 	clear_screen(gpu, 1);
 	clear_depth(gpu, 1);
-	printf("Initing keyboard");
+	printf("Done initial clear, Initing keyboard\n");
 	//init_keyboard();
 
 	int keycode = 0;
 
 	while(1) {
 		time_t start_time = clock();
-		clear_screen(gpu, 1);
 		clear_depth(gpu, 1);
+		clear_screen(gpu, 1);
 		printf("Clear ticks %d\n", clock() - start_time);
 		start_time = clock();
 
-		draw_cube(gpu, 2, 0, 0, -depth);
-		draw_cube(gpu, 12, -35+x, 30+y, -depth);
-		draw_cube(gpu, 25, -25+x, -10+y, -depth);
+		//draw_cube(gpu, 2, 0, 0, -depth);
+		for(int i=4;i>-7;i--) {
+			for(int j=4;j>-7;j--) {
+				draw_cube(gpu, 8, j*8, -20, -70 + i*8, 0);
+
+			}
+		}
+
 
 		printf("Render ticks %d\n", clock() - start_time);
 		start_time = clock();

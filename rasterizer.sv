@@ -21,6 +21,8 @@ int x_cnt, x_cnt_next;
 int z_cnt, z_cnt_next;
 int dzBdx, dzBdx_next; // dz by dx
 
+int right_x_latch, right_x_latch_next;
+
 logic init_p;
 
 pos_edge_detect pos_detect(CLK, RESET, init, init_p);
@@ -87,6 +89,7 @@ enum logic [5:0] {
     IDLE,
     INIT,
     RENDERING_CALC,
+    RENDERING_SLEEP,
     RENDERING_TEXT,
     DONE
 } state = IDLE, next_state;
@@ -100,6 +103,7 @@ always_comb begin
     xyz = '{0, 0, 0};
     done = 0;
     output_valid = 0;
+    right_x_latch_next = right_x_latch;
 
     // barycentric finish
     bot_area = (bot_area_norm * (1<<8))/ area;
@@ -125,20 +129,14 @@ always_comb begin
 
 
     if(state == INIT) begin
+        right_x_latch_next = right_x;
         x_cnt_next = left_x;
         z_cnt_next = left_z;
         dzBdx_next = ((right_z - left_z) * (1<<8))  / (right_x - left_x);
-    end else if((state == RENDERING_CALC) | (state == RENDERING_TEXT)) begin
-        if(cont) begin
-            x_cnt_next = x_cnt + (1<<8);
-            z_cnt_next = z_cnt + dzBdx;
-        end
-        xyz = '{x_cnt, y, z_cnt};
-        if(state == RENDERING_TEXT)
-            output_valid = 1;
     end else if(state == DONE) begin
         done = 1;
     end
+    xyz = '{x_cnt, y, z_cnt};
 
     unique case(state)
         IDLE: begin
@@ -154,13 +152,23 @@ always_comb begin
                 next_state = INIT;
         end
         RENDERING_CALC: begin
+            next_state = RENDERING_SLEEP;
+        end
+        RENDERING_SLEEP: begin
             next_state = RENDERING_TEXT;
+            output_valid = 1;
         end
         RENDERING_TEXT: begin
-            if(x_cnt >= right_x)
+            output_valid = 1;
+            if(((x_cnt >= right_x_latch) || (x_cnt >= (640*(1<<8)))) & cont)
                 next_state = DONE;
-            else
+            else if(cont) begin
                 next_state = RENDERING_CALC;
+                x_cnt_next = x_cnt + (1<<8);
+                z_cnt_next = z_cnt + dzBdx;
+            end else begin
+
+            end
         end
         DONE: begin
             if(init)
@@ -181,11 +189,13 @@ always_ff @ (posedge CLK) begin
         z_cnt <= 0;
         dzBdx <= 0;
         state <= IDLE;
+        right_x_latch <= 0;
     end else begin
         x_cnt <= x_cnt_next;
         z_cnt <= z_cnt_next;
         dzBdx <= dzBdx_next;
         state <= next_state;
+        right_x_latch <= right_x_latch_next;
     end
 
 end
@@ -350,7 +360,6 @@ always_comb begin
             rast_left_z = e3_pos[2];
             rast_right_z = e1_pos[2];
         end
-        //TODO  Draw line from x_min to x_max, and lerp z, and y=y_cnt
         if(line_done) begin
             e1_step = 1;
             e3_step = 1;
@@ -374,7 +383,6 @@ always_comb begin
             rast_left_z = e3_pos[2];
             rast_right_z = e2_pos[2];
         end
-        //TODO  Draw line from x_min to x_max, and lerp z, and y=y_cnt
         if(line_done) begin
             e2_step = 1;
             e3_step = 1;
