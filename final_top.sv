@@ -76,15 +76,14 @@ final_soc final_subsystem (
 	.sdram_wire_ras_n(DRAM_RAS_N),				// sdram.ras_n
 	.sdram_wire_we_n(DRAM_WE_N),					// sdram.we_n
 	.sdram_clk_clk(DRAM_CLK),						// Clock out to SDRAM
-    .vga_b_vga_b(VGA_B),             //       vga_b.vga_b
-    .vga_blank_n_vga_blank_n(VGA_BLANK_N), // vga_blank_n.vga_blank_n
-    .vga_clk_clk(VGA_CLK_CLK),             //     vga_clk.clk
-    .vga_g_vga_g(VGA_G),             //       vga_g.vga_g
-    .vga_hs_vga_hs(VGA_HS),           //      vga_hs.vga_hs
-    .vga_r_vga_r(VGA_R),             //       vga_r.vga_r
-    .vga_sync_n_vga_sync_n(VGA_SYNC_N),   //  vga_sync_n.vga_sync_n
-    .vga_vs_vga_vs(VGA_VS),            //      vga_vs.vga_vs
-    .debug_debug(debug),
+    .vga_B(VGA_B),             //       vga_b.vga_b
+    .vga_BLANK(VGA_BLANK_N), // vga_blank_n.vga_blank_n
+    .vga_CLK(VGA_CLK_CLK),             //     vga_clk.clk
+    .vga_G(VGA_G),             //       vga_g.vga_g
+    .vga_HS(VGA_HS),           //      vga_hs.vga_hs
+    .vga_R(VGA_R),             //       vga_r.vga_r
+    .vga_SYNC(VGA_SYNC_N),   //  vga_sync_n.vga_sync_n
+    .vga_VS(VGA_VS),            //      vga_vs.vga_vs
     .keycode_export(keycode),  
     .otg_hpi_address_export(hpi_addr),
     .otg_hpi_data_in_port(hpi_data_in),

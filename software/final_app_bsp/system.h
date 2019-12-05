@@ -4,7 +4,7 @@
  * Machine generated for CPU 'NIOS2' in SOPC Builder design 'final_soc'
  * SOPC Builder design path: ../../final_soc.sopcinfo
  *
- * Generated: Sun Nov 24 01:16:57 PST 2019
+ * Generated: Mon Dec 02 20:40:59 CST 2019
  */
 
 /*
@@ -62,7 +62,7 @@
 
 #define ALT_CPU_ARCHITECTURE "altera_nios2_gen2"
 #define ALT_CPU_BIG_ENDIAN 0
-#define ALT_CPU_BREAK_ADDR 0x08002820
+#define ALT_CPU_BREAK_ADDR 0x08082820
 #define ALT_CPU_CPU_ARCH_NIOS2_R1
 #define ALT_CPU_CPU_FREQ 50000000u
 #define ALT_CPU_CPU_ID_SIZE 1
@@ -99,7 +99,7 @@
  */
 
 #define NIOS2_BIG_ENDIAN 0
-#define NIOS2_BREAK_ADDR 0x08002820
+#define NIOS2_BREAK_ADDR 0x08082820
 #define NIOS2_CPU_ARCH_NIOS2_R1
 #define NIOS2_CPU_FREQ 50000000u
 #define NIOS2_CPU_ID_SIZE 1
@@ -135,12 +135,14 @@
 
 #define __ALTERA_AVALON_JTAG_UART
 #define __ALTERA_AVALON_NEW_SDRAM_CONTROLLER
+#define __ALTERA_AVALON_ONCHIP_MEMORY2
 #define __ALTERA_AVALON_PIO
 #define __ALTERA_AVALON_TIMER
 #define __ALTERA_NIOS2_GEN2
+#define __ALTERA_UP_AVALON_VIDEO_PIXEL_BUFFER_DMA
+#define __ALTERA_UP_AVALON_VIDEO_RGB_RESAMPLER
 #define __ALTPLL
 #define __GPU_CORE
-#define __VGA_CONTROLLER
 
 
 /*
@@ -149,7 +151,7 @@
  */
 
 #define ALT_MODULE_CLASS_GPU_CORE_0 GPU_CORE
-#define GPU_CORE_0_BASE 0x8000000
+#define GPU_CORE_0_BASE 0x8080000
 #define GPU_CORE_0_IRQ -1
 #define GPU_CORE_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define GPU_CORE_0_NAME "/dev/GPU_CORE_0"
@@ -163,7 +165,7 @@
  */
 
 #define ALT_MODULE_CLASS_PLL altpll
-#define PLL_BASE 0x8003090
+#define PLL_BASE 0x80830a0
 #define PLL_IRQ -1
 #define PLL_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PLL_NAME "/dev/PLL"
@@ -226,7 +228,7 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart_0"
-#define ALT_STDERR_BASE 0x80030b0
+#define ALT_STDERR_BASE 0x80830b0
 #define ALT_STDERR_DEV jtag_uart_0
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
@@ -236,7 +238,7 @@
 #define ALT_STDIN_DEV null
 #define ALT_STDIN_TYPE ""
 #define ALT_STDOUT "/dev/jtag_uart_0"
-#define ALT_STDOUT_BASE 0x80030b0
+#define ALT_STDOUT_BASE 0x80830b0
 #define ALT_STDOUT_DEV jtag_uart_0
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -245,17 +247,32 @@
 
 
 /*
- * VGA_Controller_0 configuration
+ * frame_buffer configuration
  *
  */
 
-#define ALT_MODULE_CLASS_VGA_Controller_0 VGA_Controller
-#define VGA_CONTROLLER_0_BASE 0x80030a0
-#define VGA_CONTROLLER_0_IRQ -1
-#define VGA_CONTROLLER_0_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define VGA_CONTROLLER_0_NAME "/dev/VGA_Controller_0"
-#define VGA_CONTROLLER_0_SPAN 16
-#define VGA_CONTROLLER_0_TYPE "VGA_Controller"
+#define ALT_MODULE_CLASS_frame_buffer altera_avalon_onchip_memory2
+#define FRAME_BUFFER_ALLOW_IN_SYSTEM_MEMORY_CONTENT_EDITOR 0
+#define FRAME_BUFFER_ALLOW_MRAM_SIM_CONTENTS_ONLY_FILE 0
+#define FRAME_BUFFER_BASE 0x8000000
+#define FRAME_BUFFER_CONTENTS_INFO ""
+#define FRAME_BUFFER_DUAL_PORT 1
+#define FRAME_BUFFER_GUI_RAM_BLOCK_TYPE "AUTO"
+#define FRAME_BUFFER_INIT_CONTENTS_FILE "final_soc_frame_buffer"
+#define FRAME_BUFFER_INIT_MEM_CONTENT 0
+#define FRAME_BUFFER_INSTANCE_ID "NONE"
+#define FRAME_BUFFER_IRQ -1
+#define FRAME_BUFFER_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define FRAME_BUFFER_NAME "/dev/frame_buffer"
+#define FRAME_BUFFER_NON_DEFAULT_INIT_FILE_ENABLED 0
+#define FRAME_BUFFER_RAM_BLOCK_TYPE "AUTO"
+#define FRAME_BUFFER_READ_DURING_WRITE_MODE "DONT_CARE"
+#define FRAME_BUFFER_SINGLE_CLOCK_OP 0
+#define FRAME_BUFFER_SIZE_MULTIPLE 1
+#define FRAME_BUFFER_SIZE_VALUE 307200
+#define FRAME_BUFFER_SPAN 307200
+#define FRAME_BUFFER_TYPE "altera_avalon_onchip_memory2"
+#define FRAME_BUFFER_WRITABLE 1
 
 
 /*
@@ -275,7 +292,7 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart_0 altera_avalon_jtag_uart
-#define JTAG_UART_0_BASE 0x80030b0
+#define JTAG_UART_0_BASE 0x80830b0
 #define JTAG_UART_0_IRQ 0
 #define JTAG_UART_0_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_0_NAME "/dev/jtag_uart_0"
@@ -293,7 +310,7 @@
  */
 
 #define ALT_MODULE_CLASS_keycode altera_avalon_pio
-#define KEYCODE_BASE 0x8003080
+#define KEYCODE_BASE 0x8083090
 #define KEYCODE_BIT_CLEARING_EDGE_REGISTER 0
 #define KEYCODE_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define KEYCODE_CAPTURE 0
@@ -320,7 +337,7 @@
  */
 
 #define ALT_MODULE_CLASS_otg_hpi_address altera_avalon_pio
-#define OTG_HPI_ADDRESS_BASE 0x8003070
+#define OTG_HPI_ADDRESS_BASE 0x8083080
 #define OTG_HPI_ADDRESS_BIT_CLEARING_EDGE_REGISTER 0
 #define OTG_HPI_ADDRESS_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define OTG_HPI_ADDRESS_CAPTURE 0
@@ -347,7 +364,7 @@
  */
 
 #define ALT_MODULE_CLASS_otg_hpi_cs altera_avalon_pio
-#define OTG_HPI_CS_BASE 0x8003030
+#define OTG_HPI_CS_BASE 0x8083040
 #define OTG_HPI_CS_BIT_CLEARING_EDGE_REGISTER 0
 #define OTG_HPI_CS_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define OTG_HPI_CS_CAPTURE 0
@@ -374,7 +391,7 @@
  */
 
 #define ALT_MODULE_CLASS_otg_hpi_data altera_avalon_pio
-#define OTG_HPI_DATA_BASE 0x8003060
+#define OTG_HPI_DATA_BASE 0x8083070
 #define OTG_HPI_DATA_BIT_CLEARING_EDGE_REGISTER 0
 #define OTG_HPI_DATA_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define OTG_HPI_DATA_CAPTURE 0
@@ -401,7 +418,7 @@
  */
 
 #define ALT_MODULE_CLASS_otg_hpi_r altera_avalon_pio
-#define OTG_HPI_R_BASE 0x8003050
+#define OTG_HPI_R_BASE 0x8083060
 #define OTG_HPI_R_BIT_CLEARING_EDGE_REGISTER 0
 #define OTG_HPI_R_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define OTG_HPI_R_CAPTURE 0
@@ -428,7 +445,7 @@
  */
 
 #define ALT_MODULE_CLASS_otg_hpi_reset altera_avalon_pio
-#define OTG_HPI_RESET_BASE 0x8003020
+#define OTG_HPI_RESET_BASE 0x8083030
 #define OTG_HPI_RESET_BIT_CLEARING_EDGE_REGISTER 0
 #define OTG_HPI_RESET_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define OTG_HPI_RESET_CAPTURE 0
@@ -455,7 +472,7 @@
  */
 
 #define ALT_MODULE_CLASS_otg_hpi_w altera_avalon_pio
-#define OTG_HPI_W_BASE 0x8003040
+#define OTG_HPI_W_BASE 0x8083050
 #define OTG_HPI_W_BIT_CLEARING_EDGE_REGISTER 0
 #define OTG_HPI_W_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define OTG_HPI_W_CAPTURE 0
@@ -477,13 +494,27 @@
 
 
 /*
+ * pixel_dma configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_pixel_dma altera_up_avalon_video_pixel_buffer_dma
+#define PIXEL_DMA_BASE 0x8083020
+#define PIXEL_DMA_IRQ -1
+#define PIXEL_DMA_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define PIXEL_DMA_NAME "/dev/pixel_dma"
+#define PIXEL_DMA_SPAN 16
+#define PIXEL_DMA_TYPE "altera_up_avalon_video_pixel_buffer_dma"
+
+
+/*
  * timer_0 configuration
  *
  */
 
 #define ALT_MODULE_CLASS_timer_0 altera_avalon_timer
 #define TIMER_0_ALWAYS_RUN 0
-#define TIMER_0_BASE 0x8003000
+#define TIMER_0_BASE 0x8083000
 #define TIMER_0_COUNTER_SIZE 32
 #define TIMER_0_FIXED_PERIOD 0
 #define TIMER_0_FREQ 50000000
@@ -500,5 +531,19 @@
 #define TIMER_0_TICKS_PER_SEC 1000
 #define TIMER_0_TIMEOUT_PULSE_OUTPUT 0
 #define TIMER_0_TYPE "altera_avalon_timer"
+
+
+/*
+ * video_rgb_resampler_0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_video_rgb_resampler_0 altera_up_avalon_video_rgb_resampler
+#define VIDEO_RGB_RESAMPLER_0_BASE 0x80830bc
+#define VIDEO_RGB_RESAMPLER_0_IRQ -1
+#define VIDEO_RGB_RESAMPLER_0_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define VIDEO_RGB_RESAMPLER_0_NAME "/dev/video_rgb_resampler_0"
+#define VIDEO_RGB_RESAMPLER_0_SPAN 4
+#define VIDEO_RGB_RESAMPLER_0_TYPE "altera_up_avalon_video_rgb_resampler"
 
 #endif /* __SYSTEM_H_ */

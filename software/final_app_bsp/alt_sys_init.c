@@ -4,7 +4,7 @@
  * Machine generated for CPU 'NIOS2' in SOPC Builder design 'final_soc'
  * SOPC Builder design path: ../../final_soc.sopcinfo
  *
- * Generated: Sun Nov 24 01:16:57 PST 2019
+ * Generated: Mon Dec 02 20:40:59 CST 2019
  */
 
 /*
@@ -61,6 +61,8 @@
 #include "altera_nios2_gen2_irq.h"
 #include "altera_avalon_jtag_uart.h"
 #include "altera_avalon_timer.h"
+#include "altera_up_avalon_video_pixel_buffer_dma.h"
+#include "altera_up_avalon_video_rgb_resampler.h"
 
 /*
  * Allocate the device storage
@@ -69,6 +71,8 @@
 ALTERA_NIOS2_GEN2_IRQ_INSTANCE ( NIOS2, NIOS2);
 ALTERA_AVALON_JTAG_UART_INSTANCE ( JTAG_UART_0, jtag_uart_0);
 ALTERA_AVALON_TIMER_INSTANCE ( TIMER_0, timer_0);
+ALTERA_UP_AVALON_VIDEO_PIXEL_BUFFER_DMA_INSTANCE ( PIXEL_DMA, pixel_dma);
+ALTERA_UP_AVALON_VIDEO_RGB_RESAMPLER_INSTANCE ( VIDEO_RGB_RESAMPLER_0, video_rgb_resampler_0);
 
 /*
  * Initialize the interrupt controller devices
@@ -93,4 +97,6 @@ void alt_sys_init( void )
 {
     ALTERA_AVALON_TIMER_INIT ( TIMER_0, timer_0);
     ALTERA_AVALON_JTAG_UART_INIT ( JTAG_UART_0, jtag_uart_0);
+    ALTERA_UP_AVALON_VIDEO_PIXEL_BUFFER_DMA_INIT ( PIXEL_DMA, pixel_dma);
+    ALTERA_UP_AVALON_VIDEO_RGB_RESAMPLER_INIT ( VIDEO_RGB_RESAMPLER_0, video_rgb_resampler_0);
 }

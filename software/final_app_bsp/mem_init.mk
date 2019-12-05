@@ -189,6 +189,28 @@ $(MEM_0)_CREATE_LANES := 0
 .PHONY: SDRAM
 SDRAM: check_elf_exists $(HDL_SIM_DIR)/$(MEM_0).dat $(HDL_SIM_DIR)/$(MEM_0).sym
 
+# Memory: frame_buffer
+MEM_1 := final_soc_frame_buffer
+$(MEM_1)_NAME := frame_buffer
+$(MEM_1)_MEM_INIT_FILE_PARAM_NAME := INIT_FILE
+HEX_FILES += $(MEM_INIT_DIR)/$(MEM_1).hex
+MEM_INIT_INSTALL_FILES += $(MEM_INIT_INSTALL_DIR)/$(MEM_1).hex
+DAT_FILES += $(HDL_SIM_DIR)/$(MEM_1).dat
+HDL_SIM_INSTALL_FILES += $(HDL_SIM_INSTALL_DIR)/$(MEM_1).dat
+SYM_FILES += $(HDL_SIM_DIR)/$(MEM_1).sym
+HDL_SIM_INSTALL_FILES += $(HDL_SIM_INSTALL_DIR)/$(MEM_1).sym
+$(MEM_1)_START := 0x08000000
+$(MEM_1)_END := 0x0804afff
+$(MEM_1)_SPAN := 0x0004b000
+$(MEM_1)_HIERARCHICAL_PATH := frame_buffer
+$(MEM_1)_WIDTH := 32
+$(MEM_1)_HEX_DATA_WIDTH := 32
+$(MEM_1)_ENDIANNESS := --little-endian-mem
+$(MEM_1)_CREATE_LANES := 0
+
+.PHONY: frame_buffer
+frame_buffer: check_elf_exists $(MEM_INIT_DIR)/$(MEM_1).hex $(HDL_SIM_DIR)/$(MEM_1).dat $(HDL_SIM_DIR)/$(MEM_1).sym
+
 
 #END OF BSP SPECIFIC
 

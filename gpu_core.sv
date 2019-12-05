@@ -73,13 +73,13 @@ enum logic [5:0] {
 always_comb begin
 
     //default slave
-    GPU_SLAVE_readdata = 32'hzzzz;
+    GPU_SLAVE_readdata = 32'hzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
     //default master
-    GPU_MASTER_address = 32'hzzzz;
+    GPU_MASTER_address = 32'hzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
     GPU_MASTER_read = 0;
     GPU_MASTER_chipselect = 0;
     GPU_MASTER_write = 0;
-    GPU_MASTER_writedata = 32'hzzzz;
+    GPU_MASTER_writedata = 32'hzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
     //GPU_MASTER_burstcount = 19'hzzzz;
     //'next' defaults
     frame_pointer_next = frame_pointer;
@@ -142,10 +142,10 @@ always_comb begin
                 GPU_MASTER_chipselect = 1;
                 if(rast_state == Z_READ) begin // Check depth buffer and frame bounds
                     GPU_MASTER_read = 1;
-                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
+                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*320) + (rast_xyz[0]/(1<<8)))*4);
 
                     if(GPU_MASTER_readdatavalid & ~GPU_MASTER_waitrequest) begin
-                        if((GPU_MASTER_readdata > rast_xyz[2]) & (rast_xyz[0] > 0) & (rast_xyz[0] < (640*(1<<8))) & (rast_xyz[1] > 0) & (rast_xyz[1] < (480*(1<<8)))) begin
+                        if((GPU_MASTER_readdata > rast_xyz[2]) & (rast_xyz[0] > 0) & (rast_xyz[0] < (320*(1<<8))) & (rast_xyz[1] > 0) & (rast_xyz[1] < (240*(1<<8)))) begin
                             rast_next_state = RGB_WRITE;
                         end else begin
                             rast_cont = 1; // Skip pixel
@@ -155,15 +155,15 @@ always_comb begin
 
                 end else if(rast_state == RGB_WRITE) begin // Write rgb to frame buffer
                     GPU_MASTER_write = 1;
-                    GPU_MASTER_writedata = {2'h00, rast_rgb[2], rast_rgb[1], rast_rgb[0]};
-                    GPU_MASTER_address = frame_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
+                    GPU_MASTER_writedata = {8'h00, rast_rgb[0], rast_rgb[1], rast_rgb[2]};
+                    GPU_MASTER_address = frame_pointer + (( ((rast_xyz[1]/(1<<8))*320) + (rast_xyz[0]/(1<<8)))*4);
                     if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
                         rast_next_state = Z_WRITE;
 
                 end else if(rast_state == Z_WRITE) begin // Write z to depth buffer
                     GPU_MASTER_write = 1;
                     GPU_MASTER_writedata = rast_xyz[2];
-                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*640) + (rast_xyz[0]/(1<<8)))*4);
+                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*320) + (rast_xyz[0]/(1<<8)))*4);
                     if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest) begin
                         rast_next_state = Z_READ;
                         rast_cont = 1;
@@ -174,7 +174,7 @@ always_comb begin
             GPU_MASTER_chipselect = 1;
             GPU_MASTER_write = 1;
             if(mode == 2) begin // Clear frame buffer to 87CEEB
-                GPU_MASTER_writedata = {8'h00, 8'hEB, 8'hCE, 8'h87};
+                GPU_MASTER_writedata = {8'h00, 8'h87, 8'hCE, 8'hEB};
                 GPU_MASTER_address = frame_pointer + clear_counter*4;
             end else begin // Clear depth buffer
                 GPU_MASTER_writedata = {8'h7F, 8'hFF, 8'hFF, 8'hFF};
@@ -208,7 +208,7 @@ always_comb begin
                     next_state = DONE;
                 end
             end else if((mode == 2) | (mode == 3)) begin //clear
-                if(clear_counter > (640 * 480)) begin
+                if(clear_counter > (320 * 240)) begin
                     next_state = DONE;
                     done_next = 1;
                 end
@@ -281,6 +281,10 @@ module rast_cube(
 
 enum logic [5:0] {
     IDLE,
+    PROJECTING_1,
+    PROJECTING_2,
+    PROJECTING_3,
+    PROJECTING_4,
     TOP_1, TOP_2,
     BOT_1, BOT_2,
     FRONT_1, FRONT_2,
@@ -302,11 +306,12 @@ enum logic [5:0] {
 //7 -> front_bot_right
 int verticies[8][3];
 int face_uv[6][4][4];
+int face_uv_next[6][4][4];
 
 int test_scale = 16 * (1<<8);
 int test_vec[3] = '{15 * (1<<8), 0 * (1<<8) ,  -70* (1<<8)};
 
-project_cube projector(scale, pos, prj, verticies);
+project_cube projector(CLK, RESET, scale, pos, prj, verticies);
 
 // Rasterization variables
 logic rast_done;
@@ -349,47 +354,63 @@ always_comb begin
     // face 3 => left
     // face 4 => right
     // face 5 => front
-
+    if(state == PROJECTING_4) begin
     // Group into faces and append UV
     //
     // top
-    face_uv[0][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd00 + offset, 16'd00}}; // back_top_left
-    face_uv[0][1] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd15 + offset, 16'd00}}; // back_top_right
-    face_uv[0][2] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd00 + offset, 16'd15}}; // front_top_left
-    face_uv[0][3] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd15 + offset, 16'd15}}; // front_top_right
+    face_uv_next[0][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd00 + offset, 16'd00}}; // back_top_left
+    face_uv_next[0][1] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd15 + offset, 16'd00}}; // back_top_right
+    face_uv_next[0][2] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd00 + offset, 16'd15}}; // front_top_left
+    face_uv_next[0][3] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd15 + offset, 16'd15}}; // front_top_right
     // bot
-    face_uv[1][0] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd00}}; // back_bot_left
-    face_uv[1][1] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd31 + offset, 16'd00}}; // back_bot_right
-    face_uv[1][2] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd16 + offset, 16'd15}}; // front_bot_left
-    face_uv[1][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd31 + offset, 16'd15}}; // front_bot_right
+    face_uv_next[1][0] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd00}}; // back_bot_left
+    face_uv_next[1][1] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd31 + offset, 16'd00}}; // back_bot_right
+    face_uv_next[1][2] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd16 + offset, 16'd15}}; // front_bot_left
+    face_uv_next[1][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd31 + offset, 16'd15}}; // front_bot_right
     // back
-    face_uv[2][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd16 + offset, 16'd16}}; // back_top_left
-    face_uv[2][1] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd31 + offset, 16'd16}}; // back_top_right
-    face_uv[2][2] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd31}}; // back_bot_left
-    face_uv[2][3] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd31 + offset, 16'd31}}; // back_bot_right
+    face_uv_next[2][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd16 + offset, 16'd16}}; // back_top_left
+    face_uv_next[2][1] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd31 + offset, 16'd16}}; // back_top_right
+    face_uv_next[2][2] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd31}}; // back_bot_left
+    face_uv_next[2][3] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd31 + offset, 16'd31}}; // back_bot_right
     // left
-    face_uv[3][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd16 + offset, 16'd16}}; // back_top_left
-    face_uv[3][1] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd31}}; // back_bot_left
-    face_uv[3][2] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd31 + offset, 16'd16}}; // front_top_left
-    face_uv[3][3] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd31 + offset, 16'd31}}; // front_bot_left
+    face_uv_next[3][0] = '{verticies[0][0], verticies[0][1], verticies[0][2], {16'd16 + offset, 16'd16}}; // back_top_left
+    face_uv_next[3][1] = '{verticies[2][0], verticies[2][1], verticies[2][2], {16'd16 + offset, 16'd31}}; // back_bot_left
+    face_uv_next[3][2] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd31 + offset, 16'd16}}; // front_top_left
+    face_uv_next[3][3] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd31 + offset, 16'd31}}; // front_bot_left
     // right
-    face_uv[4][0] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd16 + offset, 16'd16}}; // back_top_right
-    face_uv[4][1] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd16 + offset, 16'd31}}; // back_bot_right
-    face_uv[4][2] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd31 + offset, 16'd16}}; // front_top_right
-    face_uv[4][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd31 + offset, 16'd31}}; // front_bot_right
+    face_uv_next[4][0] = '{verticies[1][0], verticies[1][1], verticies[1][2], {16'd16 + offset, 16'd16}}; // back_top_right
+    face_uv_next[4][1] = '{verticies[3][0], verticies[3][1], verticies[3][2], {16'd16 + offset, 16'd31}}; // back_bot_right
+    face_uv_next[4][2] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd31 + offset, 16'd16}}; // front_top_right
+    face_uv_next[4][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd31 + offset, 16'd31}}; // front_bot_right
     // front
-    face_uv[5][0] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd00 + offset, 16'd16}}; // front_top_left
-    face_uv[5][1] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd15 + offset, 16'd16}}; // front_top_right
-    face_uv[5][2] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd00 + offset, 16'd31}}; // front_bot_left
-    face_uv[5][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd15 + offset, 16'd31}}; // front_bot_right
+    face_uv_next[5][0] = '{verticies[4][0], verticies[4][1], verticies[4][2], {16'd00 + offset, 16'd16}}; // front_top_left
+    face_uv_next[5][1] = '{verticies[5][0], verticies[5][1], verticies[5][2], {16'd15 + offset, 16'd16}}; // front_top_right
+    face_uv_next[5][2] = '{verticies[6][0], verticies[6][1], verticies[6][2], {16'd00 + offset, 16'd31}}; // front_bot_left
+    face_uv_next[5][3] = '{verticies[7][0], verticies[7][1], verticies[7][2], {16'd15 + offset, 16'd31}}; // front_bot_right
+
+    end else begin
+        face_uv_next = face_uv;
+    end
 
 
     // state logic
     unique case(state)
         IDLE: begin
             if(start) begin
-                next_state = TOP_1;
+                next_state = PROJECTING_1;
             end
+        end
+        PROJECTING_1: begin
+            next_state = PROJECTING_2;
+        end
+        PROJECTING_2: begin
+            next_state = PROJECTING_3;
+        end
+        PROJECTING_3: begin
+            next_state = PROJECTING_4;
+        end
+        PROJECTING_4: begin
+            next_state = TOP_1;
         end
         TOP_1: begin
             rast_start = 1;
@@ -524,6 +545,7 @@ always_ff @ (posedge CLK) begin
         state <= IDLE;
     end else begin
         state <= next_state;
+        face_uv <= face_uv_next;
     end
 end
 
@@ -531,11 +553,14 @@ endmodule
 
 // TODO make sequencial
 module project_cube(
+    input logic CLK,
+    input logic RESET,
     input int scale,
     input int pos[3],
     input int prj[4][4],
     output int out[8][3]
 );
+
 
 // 8 vertex locations
 int back_top_left[4];
@@ -549,14 +574,21 @@ int front_bot_right[4];
 
 int all_verticies[8][4];
 int prj_vert[8][4];
+int prj_vert_next[8][4];
 int screen_verts[8][3];
+int screen_verts_next[8][3];
 
 assign all_verticies = '{back_top_left, back_top_right, back_bot_left, back_bot_right, front_top_left, front_top_right, front_bot_left, front_bot_right};
 
-mat_vec_mul projectors[8](.m1(prj), .vec(all_verticies), .out(prj_vert));
-viewport_trans view_transformers[8](.vec(prj_vert), .out(screen_verts));
+mat_vec_mul projectors[8](.m1(prj), .vec(all_verticies), .out(prj_vert_next));
+viewport_trans view_transformers[8](.CLK, .RESET, .vec(prj_vert), .out(screen_verts_next));
 
 assign out = screen_verts;
+
+always_ff @ (posedge CLK) begin
+    prj_vert <= prj_vert_next;
+    screen_verts <= screen_verts_next;
+end
 
 always_comb begin
     // Start at position
@@ -620,21 +652,31 @@ end
 endmodule
 
 module viewport_trans(
+    input logic CLK,
+    input logic RESET,
     input int vec[4],
     output int out[3]
 );
 
 int pers_div[3];
+int pers_div_next[3];
 
 always_comb begin
     // Persepective divide
-    pers_div[0] = (vec[0]*(1<<8)) / vec[3];
-    pers_div[1] = (vec[1]*(1<<8)) / vec[3];
-    pers_div[2] = (vec[2]*(1<<8)) / vec[3];
+    pers_div_next[0] = (vec[0]*(1<<8)) / vec[3];
+    pers_div_next[1] = (vec[1]*(1<<8)) / vec[3];
+    pers_div_next[2] = (vec[2]*(1<<8)) / vec[3];
     // Viewport transform
-    out[0] = pers_div[0] + ((((1*(1<<8)) + pers_div[0])*(320*(1<<8)))/(1<<8));
-    out[1] = pers_div[1] + ((((1*(1<<8)) - pers_div[1])*(240*(1<<8)))/(1<<8));
+    out[0] = pers_div[0] + ((((1*(1<<8)) + pers_div[0])*(160*(1<<8)))/(1<<8));
+    out[1] = pers_div[1] + ((((1*(1<<8)) - pers_div[1])*(120*(1<<8)))/(1<<8));
     out[2] = pers_div[2];
+end
+
+always_ff @ (posedge CLK) begin
+    if(RESET)
+        pers_div <= '{0, 0, 0};
+    else
+        pers_div <= pers_div_next;
 end
 
 endmodule

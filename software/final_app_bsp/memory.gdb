@@ -3,7 +3,7 @@
 # Machine generated for CPU 'NIOS2' in SOPC Builder design 'final_soc'
 # SOPC Builder design path: ../../final_soc.sopcinfo
 #
-# Generated: Sun Nov 24 01:16:57 PST 2019
+# Generated: Mon Dec 02 20:40:59 CST 2019
 
 # DO NOT MODIFY THIS FILE
 #
@@ -48,3 +48,6 @@
 
 # SDRAM
 memory 0x0 0x8000000 cache
+
+# frame_buffer
+memory 0x8000000 0x804b000 cache

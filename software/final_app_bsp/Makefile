@@ -269,6 +269,20 @@ altera_nios2_gen2_hal_driver_ASM_LIB_SRCS := \
 	$(altera_nios2_gen2_hal_driver_SRCS_ROOT)/src/alt_log_macro.S \
 	$(altera_nios2_gen2_hal_driver_SRCS_ROOT)/src/crt0.S
 
+# altera_up_avalon_video_rgb_resampler_driver sources root 
+altera_up_avalon_video_rgb_resampler_driver_SRCS_ROOT := drivers
+
+# altera_up_avalon_video_rgb_resampler_driver sources 
+altera_up_avalon_video_rgb_resampler_driver_C_LIB_SRCS := \
+	$(altera_up_avalon_video_rgb_resampler_driver_SRCS_ROOT)/src/altera_up_avalon_video_rgb_resampler.c
+
+# avalon_video_pixel_buffer_dma_driver sources root 
+avalon_video_pixel_buffer_dma_driver_SRCS_ROOT := drivers
+
+# avalon_video_pixel_buffer_dma_driver sources 
+avalon_video_pixel_buffer_dma_driver_C_LIB_SRCS := \
+	$(avalon_video_pixel_buffer_dma_driver_SRCS_ROOT)/src/altera_up_avalon_video_pixel_buffer_dma.c
+
 # hal sources root 
 hal_SRCS_ROOT := HAL
 
@@ -334,6 +348,8 @@ COMPONENT_C_LIB_SRCS += \
 	$(altera_avalon_jtag_uart_driver_C_LIB_SRCS) \
 	$(altera_avalon_timer_driver_C_LIB_SRCS) \
 	$(altera_nios2_gen2_hal_driver_C_LIB_SRCS) \
+	$(altera_up_avalon_video_rgb_resampler_driver_C_LIB_SRCS) \
+	$(avalon_video_pixel_buffer_dma_driver_C_LIB_SRCS) \
 	$(hal_C_LIB_SRCS)
 
 # Assemble all component assembly source files 
