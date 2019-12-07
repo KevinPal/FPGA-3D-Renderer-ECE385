@@ -51,6 +51,39 @@ assign out[3][3] = 1 * (1<<8);
 
 endmodule
 
+module gen_camera_mat(
+    input int x_axis[3],
+    input int y_axis[3],
+    input int z_axis[3],
+    input int camera_pos[3],
+    output int out[4][4]
+);
+
+int dot_pos[3];
+
+vec_dot dot1(x_axis, camera_pos, dot_pos[0]);
+vec_dot dot2(y_axis, camera_pos, dot_pos[1]);
+vec_dot dot3(z_axis, camera_pos, dot_pos[2]);
+
+assign out[0][0] = x_axis[0];
+assign out[0][1] = y_axis[0];
+assign out[0][2] = z_axis[0];
+assign out[0][3] = 0;
+assign out[1][0] = x_axis[1];
+assign out[1][1] = y_axis[1];
+assign out[1][2] = z_axis[1];
+assign out[1][3] = 0;
+assign out[2][0] = x_axis[2];
+assign out[2][1] = y_axis[2];
+assign out[2][2] = z_axis[2];
+assign out[2][3] = 0;
+assign out[3][0] = dot_pos[0];
+assign out[3][1] = dot_pos[1];
+assign out[3][2] = dot_pos[2];
+assign out[3][3] = 1 * (1<<8);
+
+endmodule
+
 module mat_vec_mul(
     input int  m1[4][4],
     input int vec[4],
@@ -89,23 +122,6 @@ assign out[3][3] =((m1[3][0] * m2[0][3])/(1<<8)) + ((m1[3][1] * m2[1][3])/(1<<8)
 
 endmodule
 
-module mat_reg(
-    input logic  CLK,
-    input logic  RESET,
-    input int  in_data[4][4],
-    output int  out_data[4][4]
-);
-
-    int data[4][4];
-
-    always_ff @ (posedge CLK) begin
-        data <= in_data;
-    end
-
-    assign out_data = data;
-
-endmodule
-
 module vec_cross(
     input int a[3],
     input int b[3],
@@ -132,6 +148,16 @@ module vec_sub(
 assign out[0] = a[0] - b[0];
 assign out[1] = a[1] - b[1];
 assign out[2] = a[2] - b[2];
+
+endmodule
+
+module vec_dot(
+    input int a[3],
+    input int b[3],
+    output int out
+);
+
+assign out = ((a[0] * b[0])/(1<<8)) + ((a[1] * b[1])/(1<<8)) + ((a[2] * b[2])/(1<<8));
 
 endmodule
 
