@@ -367,6 +367,7 @@ enum logic [5:0] {
     INIT2,
     INIT3,
     INIT4,
+    INIT5,
     RENDER_BOT_INIT_1,
     RENDER_BOT_INIT_2,
     RENDER_BOT,
@@ -440,7 +441,7 @@ always_comb begin
     //
     //
     // Main Inits
-    if((state == INIT1) | (state == INIT2) | (state == INIT3) | (state == INIT4))
+    if((state == INIT1) | (state == INIT2) | (state == INIT3) | (state == INIT4) | (state == INIT5))
         init = 1;
 
     // Find left and right edge for bot
@@ -514,6 +515,9 @@ always_comb begin
             next_state = INIT4;
         end
         INIT4: begin
+            next_state = INIT5;
+        end
+        INIT5: begin
             next_state = RENDER_BOT_INIT_1;
             y_cnt_next = e1_ymin_c;
         end
@@ -606,7 +610,8 @@ int max_pos[3];
 enum logic [5:0] {
     NOT_INIT,
     INIT_1,
-    INIT_2
+    INIT_2,
+    INIT_3
 } init_state = NOT_INIT, init_state_next;
 
 ceil_min_max minmaxers[3](bot, top, min_pos, max_pos);
@@ -622,14 +627,14 @@ always_comb begin
     steps[1] = 32'hxxxxxxxx;
     steps[2] = 32'hxxxxxxxx;
 
-    if(init & (init_state == NOT_INIT)) begin
+    if((init & (init_state == NOT_INIT)) | (init_state == INIT_1) ) begin
         steps[0] = top[0] - bot[0];
         steps[1] = top[1] - bot[1];
         steps[2] = top[2] - bot[2];
 
         dxBdyNext = (steps[0] * (1<<8))/steps[1];
         dzBdyNext = (steps[2] * (1<<8))/steps[1];
-    end else if (init_state == INIT_1) begin
+    end else if ((init_state == INIT_2) | (init_state == INIT_3)) begin
         yPreStep = min_pos[1] - bot[1];  // minY - bot.Y
         current_pos_next[0] = (bot[0] + ((yPreStep * dxBdy)/(1<<8)));
         current_pos_next[2] = (bot[2] + ((yPreStep * dzBdy)/(1<<8)));
@@ -651,10 +656,13 @@ always_comb begin
             init_state_next = INIT_2;
         end
         INIT_2: begin
+            init_state_next = INIT_3;
+        end
+        INIT_3: begin
             if(~init)
-                init_state_next = INIT_2;
-            else
                 init_state_next = NOT_INIT;
+            else
+                init_state_next = INIT_3;
         end
     endcase
 

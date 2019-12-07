@@ -410,7 +410,14 @@ always_comb begin
             next_state = PROJECTING_4;
         end
         PROJECTING_4: begin
-            next_state = TOP_1;
+            // back_top_left.x and front_bot_right.x are < 0
+            if((verticies[0][0] < 0) & (verticies[7][0] < 0))
+                next_state = DONE;
+            // back_top_left.x and front_bot_right.x are > screen_width
+            else if((verticies[0][0] > (320 * (1<<8))) & (verticies[7][0] > (320 * (1<<8))))
+                next_state = DONE;
+            else
+                next_state = TOP_1;
         end
         TOP_1: begin
             rast_start = 1;
