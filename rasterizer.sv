@@ -652,9 +652,9 @@ always_comb begin
         end
         INIT_2: begin
             if(~init)
-                init_state_next = INIT_2;
-            else
                 init_state_next = NOT_INIT;
+            else
+                init_state_next = INIT_2;
         end
     endcase
 

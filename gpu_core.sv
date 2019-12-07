@@ -45,12 +45,28 @@ logic rast_done;
 logic rast_ready;
 
 int prj[4][4];
+int prj_raw[4][4];
+int cam[4][4];
 
 int tv1[3] = '{100 * (1<<8), 100 * (1<<8), 0};
 int tv2[3] = '{50 * (1<<8), 300 * (1<<8), 0};
 int tv3[3] = '{250 * (1<<8), 200 * (1<<8), 0};
 
-gen_prj_mat m1(320 * (1<<8), 240 * (1<<8), 5 * (1<<8), 200 * (1<<8), prj);
+int x_axis[3];
+int y_axis[3];
+int z_axis[3];
+int x_axis_next[3];
+int y_axis_next[3];
+int z_axis_next[3];
+int cam_pos[3];
+int cam_pos_next[3];
+
+
+gen_prj_mat m1(320 * (1<<8), 240 * (1<<8), 5 * (1<<8), 200 * (1<<8), prj_raw);
+gen_camera_mat m2('{x_axis[0],x_axis[1], x_axis[2]}, '{y_axis[0],y_axis[1], y_axis[2]},
+	'{z_axis[0],z_axis[1], z_axis[2]}, '{cam_pos[0], cam_pos[1], cam_pos[2]}, cam);
+
+mat_mat_mul m3(cam, prj_raw, prj);
 
 rast_cube cube_renderer(CLK_clk, RESET_reset, rast_start, rast_cont, 
     scale, '{x, y, z}, block_id, prj, rast_ready, rast_rgb, rast_xyz, rast_done);
@@ -95,6 +111,10 @@ always_comb begin
     clear_counter_next = clear_counter;
     mode_next = mode;
     block_id_next = block_id;
+    x_axis_next = x_axis;
+    y_axis_next = y_axis;
+    z_axis_next = z_axis;
+    cam_pos_next = cam_pos;
 
     // rast defaults
     rast_start = 0;
@@ -115,6 +135,18 @@ always_comb begin
                 7: GPU_SLAVE_readdata = z;
                 8: GPU_SLAVE_readdata = mode;
                 9: GPU_SLAVE_readdata = block_id;
+                10: GPU_SLAVE_readdata = x_axis[0];
+                11: GPU_SLAVE_readdata = x_axis[1];
+                12: GPU_SLAVE_readdata = x_axis[2];
+                13: GPU_SLAVE_readdata = y_axis[0];
+                14: GPU_SLAVE_readdata = y_axis[1];
+                15: GPU_SLAVE_readdata = y_axis[2];
+                16: GPU_SLAVE_readdata = z_axis[0];
+                17: GPU_SLAVE_readdata = z_axis[1];
+                18: GPU_SLAVE_readdata = z_axis[2];
+                19: GPU_SLAVE_readdata = cam_pos[0];
+                20: GPU_SLAVE_readdata = cam_pos[1];
+                21: GPU_SLAVE_readdata = cam_pos[2];
             endcase
         end
 
@@ -131,6 +163,18 @@ always_comb begin
                 7: z_next                = GPU_SLAVE_writedata;
                 8: mode_next             = GPU_SLAVE_writedata;
                 9: block_id_next         = GPU_SLAVE_writedata;
+                10: x_axis_next[0]       = GPU_SLAVE_writedata;
+                11: x_axis_next[1]       = GPU_SLAVE_writedata;
+                12: x_axis_next[2]       = GPU_SLAVE_writedata;
+                13: y_axis_next[0]       = GPU_SLAVE_writedata;
+                14: y_axis_next[1]       = GPU_SLAVE_writedata;
+                15: y_axis_next[2]       = GPU_SLAVE_writedata;
+                16: z_axis_next[0]       = GPU_SLAVE_writedata;
+                17: z_axis_next[1]       = GPU_SLAVE_writedata;
+                18: z_axis_next[2]       = GPU_SLAVE_writedata;
+                19: cam_pos_next[0]      = GPU_SLAVE_writedata;
+                20: cam_pos_next[1]      = GPU_SLAVE_writedata;
+                21: cam_pos_next[2]      = GPU_SLAVE_writedata;
             endcase
         end
 
@@ -244,6 +288,10 @@ always_ff @ (posedge CLK_clk) begin
         clear_counter <= 0;
         mode <= 0;
         block_id <= 0;
+        x_axis <= '{(1<<8), 0, 0};
+        y_axis <= '{0, (1<<8), 0};
+        z_axis <= '{0, 0, (1<<8)};
+        cam_pos <= '{0, 0, 0};
     end else begin
         frame_pointer <= frame_pointer_next;
         start <= start_next;
@@ -258,6 +306,10 @@ always_ff @ (posedge CLK_clk) begin
         clear_counter <= clear_counter_next;
         mode <= mode_next;
         block_id <= block_id_next;
+        x_axis <= x_axis_next;
+        y_axis <= y_axis_next;
+        z_axis <= z_axis_next;
+        cam_pos <= cam_pos_next;
     end
 end
 
