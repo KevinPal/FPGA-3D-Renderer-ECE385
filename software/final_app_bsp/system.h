@@ -4,7 +4,7 @@
  * Machine generated for CPU 'NIOS2' in SOPC Builder design 'final_soc'
  * SOPC Builder design path: ../../final_soc.sopcinfo
  *
- * Generated: Mon Dec 02 20:40:59 CST 2019
+ * Generated: Sat Dec 07 21:23:13 CST 2019
  */
 
 /*
@@ -534,16 +534,16 @@
 
 
 /*
- * video_rgb_resampler_0 configuration
+ * vga_resampler configuration
  *
  */
 
-#define ALT_MODULE_CLASS_video_rgb_resampler_0 altera_up_avalon_video_rgb_resampler
-#define VIDEO_RGB_RESAMPLER_0_BASE 0x80830bc
-#define VIDEO_RGB_RESAMPLER_0_IRQ -1
-#define VIDEO_RGB_RESAMPLER_0_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define VIDEO_RGB_RESAMPLER_0_NAME "/dev/video_rgb_resampler_0"
-#define VIDEO_RGB_RESAMPLER_0_SPAN 4
-#define VIDEO_RGB_RESAMPLER_0_TYPE "altera_up_avalon_video_rgb_resampler"
+#define ALT_MODULE_CLASS_vga_resampler altera_up_avalon_video_rgb_resampler
+#define VGA_RESAMPLER_BASE 0x80830bc
+#define VGA_RESAMPLER_IRQ -1
+#define VGA_RESAMPLER_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define VGA_RESAMPLER_NAME "/dev/vga_resampler"
+#define VGA_RESAMPLER_SPAN 4
+#define VGA_RESAMPLER_TYPE "altera_up_avalon_video_rgb_resampler"
 
 #endif /* __SYSTEM_H_ */

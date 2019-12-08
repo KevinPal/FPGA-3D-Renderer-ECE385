@@ -52,6 +52,13 @@ typedef struct vga_controller_t {
 	volatile alt_32 should_draw;
 } vga_controller_t ;
 
+typedef struct dma_controller_t {
+	volatile frame_buffer_t* front_buffer;
+	volatile frame_buffer_t* back_buffer;
+	volatile int resolution;
+	volatile int status;
+} dma_controller_t;
+
 typedef struct vec3_t {
 	volatile int x;
 	volatile int y;

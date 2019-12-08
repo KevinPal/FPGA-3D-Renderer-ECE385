@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Dec 4, 2019 6:29:06 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1575505746248</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Dec 7, 2019 9:23:12 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1575775392486</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Users\kpalani\Desktop\ece385_finalprj\software\final_app_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\final_soc.sopcinfo</SopcDesignFile>
@@ -983,7 +983,7 @@
                 <attributes>printable</attributes>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>video_rgb_resampler_0</slaveDescriptor>
+                <slaveDescriptor>vga_resampler</slaveDescriptor>
                 <addressRange>0x080830BC - 0x080830BF</addressRange>
                 <addressSpan>4</addressSpan>
                 <attributes/>

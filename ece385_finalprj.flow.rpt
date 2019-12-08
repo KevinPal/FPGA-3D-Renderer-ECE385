@@ -1,5 +1,5 @@
 Flow report for ece385_finalprj
-Fri Dec 06 23:48:34 2019
+Sat Dec 07 21:21:29 2019
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -40,17 +40,17 @@ refer to the applicable agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Fri Dec 06 23:48:34 2019       ;
+; Flow Status                        ; Successful - Sat Dec 07 21:21:29 2019       ;
 ; Quartus Prime Version              ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition ;
 ; Revision Name                      ; ece385_finalprj                             ;
 ; Top-level Entity Name              ; final_top                                   ;
 ; Family                             ; Cyclone IV E                                ;
 ; Device                             ; EP4CE115F29C7                               ;
 ; Timing Models                      ; Final                                       ;
-; Total logic elements               ; 70,970 / 114,480 ( 62 % )                   ;
-;     Total combinational functions  ; 68,109 / 114,480 ( 59 % )                   ;
-;     Dedicated logic registers      ; 13,604 / 114,480 ( 12 % )                   ;
-; Total registers                    ; 13723                                       ;
+; Total logic elements               ; 71,120 / 114,480 ( 62 % )                   ;
+;     Total combinational functions  ; 68,225 / 114,480 ( 60 % )                   ;
+;     Dedicated logic registers      ; 13,745 / 114,480 ( 12 % )                   ;
+; Total registers                    ; 13864                                       ;
 ; Total pins                         ; 194 / 529 ( 37 % )                          ;
 ; Total virtual pins                 ; 0                                           ;
 ; Total memory bits                  ; 3,266,304 / 3,981,312 ( 82 % )              ;
@@ -64,7 +64,7 @@ refer to the applicable agreement for further details.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 12/06/2019 23:29:34 ;
+; Start date & time ; 12/07/2019 21:02:14 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; ece385_finalprj     ;
 +-------------------+---------------------+
@@ -75,7 +75,7 @@ refer to the applicable agreement for further details.
 +----------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+-----------------+------------------+
 ; Assignment Name                              ; Value                                                                                                                                                                                                                                                                                                   ; Default Value   ; Entity Name     ; Section Id       ;
 +----------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+-----------------+------------------+
-; COMPILER_SIGNATURE_ID                        ; 220964532840647.157569657435804                                                                                                                                                                                                                                                                         ; --              ; --              ; --               ;
+; COMPILER_SIGNATURE_ID                        ; 220964532840647.157577413343032                                                                                                                                                                                                                                                                         ; --              ; --              ; --               ;
 ; CYCLONEII_OPTIMIZATION_TECHNIQUE             ; Speed                                                                                                                                                                                                                                                                                                   ; Balanced        ; --              ; --               ;
 ; EDA_DESIGN_INSTANCE_NAME                     ; NA                                                                                                                                                                                                                                                                                                      ; --              ; --              ; testbench        ;
 ; EDA_NATIVELINK_SIMULATION_TEST_BENCH         ; testbench                                                                                                                                                                                                                                                                                               ; --              ; --              ; eda_simulation   ;
@@ -111,7 +111,7 @@ refer to the applicable agreement for further details.
 ; SLD_FILE                                     ; final_soc/synthesis/final_soc.regmap                                                                                                                                                                                                                                                                    ; --              ; --              ; --               ;
 ; SLD_FILE                                     ; final_soc/synthesis/final_soc.debuginfo                                                                                                                                                                                                                                                                 ; --              ; --              ; --               ;
 ; SLD_FILE                                     ; db/stp1_auto_stripped.stp                                                                                                                                                                                                                                                                               ; --              ; --              ; --               ;
-; SLD_INFO                                     ; QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1575343405                                                                                                                                                                                                                                             ; --              ; final_soc       ; --               ;
+; SLD_INFO                                     ; QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1575774037                                                                                                                                                                                                                                             ; --              ; final_soc       ; --               ;
 ; SLD_NODE_CREATOR_ID                          ; 110                                                                                                                                                                                                                                                                                                     ; --              ; --              ; auto_signaltap_0 ;
 ; SLD_NODE_ENTITY_NAME                         ; sld_signaltap                                                                                                                                                                                                                                                                                           ; --              ; --              ; auto_signaltap_0 ;
 ; SLD_NODE_PARAMETER_ASSIGNMENT                ; SLD_RAM_BLOCK_TYPE=AUTO                                                                                                                                                                                                                                                                                 ; --              ; --              ; auto_signaltap_0 ;
@@ -151,13 +151,13 @@ refer to the applicable agreement for further details.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:04:51     ; 1.0                     ; 5586 MB             ; 00:04:57                           ;
-; Fitter               ; 00:10:36     ; 1.1                     ; 7025 MB             ; 00:30:43                           ;
+; Analysis & Synthesis ; 00:04:51     ; 1.0                     ; 5609 MB             ; 00:05:02                           ;
+; Fitter               ; 00:10:58     ; 1.1                     ; 7099 MB             ; 00:31:06                           ;
 ; Assembler            ; 00:00:07     ; 1.0                     ; 4968 MB             ; 00:00:07                           ;
-; Power Analyzer       ; 00:00:57     ; 1.2                     ; 5441 MB             ; 00:01:06                           ;
-; Timing Analyzer      ; 00:00:43     ; 2.6                     ; 5931 MB             ; 00:01:07                           ;
-; EDA Netlist Writer   ; 00:01:12     ; 1.0                     ; 5316 MB             ; 00:01:08                           ;
-; Total                ; 00:18:26     ; --                      ; --                  ; 00:39:08                           ;
+; Power Analyzer       ; 00:00:54     ; 1.2                     ; 5443 MB             ; 00:01:02                           ;
+; Timing Analyzer      ; 00:00:40     ; 2.6                     ; 5914 MB             ; 00:01:02                           ;
+; EDA Netlist Writer   ; 00:01:10     ; 1.0                     ; 5312 MB             ; 00:01:07                           ;
+; Total                ; 00:18:40     ; --                      ; --                  ; 00:39:26                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 

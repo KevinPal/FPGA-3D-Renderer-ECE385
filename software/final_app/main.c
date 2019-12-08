@@ -10,7 +10,7 @@
 #include "sys/alt_dma.h"
 #include "alt_types.h"
 #include "keyboard.h"
-#include "math.h";
+#include "math.h"
 
 int offset = 0;
 
@@ -70,7 +70,7 @@ void clear_depth(volatile gpu_core_t* gpu, int should_wait) {
 
 //volatile struct vga_controller_t* vga_cont = VGA_CONTROLLER_0_BASE;
 volatile struct gpu_core_t* gpu = GPU_CORE_0_BASE;
-
+volatile struct dma_controller_t* dma = PIXEL_DMA_BASE;
 //void swap_buffers() {
 //	volatile frame_buffer_t* temp = vga_cont->frame_pointer;
 //	vga_cont->frame_pointer = gpu->frame_pointer;
@@ -81,14 +81,14 @@ int main() {
 
 	printf("Starting up");
 
-
-
-	union frame_buffer_t* frame1 = (frame_buffer_t*) 0x08000000;
-	//malloc(sizeof(frame_buffer_t));
+	union frame_buffer_t* frame1 = (frame_buffer_t*) FRAME_BUFFER_BASE;
 	union frame_buffer_t* frame2 = malloc(sizeof(frame_buffer_t));
 	union z_buffer_t* z_buffer = malloc(sizeof(z_buffer_t));
 
-	gpu->frame_pointer = frame1;
+	dma->back_buffer = frame1;
+	dma->front_buffer = 0; //swap
+
+	gpu->frame_pointer = frame2;
 	gpu->z_buffer = z_buffer;
 	//vga_cont->frame_pointer = frame1;
 
@@ -97,6 +97,11 @@ int main() {
 
 	printf("Done initial clear, Initing keyboard\n");
 	init_keyboard();
+
+	double theta = 0;
+
+
+
 
 	int keycode = 0;
 	while (1) {
@@ -128,8 +133,7 @@ int main() {
 		draw_cube(gpu, 8, 16, 0, -40, 6);
 
 
-
-
+		memcpy(frame1, frame2, sizeof(frame1->D1));
 
 
 		printf("Render ticks %d\n", clock() - start_time);
@@ -139,17 +143,34 @@ int main() {
 		//swap_buffers();
 
 		loop_keyboard(&keycode);
-		if(keycode == KEY_W) {
+		if(keycode == KEY_S) {
 			gpu->cam_pos.z += 1;
-		} else if (keycode == KEY_S) {
+		} else if (keycode == KEY_W) {
 			gpu->cam_pos.z -= 1;
 		}
 		if(keycode == KEY_A) {
-			gpu->cam_pos.y += 1;
+			//gpu->cam_pos.y += 1;
+			theta += 0.01;
 		} else if(keycode == KEY_D) {
-			gpu->cam_pos.y -= 1;
-			printf("moving %d", gpu->cam_pos.y);
+			theta -= 0.01;
+			//gpu->cam_pos.y -= 1;
+			//printf("moving %d", gpu->cam_pos.y);
 		}
+
+		int s = (int)(sin(theta) * (1<<8));
+		int c = (int)(cos(theta) * (1<<8));
+
+		gpu->cam_x_axis.x = c;
+		gpu->cam_x_axis.y = 0;
+		gpu->cam_x_axis.z = -s;
+
+		gpu->cam_y_axis.x = 0;
+		gpu->cam_y_axis.y = 1<<8;
+		gpu->cam_y_axis.z = 0;
+
+		gpu->cam_z_axis.x = s;
+		gpu->cam_z_axis.y = 0;
+		gpu->cam_z_axis.z = c;
 
 	}
 
