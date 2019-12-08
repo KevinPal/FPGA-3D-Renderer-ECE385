@@ -1,7 +1,7 @@
 #include "alt_types.h"
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 240
 #define BYTES_PER_PIXEL 4
 
 #define GPU_MODE_IDLE 0
@@ -10,6 +10,16 @@
 #define GPU_MODE_CLEAR_DEPTH 3
 
 #define FP_SCALE (1<<8)
+
+#define KEY_RIGHT 0x4f
+#define KEY_DOWN  0x51
+#define KEY_LEFT  0x50
+#define KEY_UP    0x52
+
+#define KEY_W 0x1A
+#define KEY_S 0x16
+#define KEY_A 0x04
+#define KEY_D 0x07
 
 typedef struct pixel_t {
 	char r;
@@ -42,6 +52,11 @@ typedef struct vga_controller_t {
 	volatile alt_32 should_draw;
 } vga_controller_t ;
 
+typedef struct vec3_t {
+	volatile int x;
+	volatile int y;
+	volatile int z;
+} vec3_t;
 
 typedef struct gpu_core_t {
 	volatile frame_buffer_t* frame_pointer;
@@ -54,6 +69,10 @@ typedef struct gpu_core_t {
 	volatile int z;
 	volatile int mode;
 	volatile int block_id;
+	volatile vec3_t cam_x_axis;
+	volatile vec3_t cam_y_axis;
+	volatile vec3_t cam_z_axis;
+	volatile vec3_t cam_pos;
 } gpu_core_t;
 
 

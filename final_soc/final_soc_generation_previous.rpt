@@ -4,8 +4,6 @@ Progress: Loading ece385_finalprj/final_soc.qsys
 Progress: Reading input file
 Progress: Adding GPU_CORE_0 [GPU_CORE 1.0]
 Progress: Parameterizing module GPU_CORE_0
-Progress: Adding Instruction_Memory [altera_avalon_onchip_memory2 18.1]
-Progress: Parameterizing module Instruction_Memory
 Progress: Adding NIOS2 [altera_nios2_gen2 18.1]
 Progress: Parameterizing module NIOS2
 Progress: Adding PLL [altpll 18.1]
@@ -16,8 +14,8 @@ Progress: Adding VGA_Controller_0 [VGA_Controller 1.0]
 Progress: Parameterizing module VGA_Controller_0
 Progress: Adding clk_0 [clock_source 18.1]
 Progress: Parameterizing module clk_0
-Progress: Adding dma_0 [altera_avalon_dma 18.1]
-Progress: Parameterizing module dma_0
+Progress: Adding frame_buffer [altera_avalon_onchip_memory2 18.1]
+Progress: Parameterizing module frame_buffer
 Progress: Adding jtag_uart_0 [altera_avalon_jtag_uart 18.1]
 Progress: Parameterizing module jtag_uart_0
 Progress: Adding keycode [altera_avalon_pio 18.1]
@@ -34,8 +32,18 @@ Progress: Adding otg_hpi_reset [altera_avalon_pio 18.1]
 Progress: Parameterizing module otg_hpi_reset
 Progress: Adding otg_hpi_w [altera_avalon_pio 18.1]
 Progress: Parameterizing module otg_hpi_w
+Progress: Adding pixel_buffer [altera_up_avalon_video_dual_clock_buffer 18.0]
+Progress: Parameterizing module pixel_buffer
+Progress: Adding pixel_dma [altera_up_avalon_video_pixel_buffer_dma 18.0]
+Progress: Parameterizing module pixel_dma
 Progress: Adding timer_0 [altera_avalon_timer 18.1]
 Progress: Parameterizing module timer_0
+Progress: Adding video_rgb_resampler_0 [altera_up_avalon_video_rgb_resampler 18.0]
+Progress: Parameterizing module video_rgb_resampler_0
+Progress: Adding video_scaler_0 [altera_up_avalon_video_scaler 18.0]
+Progress: Parameterizing module video_scaler_0
+Progress: Adding video_vga_controller_0 [altera_up_avalon_video_vga_controller 18.0]
+Progress: Parameterizing module video_vga_controller_0
 Progress: Building connections
 Progress: Parameterizing connections
 Progress: Validating
@@ -43,6 +51,10 @@ Progress: Done reading input file
 Info: final_soc.SDRAM: SDRAM Controller will only be supported in Quartus Prime Standard Edition in the future release.
 Info: final_soc.jtag_uart_0: JTAG UART IP input clock need to be at least double (2x) the operating frequency of JTAG TCK on board
 Info: final_soc.otg_hpi_data: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
+Info: final_soc.video_rgb_resampler_0: RGB Resampling: 8 (bits) x 4 (planes) -> 10 (bits) x 3 (planes)
+Info: final_soc.video_scaler_0: Change in Resolution: 320 x 240 -> 640 x 480
+Info: final_soc.video_vga_controller_0: Video Output Stream: Format: 640 x 480 with Color: 10 (bits) x 3 (planes) converted to 8 (bits) per color plane
+Info: final_soc.video_scaler_0.avalon_scaler_source/video_vga_controller_0.avalon_vga_sink: The source has a channel signal of 2 bits, but the sink does not. Avalon-ST Adapter will be inserted.
 Info: qsys-generate succeeded.
 Info: Finished: Create block symbol file (.bsf)
 Info: 
@@ -52,8 +64,6 @@ Progress: Loading ece385_finalprj/final_soc.qsys
 Progress: Reading input file
 Progress: Adding GPU_CORE_0 [GPU_CORE 1.0]
 Progress: Parameterizing module GPU_CORE_0
-Progress: Adding Instruction_Memory [altera_avalon_onchip_memory2 18.1]
-Progress: Parameterizing module Instruction_Memory
 Progress: Adding NIOS2 [altera_nios2_gen2 18.1]
 Progress: Parameterizing module NIOS2
 Progress: Adding PLL [altpll 18.1]
@@ -64,8 +74,8 @@ Progress: Adding VGA_Controller_0 [VGA_Controller 1.0]
 Progress: Parameterizing module VGA_Controller_0
 Progress: Adding clk_0 [clock_source 18.1]
 Progress: Parameterizing module clk_0
-Progress: Adding dma_0 [altera_avalon_dma 18.1]
-Progress: Parameterizing module dma_0
+Progress: Adding frame_buffer [altera_avalon_onchip_memory2 18.1]
+Progress: Parameterizing module frame_buffer
 Progress: Adding jtag_uart_0 [altera_avalon_jtag_uart 18.1]
 Progress: Parameterizing module jtag_uart_0
 Progress: Adding keycode [altera_avalon_pio 18.1]
@@ -82,8 +92,18 @@ Progress: Adding otg_hpi_reset [altera_avalon_pio 18.1]
 Progress: Parameterizing module otg_hpi_reset
 Progress: Adding otg_hpi_w [altera_avalon_pio 18.1]
 Progress: Parameterizing module otg_hpi_w
+Progress: Adding pixel_buffer [altera_up_avalon_video_dual_clock_buffer 18.0]
+Progress: Parameterizing module pixel_buffer
+Progress: Adding pixel_dma [altera_up_avalon_video_pixel_buffer_dma 18.0]
+Progress: Parameterizing module pixel_dma
 Progress: Adding timer_0 [altera_avalon_timer 18.1]
 Progress: Parameterizing module timer_0
+Progress: Adding video_rgb_resampler_0 [altera_up_avalon_video_rgb_resampler 18.0]
+Progress: Parameterizing module video_rgb_resampler_0
+Progress: Adding video_scaler_0 [altera_up_avalon_video_scaler 18.0]
+Progress: Parameterizing module video_scaler_0
+Progress: Adding video_vga_controller_0 [altera_up_avalon_video_vga_controller 18.0]
+Progress: Parameterizing module video_vga_controller_0
 Progress: Building connections
 Progress: Parameterizing connections
 Progress: Validating
@@ -91,47 +111,70 @@ Progress: Done reading input file
 Info: final_soc.SDRAM: SDRAM Controller will only be supported in Quartus Prime Standard Edition in the future release.
 Info: final_soc.jtag_uart_0: JTAG UART IP input clock need to be at least double (2x) the operating frequency of JTAG TCK on board
 Info: final_soc.otg_hpi_data: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
+Info: final_soc.video_rgb_resampler_0: RGB Resampling: 8 (bits) x 4 (planes) -> 10 (bits) x 3 (planes)
+Info: final_soc.video_scaler_0: Change in Resolution: 320 x 240 -> 640 x 480
+Info: final_soc.video_vga_controller_0: Video Output Stream: Format: 640 x 480 with Color: 10 (bits) x 3 (planes) converted to 8 (bits) per color plane
+Info: final_soc.video_scaler_0.avalon_scaler_source/video_vga_controller_0.avalon_vga_sink: The source has a channel signal of 2 bits, but the sink does not. Avalon-ST Adapter will be inserted.
 Info: final_soc: Generating final_soc "final_soc" for QUARTUS_SYNTH
-Info: Inserting clock-crossing logic between cmd_demux.src0 and cmd_mux.sink0
-Info: Inserting clock-crossing logic between cmd_demux_001.src0 and cmd_mux.sink1
-Info: Inserting clock-crossing logic between cmd_demux_002.src0 and cmd_mux.sink2
-Info: Inserting clock-crossing logic between cmd_demux_003.src0 and cmd_mux.sink3
-Info: Inserting clock-crossing logic between rsp_demux.src0 and rsp_mux.sink0
-Info: Inserting clock-crossing logic between rsp_demux.src1 and rsp_mux_001.sink0
-Info: Inserting clock-crossing logic between rsp_demux.src2 and rsp_mux_002.sink0
-Info: Inserting clock-crossing logic between rsp_demux.src3 and rsp_mux_003.sink0
+Info: Inserting clock-crossing logic between cmd_demux_001.src4 and cmd_mux_004.sink0
+Info: Inserting clock-crossing logic between cmd_demux_001.src7 and cmd_mux_007.sink0
+Info: Inserting clock-crossing logic between cmd_demux_002.src0 and cmd_mux_004.sink1
+Info: Inserting clock-crossing logic between cmd_demux_002.src2 and cmd_mux_007.sink1
+Info: Inserting clock-crossing logic between rsp_demux_004.src0 and rsp_mux_001.sink4
+Info: Inserting clock-crossing logic between rsp_demux_004.src1 and rsp_mux_002.sink0
+Info: Inserting clock-crossing logic between rsp_demux_007.src0 and rsp_mux_001.sink7
+Info: Inserting clock-crossing logic between rsp_demux_007.src1 and rsp_mux_002.sink2
+Info: Interconnect is inserted between master pixel_dma.avalon_pixel_dma_master and slave frame_buffer.s2 because the master has readdatavalid signal 1 bit wide, but the slave is 0 bit wide.
+Info: Interconnect is inserted between master pixel_dma.avalon_pixel_dma_master and slave frame_buffer.s2 because the master has waitrequest signal 1 bit wide, but the slave is 0 bit wide.
+Info: Interconnect is inserted between master pixel_dma.avalon_pixel_dma_master and slave frame_buffer.s2 because the master has address signal 32 bit wide, but the slave is 17 bit wide.
+Info: Interconnect is inserted between master pixel_dma.avalon_pixel_dma_master and slave frame_buffer.s2 because the master has lock signal 1 bit wide, but the slave is 0 bit wide.
+Info: Interconnect is inserted between master pixel_dma.avalon_pixel_dma_master and slave frame_buffer.s2 because the master has read signal 1 bit wide, but the slave is 0 bit wide.
+Info: avalon_st_adapter: Inserting channel_adapter: channel_adapter_0
 Info: GPU_CORE_0: "final_soc" instantiated GPU_CORE "GPU_CORE_0"
 Info: NIOS2: "final_soc" instantiated altera_nios2_gen2 "NIOS2"
 Info: PLL: "final_soc" instantiated altpll "PLL"
 Info: SDRAM: Starting RTL generation for module 'final_soc_SDRAM'
-Info: SDRAM:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_new_sdram_controller -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_new_sdram_controller/generate_rtl.pl --name=final_soc_SDRAM --dir=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0005_SDRAM_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0005_SDRAM_gen//final_soc_SDRAM_component_configuration.pl  --do_build_sim=0  ]
+Info: SDRAM:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_new_sdram_controller -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_new_sdram_controller/generate_rtl.pl --name=final_soc_SDRAM --dir=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0174_SDRAM_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0174_SDRAM_gen//final_soc_SDRAM_component_configuration.pl  --do_build_sim=0  ]
 Info: SDRAM: Done RTL generation for module 'final_soc_SDRAM'
 Info: SDRAM: "final_soc" instantiated altera_avalon_new_sdram_controller "SDRAM"
-Info: VGA_Controller_0: "final_soc" instantiated VGA_Controller "VGA_Controller_0"
+Info: frame_buffer: Starting RTL generation for module 'final_soc_frame_buffer'
+Info: frame_buffer:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_onchip_memory2 -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_onchip_memory2/generate_rtl.pl --name=final_soc_frame_buffer --dir=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0175_frame_buffer_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0175_frame_buffer_gen//final_soc_frame_buffer_component_configuration.pl  --do_build_sim=0  ]
+Info: frame_buffer: Done RTL generation for module 'final_soc_frame_buffer'
+Info: frame_buffer: "final_soc" instantiated altera_avalon_onchip_memory2 "frame_buffer"
 Info: jtag_uart_0: Starting RTL generation for module 'final_soc_jtag_uart_0'
-Info: jtag_uart_0:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart/generate_rtl.pl --name=final_soc_jtag_uart_0 --dir=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0007_jtag_uart_0_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0007_jtag_uart_0_gen//final_soc_jtag_uart_0_component_configuration.pl  --do_build_sim=0  ]
+Info: jtag_uart_0:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart/generate_rtl.pl --name=final_soc_jtag_uart_0 --dir=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0176_jtag_uart_0_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0176_jtag_uart_0_gen//final_soc_jtag_uart_0_component_configuration.pl  --do_build_sim=0  ]
 Info: jtag_uart_0: Done RTL generation for module 'final_soc_jtag_uart_0'
 Info: jtag_uart_0: "final_soc" instantiated altera_avalon_jtag_uart "jtag_uart_0"
 Info: keycode: Starting RTL generation for module 'final_soc_keycode'
-Info: keycode:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=final_soc_keycode --dir=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0008_keycode_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0008_keycode_gen//final_soc_keycode_component_configuration.pl  --do_build_sim=0  ]
+Info: keycode:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=final_soc_keycode --dir=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0177_keycode_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0177_keycode_gen//final_soc_keycode_component_configuration.pl  --do_build_sim=0  ]
 Info: keycode: Done RTL generation for module 'final_soc_keycode'
 Info: keycode: "final_soc" instantiated altera_avalon_pio "keycode"
 Info: otg_hpi_address: Starting RTL generation for module 'final_soc_otg_hpi_address'
-Info: otg_hpi_address:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=final_soc_otg_hpi_address --dir=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0009_otg_hpi_address_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0009_otg_hpi_address_gen//final_soc_otg_hpi_address_component_configuration.pl  --do_build_sim=0  ]
+Info: otg_hpi_address:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=final_soc_otg_hpi_address --dir=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0178_otg_hpi_address_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0178_otg_hpi_address_gen//final_soc_otg_hpi_address_component_configuration.pl  --do_build_sim=0  ]
 Info: otg_hpi_address: Done RTL generation for module 'final_soc_otg_hpi_address'
 Info: otg_hpi_address: "final_soc" instantiated altera_avalon_pio "otg_hpi_address"
 Info: otg_hpi_cs: Starting RTL generation for module 'final_soc_otg_hpi_cs'
-Info: otg_hpi_cs:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=final_soc_otg_hpi_cs --dir=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0010_otg_hpi_cs_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0010_otg_hpi_cs_gen//final_soc_otg_hpi_cs_component_configuration.pl  --do_build_sim=0  ]
+Info: otg_hpi_cs:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=final_soc_otg_hpi_cs --dir=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0179_otg_hpi_cs_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0179_otg_hpi_cs_gen//final_soc_otg_hpi_cs_component_configuration.pl  --do_build_sim=0  ]
 Info: otg_hpi_cs: Done RTL generation for module 'final_soc_otg_hpi_cs'
 Info: otg_hpi_cs: "final_soc" instantiated altera_avalon_pio "otg_hpi_cs"
 Info: otg_hpi_data: Starting RTL generation for module 'final_soc_otg_hpi_data'
-Info: otg_hpi_data:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=final_soc_otg_hpi_data --dir=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0011_otg_hpi_data_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0011_otg_hpi_data_gen//final_soc_otg_hpi_data_component_configuration.pl  --do_build_sim=0  ]
+Info: otg_hpi_data:   Generation command is [exec C:/intelfpga_lite/18.1/quartus/bin64/perl/bin/perl.exe -I C:/intelfpga_lite/18.1/quartus/bin64/perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=final_soc_otg_hpi_data --dir=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0180_otg_hpi_data_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0180_otg_hpi_data_gen//final_soc_otg_hpi_data_component_configuration.pl  --do_build_sim=0  ]
 Info: otg_hpi_data: Done RTL generation for module 'final_soc_otg_hpi_data'
 Info: otg_hpi_data: "final_soc" instantiated altera_avalon_pio "otg_hpi_data"
+Info: pixel_buffer: Starting Generation of the Dual Clock Buffer
+Info: pixel_buffer: "final_soc" instantiated altera_up_avalon_video_dual_clock_buffer "pixel_buffer"
+Info: pixel_dma: Starting Generation of VGA Pixel Buffer
+Info: pixel_dma: "final_soc" instantiated altera_up_avalon_video_pixel_buffer_dma "pixel_dma"
 Info: timer_0: Starting RTL generation for module 'final_soc_timer_0'
-Info: timer_0:   Generation command is [exec C:/intelFPGA_lite/18.1/quartus/bin64//perl/bin/perl.exe -I C:/intelFPGA_lite/18.1/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer/generate_rtl.pl --name=final_soc_timer_0 --dir=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0012_timer_0_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0012_timer_0_gen//final_soc_timer_0_component_configuration.pl  --do_build_sim=0  ]
+Info: timer_0:   Generation command is [exec C:/intelFPGA_lite/18.1/quartus/bin64//perl/bin/perl.exe -I C:/intelFPGA_lite/18.1/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/common -I C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer -- C:/intelfpga_lite/18.1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer/generate_rtl.pl --name=final_soc_timer_0 --dir=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0183_timer_0_gen/ --quartus_dir=C:/intelfpga_lite/18.1/quartus --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0183_timer_0_gen//final_soc_timer_0_component_configuration.pl  --do_build_sim=0  ]
 Info: timer_0: Done RTL generation for module 'final_soc_timer_0'
 Info: timer_0: "final_soc" instantiated altera_avalon_timer "timer_0"
+Info: video_rgb_resampler_0: Starting Generation of Video RGB Resampler
+Info: video_rgb_resampler_0: "final_soc" instantiated altera_up_avalon_video_rgb_resampler "video_rgb_resampler_0"
+Info: video_scaler_0: Starting Generation of Video Scaler
+Info: video_scaler_0: "final_soc" instantiated altera_up_avalon_video_scaler "video_scaler_0"
+Info: video_vga_controller_0: Starting Generation of VGA Controller
+Info: video_vga_controller_0: "final_soc" instantiated altera_up_avalon_video_vga_controller "video_vga_controller_0"
 Info: avalon_st_adapter: Inserting error_adapter: error_adapter_0
 Info: avalon_st_adapter_001: Inserting error_adapter: error_adapter_0
 Info: avalon_st_adapter_002: Inserting error_adapter: error_adapter_0
@@ -146,54 +189,58 @@ Info: avalon_st_adapter_010: Inserting error_adapter: error_adapter_0
 Info: avalon_st_adapter_011: Inserting error_adapter: error_adapter_0
 Info: avalon_st_adapter_012: Inserting error_adapter: error_adapter_0
 Info: avalon_st_adapter_013: Inserting error_adapter: error_adapter_0
+Info: avalon_st_adapter_014: Inserting error_adapter: error_adapter_0
+Info: avalon_st_adapter_015: Inserting error_adapter: error_adapter_0
 Info: mm_interconnect_0: "final_soc" instantiated altera_mm_interconnect "mm_interconnect_0"
+Info: mm_interconnect_1: "final_soc" instantiated altera_mm_interconnect "mm_interconnect_1"
 Info: irq_mapper: "final_soc" instantiated altera_irq_mapper "irq_mapper"
+Info: avalon_st_adapter: "final_soc" instantiated altera_avalon_st_adapter "avalon_st_adapter"
 Info: rst_controller: "final_soc" instantiated altera_reset_controller "rst_controller"
 Info: cpu: Starting RTL generation for module 'final_soc_NIOS2_cpu'
-Info: cpu:   Generation command is [exec C:/intelFPGA_lite/18.1/quartus/bin64//eperlcmd.exe -I C:/intelFPGA_lite/18.1/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/cpu_lib -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/nios_lib -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -- C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/generate_rtl.epl --name=final_soc_NIOS2_cpu --dir=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0015_cpu_gen/ --quartus_bindir=C:/intelFPGA_lite/18.1/quartus/bin64/ --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8224_7794698960046217329.dir/0015_cpu_gen//final_soc_NIOS2_cpu_processor_configuration.pl  --do_build_sim=0  ]
-Info: cpu: # 2019.11.24 01:10:10 (*) Starting Nios II generation
-Info: cpu: # 2019.11.24 01:10:10 (*)   Checking for plaintext license.
-Info: cpu: # 2019.11.24 01:10:11 (*)   Couldn't query license setup in Quartus directory C:/intelFPGA_lite/18.1/quartus/bin64/
-Info: cpu: # 2019.11.24 01:10:11 (*)   Defaulting to contents of LM_LICENSE_FILE environment variable
-Info: cpu: # 2019.11.24 01:10:11 (*)   LM_LICENSE_FILE environment variable is empty
-Info: cpu: # 2019.11.24 01:10:11 (*)   Plaintext license not found.
-Info: cpu: # 2019.11.24 01:10:11 (*)   No license required to generate encrypted Nios II/e.
-Info: cpu: # 2019.11.24 01:10:11 (*)   Elaborating CPU configuration settings
-Info: cpu: # 2019.11.24 01:10:11 (*)   Creating all objects for CPU
-Info: cpu: # 2019.11.24 01:10:12 (*)   Generating RTL from CPU objects
-Info: cpu: # 2019.11.24 01:10:12 (*)   Creating plain-text RTL
-Info: cpu: # 2019.11.24 01:10:13 (*) Done Nios II generation
+Info: cpu:   Generation command is [exec C:/intelFPGA_lite/18.1/quartus/bin64//eperlcmd.exe -I C:/intelFPGA_lite/18.1/quartus/bin64//perl/lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/europa -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin/perl_lib -I C:/intelfpga_lite/18.1/quartus/sopc_builder/bin -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/cpu_lib -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/nios_lib -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -I C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2 -- C:/intelfpga_lite/18.1/quartus/../ip/altera/nios2_ip/altera_nios2_gen2/generate_rtl.epl --name=final_soc_NIOS2_cpu --dir=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0189_cpu_gen/ --quartus_bindir=C:/intelFPGA_lite/18.1/quartus/bin64/ --verilog --config=C:/Users/kpalani/AppData/Local/Temp/alt8232_5245380983584697164.dir/0189_cpu_gen//final_soc_NIOS2_cpu_processor_configuration.pl  --do_build_sim=0  ]
+Info: cpu: # 2019.12.02 20:47:08 (*) Starting Nios II generation
+Info: cpu: # 2019.12.02 20:47:08 (*)   Checking for plaintext license.
+Info: cpu: # 2019.12.02 20:47:09 (*)   Couldn't query license setup in Quartus directory C:/intelFPGA_lite/18.1/quartus/bin64/
+Info: cpu: # 2019.12.02 20:47:09 (*)   Defaulting to contents of LM_LICENSE_FILE environment variable
+Info: cpu: # 2019.12.02 20:47:09 (*)   LM_LICENSE_FILE environment variable is empty
+Info: cpu: # 2019.12.02 20:47:09 (*)   Plaintext license not found.
+Info: cpu: # 2019.12.02 20:47:09 (*)   No license required to generate encrypted Nios II/e.
+Info: cpu: # 2019.12.02 20:47:09 (*)   Elaborating CPU configuration settings
+Info: cpu: # 2019.12.02 20:47:09 (*)   Creating all objects for CPU
+Info: cpu: # 2019.12.02 20:47:10 (*)   Generating RTL from CPU objects
+Info: cpu: # 2019.12.02 20:47:10 (*)   Creating plain-text RTL
+Info: cpu: # 2019.12.02 20:47:10 (*) Done Nios II generation
 Info: cpu: Done RTL generation for module 'final_soc_NIOS2_cpu'
 Info: cpu: "NIOS2" instantiated altera_nios2_gen2_unit "cpu"
 Info: GPU_CORE_0_GPU_MASTER_translator: "mm_interconnect_0" instantiated altera_merlin_master_translator "GPU_CORE_0_GPU_MASTER_translator"
-Info: SDRAM_s1_translator: "mm_interconnect_0" instantiated altera_merlin_slave_translator "SDRAM_s1_translator"
+Info: frame_buffer_s1_translator: "mm_interconnect_0" instantiated altera_merlin_slave_translator "frame_buffer_s1_translator"
 Info: GPU_CORE_0_GPU_MASTER_agent: "mm_interconnect_0" instantiated altera_merlin_master_agent "GPU_CORE_0_GPU_MASTER_agent"
-Info: SDRAM_s1_agent: "mm_interconnect_0" instantiated altera_merlin_slave_agent "SDRAM_s1_agent"
-Info: SDRAM_s1_agent_rsp_fifo: "mm_interconnect_0" instantiated altera_avalon_sc_fifo "SDRAM_s1_agent_rsp_fifo"
+Info: frame_buffer_s1_agent: "mm_interconnect_0" instantiated altera_merlin_slave_agent "frame_buffer_s1_agent"
+Info: frame_buffer_s1_agent_rsp_fifo: "mm_interconnect_0" instantiated altera_avalon_sc_fifo "frame_buffer_s1_agent_rsp_fifo"
 Info: router: "mm_interconnect_0" instantiated altera_merlin_router "router"
+Info: router_001: "mm_interconnect_0" instantiated altera_merlin_router "router_001"
 Info: router_002: "mm_interconnect_0" instantiated altera_merlin_router "router_002"
 Info: router_003: "mm_interconnect_0" instantiated altera_merlin_router "router_003"
 Info: router_004: "mm_interconnect_0" instantiated altera_merlin_router "router_004"
-Info: router_005: "mm_interconnect_0" instantiated altera_merlin_router "router_005"
-Info: router_006: "mm_interconnect_0" instantiated altera_merlin_router "router_006"
+Info: router_007: "mm_interconnect_0" instantiated altera_merlin_router "router_007"
 Info: cmd_demux: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "cmd_demux"
+Info: cmd_demux_001: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "cmd_demux_001"
 Info: cmd_demux_002: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "cmd_demux_002"
-Info: cmd_demux_003: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "cmd_demux_003"
 Info: cmd_mux: "mm_interconnect_0" instantiated altera_merlin_multiplexer "cmd_mux"
 Info: cmd_mux_001: "mm_interconnect_0" instantiated altera_merlin_multiplexer "cmd_mux_001"
 Info: Reusing file C:/Users/kpalani/Desktop/ece385_finalprj/final_soc/synthesis/submodules/altera_merlin_arbitrator.sv
-Info: cmd_mux_002: "mm_interconnect_0" instantiated altera_merlin_multiplexer "cmd_mux_002"
-Info: Reusing file C:/Users/kpalani/Desktop/ece385_finalprj/final_soc/synthesis/submodules/altera_merlin_arbitrator.sv
 Info: rsp_demux: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "rsp_demux"
+Info: rsp_demux_004: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "rsp_demux_004"
 Info: rsp_mux: "mm_interconnect_0" instantiated altera_merlin_multiplexer "rsp_mux"
+Info: Reusing file C:/Users/kpalani/Desktop/ece385_finalprj/final_soc/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: rsp_mux_001: "mm_interconnect_0" instantiated altera_merlin_multiplexer "rsp_mux_001"
 Info: Reusing file C:/Users/kpalani/Desktop/ece385_finalprj/final_soc/synthesis/submodules/altera_merlin_arbitrator.sv
 Info: rsp_mux_002: "mm_interconnect_0" instantiated altera_merlin_multiplexer "rsp_mux_002"
 Info: Reusing file C:/Users/kpalani/Desktop/ece385_finalprj/final_soc/synthesis/submodules/altera_merlin_arbitrator.sv
-Info: rsp_mux_003: "mm_interconnect_0" instantiated altera_merlin_multiplexer "rsp_mux_003"
-Info: Reusing file C:/Users/kpalani/Desktop/ece385_finalprj/final_soc/synthesis/submodules/altera_merlin_arbitrator.sv
 Info: crosser: "mm_interconnect_0" instantiated altera_avalon_st_handshake_clock_crosser "crosser"
 Info: avalon_st_adapter: "mm_interconnect_0" instantiated altera_avalon_st_adapter "avalon_st_adapter"
+Info: channel_adapter_0: "avalon_st_adapter" instantiated channel_adapter "channel_adapter_0"
 Info: error_adapter_0: "avalon_st_adapter" instantiated error_adapter "error_adapter_0"
-Info: final_soc: Done "final_soc" with 40 modules, 56 files
+Info: final_soc: Done "final_soc" with 48 modules, 68 files
 Info: qsys-generate succeeded.
 Info: Finished: Create HDL design files for synthesis

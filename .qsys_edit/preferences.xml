@@ -3,10 +3,12 @@
  <debug showDebugMenu="0" />
  <systemtable filter="All Interfaces">
   <columns>
-   <connections preferredWidth="47" />
+   <connections preferredWidth="319" />
    <irq preferredWidth="34" />
+   <name preferredWidth="206" />
   </columns>
  </systemtable>
- <library expandedCategories="Library,Project" />
- <window width="1898" height="961" x="0" y="69" />
+ <library
+   expandedCategories="Library/University Program/Audio &amp; Video/Video,Library/University Program/Audio &amp; Video,Project,Library/University Program,Library,Project/ECE_385_Final" />
+ <window width="1920" height="1030" x="0" y="0" />
 </preferences>

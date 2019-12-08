@@ -1,7 +1,14 @@
 
 module final_soc (
 	clk_clk,
-	debug_debug,
+	keycode_export,
+	otg_hpi_address_export,
+	otg_hpi_cs_export,
+	otg_hpi_data_in_port,
+	otg_hpi_data_out_port,
+	otg_hpi_r_export,
+	otg_hpi_reset_export,
+	otg_hpi_w_export,
 	reset_reset_n,
 	sdram_clk_clk,
 	sdram_wire_addr,
@@ -13,17 +20,24 @@ module final_soc (
 	sdram_wire_dqm,
 	sdram_wire_ras_n,
 	sdram_wire_we_n,
-	vga_b_vga_b,
-	vga_blank_n_vga_blank_n,
-	vga_clk_clk,
-	vga_g_vga_g,
-	vga_hs_vga_hs,
-	vga_r_vga_r,
-	vga_sync_n_vga_sync_n,
-	vga_vs_vga_vs);	
+	vga_CLK,
+	vga_HS,
+	vga_VS,
+	vga_BLANK,
+	vga_SYNC,
+	vga_R,
+	vga_G,
+	vga_B);	
 
 	input		clk_clk;
-	output	[7:0]	debug_debug;
+	output	[7:0]	keycode_export;
+	output	[1:0]	otg_hpi_address_export;
+	output		otg_hpi_cs_export;
+	input	[15:0]	otg_hpi_data_in_port;
+	output	[15:0]	otg_hpi_data_out_port;
+	output		otg_hpi_r_export;
+	output		otg_hpi_reset_export;
+	output		otg_hpi_w_export;
 	input		reset_reset_n;
 	output		sdram_clk_clk;
 	output	[12:0]	sdram_wire_addr;
@@ -35,12 +49,12 @@ module final_soc (
 	output	[3:0]	sdram_wire_dqm;
 	output		sdram_wire_ras_n;
 	output		sdram_wire_we_n;
-	output	[7:0]	vga_b_vga_b;
-	output		vga_blank_n_vga_blank_n;
-	output		vga_clk_clk;
-	output	[7:0]	vga_g_vga_g;
-	output		vga_hs_vga_hs;
-	output	[7:0]	vga_r_vga_r;
-	output		vga_sync_n_vga_sync_n;
-	output		vga_vs_vga_vs;
+	output		vga_CLK;
+	output		vga_HS;
+	output		vga_VS;
+	output		vga_BLANK;
+	output		vga_SYNC;
+	output	[7:0]	vga_R;
+	output	[7:0]	vga_G;
+	output	[7:0]	vga_B;
 endmodule

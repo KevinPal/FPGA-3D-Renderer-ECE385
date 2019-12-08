@@ -10,6 +10,9 @@
 #include "sys/alt_dma.h"
 #include "alt_types.h"
 #include "keyboard.h"
+#include "math.h";
+
+int offset = 0;
 
 void draw_cube(volatile gpu_core_t* gpu, int scale, int x, int y, int z,
 		int block_id) {
@@ -18,7 +21,7 @@ void draw_cube(volatile gpu_core_t* gpu, int scale, int x, int y, int z,
 	gpu->scale = scale * (FP_SCALE);
 	gpu->x = x * (FP_SCALE);
 	gpu->y = y * (FP_SCALE);
-	gpu->z = z * (FP_SCALE);
+	gpu->z = (z-offset) * (FP_SCALE);
 	gpu->done = 0;
 	gpu->start = 0;
 	gpu->start = 1;
@@ -78,6 +81,8 @@ int main() {
 
 	printf("Starting up");
 
+
+
 	union frame_buffer_t* frame1 = (frame_buffer_t*) 0x08000000;
 	//malloc(sizeof(frame_buffer_t));
 	union frame_buffer_t* frame2 = malloc(sizeof(frame_buffer_t));
@@ -91,10 +96,7 @@ int main() {
 			frame2, z_buffer);
 
 	printf("Done initial clear, Initing keyboard\n");
-	//init_keyboard();
-
-
-
+	init_keyboard();
 
 	int keycode = 0;
 	while (1) {
@@ -104,12 +106,9 @@ int main() {
 		printf("Clear ticks %d\n", clock() - start_time);
 		start_time = clock();
 
-		for(int z = 5; z > -7; z--) {
-		for(int x = 30; x > -30; x--) {
-
+		for(int z = 5; z > 0; z--) {
+		for(int x = 10; x > -30; x--) {
 					draw_cube(gpu, 8, -16 + 8*x, -16, -64 + 8*z, 0);
-
-					//usleep(1000);
 			}
 		}
 
@@ -135,20 +134,22 @@ int main() {
 
 		printf("Render ticks %d\n", clock() - start_time);
 		start_time = clock();
-		usleep(500000);
+		//usleep(500000);
 		//printf("swaping");
 		//swap_buffers();
 
-//		loop_keyboard(&keycode);
-//		if(keycode == 79) {
-//			x += 5;
-//		} else if (keycode == 80) {
-//			x -= 5;
-//		} else if(keycode == 82) {
-//			y -= 5;
-//		} else if(keycode == 81) {
-//			y += 5;
-//		}
+		loop_keyboard(&keycode);
+		if(keycode == KEY_W) {
+			gpu->cam_pos.z += 1;
+		} else if (keycode == KEY_S) {
+			gpu->cam_pos.z -= 1;
+		}
+		if(keycode == KEY_A) {
+			gpu->cam_pos.y += 1;
+		} else if(keycode == KEY_D) {
+			gpu->cam_pos.y -= 1;
+			printf("moving %d", gpu->cam_pos.y);
+		}
 
 	}
 
