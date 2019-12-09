@@ -157,7 +157,19 @@ module vec_dot(
     output int out
 );
 
-assign out = ((a[0] * b[0])/(1<<8)) + ((a[1] * b[1])/(1<<8)) + ((a[2] * b[2])/(1<<8));
+longint a_l[3];
+longint b_l[3];
+
+always_comb begin
+a_l[0] = a[0];
+a_l[1] = a[1];
+a_l[2] = a[2];
+b_l[0] = b[0];
+b_l[1] = b[1];
+b_l[2] = b[2];
+
+out = ((a_l[0] * b_l[0])/(1<<8)) + ((a_l[1] * b_l[1])/(1<<8)) + ((a_l[2] * b_l[2])/(1<<8));
+end
 
 endmodule
 

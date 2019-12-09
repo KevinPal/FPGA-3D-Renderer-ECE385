@@ -478,9 +478,9 @@ always_comb begin
         end
         TOP_1: begin
             rast_start = 1;
-            tv1 = face_uv[0][0];
+            tv3 = face_uv[0][0];
             tv2 = face_uv[0][1];
-            tv3 = face_uv[0][3];
+            tv1 = face_uv[0][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = TOP_2;
@@ -496,7 +496,7 @@ always_comb begin
                 next_state = BOT_1;
             end
         end
-        BOT_1: begin
+        BOT_1: begin 
             rast_start = 1;
             tv1 = face_uv[1][0];
             tv2 = face_uv[1][1];
@@ -508,15 +508,15 @@ always_comb begin
         end
         BOT_2: begin
             rast_start = 1;
-            tv1 = face_uv[1][0];
+            tv3 = face_uv[1][0];
             tv2 = face_uv[1][2];
-            tv3 = face_uv[1][3];
+            tv1 = face_uv[1][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = BACK_1; 
             end
         end
-        BACK_1: begin
+        BACK_1: begin 
             rast_start = 1;
             tv1 = face_uv[2][0];
             tv2 = face_uv[2][1];
@@ -528,12 +528,12 @@ always_comb begin
         end
         BACK_2: begin
             rast_start = 1;
-            tv1 = face_uv[2][0];
+            tv3 = face_uv[2][0];
             tv2 = face_uv[2][2];
-            tv3 = face_uv[2][3];
+            tv1 = face_uv[2][3];
             if(rast_done) begin
                 rast_start = 0;
-                next_state = LEFT_1;  // --
+                next_state = LEFT_1;  
             end
         end
         LEFT_1: begin
@@ -548,19 +548,19 @@ always_comb begin
         end
         LEFT_2: begin
             rast_start = 1;
-            tv1 = face_uv[3][0];
+            tv3 = face_uv[3][0];
             tv2 = face_uv[3][2];
-            tv3 = face_uv[3][3];
+            tv1 = face_uv[3][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = RIGHT_1;
             end
         end
-        RIGHT_1: begin
+        RIGHT_1: begin 
             rast_start = 1;
-            tv1 = face_uv[4][0];
+            tv3 = face_uv[4][0];
             tv2 = face_uv[4][1];
-            tv3 = face_uv[4][3];
+            tv1 = face_uv[4][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = RIGHT_2;
@@ -578,9 +578,9 @@ always_comb begin
         end
         FRONT_1: begin
             rast_start = 1;
-            tv1 = face_uv[5][0];
+            tv3 = face_uv[5][0];
             tv2 = face_uv[5][1];
-            tv3 = face_uv[5][3];
+            tv1 = face_uv[5][3];
             if(rast_done) begin
                 rast_start = 0;
                 next_state = FRONT_2;

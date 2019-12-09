@@ -11,6 +11,7 @@ module rast_line(
     input int top_in[4], // x y z shorts(u v)
     input int mid_in[4],
     input int bot_in[4],
+    input int area,
     output byte rgb[3],
     output int xyz[3],
     output logic output_valid,
@@ -42,16 +43,16 @@ int top_uv[2];
 int mid_uv[2];
 int bot_uv[2];
 
-// Normal Calc
-int bot_minus_mid[3];
-int top_minus_mid[3];
-int normal[3];
-int area, area_next;
-
-vec_sub norm_sub1(bot_vert, mid_vert, bot_minus_mid);
-vec_sub norm_sub2(top_vert, mid_vert, top_minus_mid);
-vec_cross norm_cross(top_minus_mid, bot_minus_mid, normal);
-vec_norm norm_area(normal, area_next);
+// Normal Calc (Moved to rast triangle)
+// int bot_minus_mid[3];
+// int top_minus_mid[3];
+// int normal[3];
+// int area, area_next;
+// 
+// vec_sub norm_sub1(bot_vert, mid_vert, bot_minus_mid);
+// vec_sub norm_sub2(top_vert, mid_vert, top_minus_mid);
+// vec_cross norm_cross(top_minus_mid, bot_minus_mid, normal);
+// vec_norm norm_area(normal, area_next);
 
 //barycentric interpolation calculation
 int bot_minus_pos[3];
@@ -244,7 +245,7 @@ always_ff @ (posedge CLK) begin
         bot_minus_pos <= '{0, 0, 0};
         mid_minus_pos <= '{0, 0, 0};
         top_minus_pos <= '{0, 0, 0};
-        area <= 0;
+        //area <= 0;
         bot_area_norm <= 0;
         mid_area_norm <= 0;
         top_area_norm <= 0;
@@ -270,7 +271,7 @@ always_ff @ (posedge CLK) begin
         bot_minus_pos <= bot_minus_pos_next;
         mid_minus_pos <= mid_minus_pos_next;
         top_minus_pos <= top_minus_pos_next;
-        area <= area_next;
+        //area <= area_next;
         bot_area_norm <= bot_area_norm_next; 
         mid_area_norm <= mid_area_norm_next; 
         top_area_norm <= top_area_norm_next; 
@@ -300,9 +301,23 @@ module rast_triangle(
     output logic done
 );
 
+// Unpacked input verticies
 int v1[3];
 int v2[3];
 int v3[3];
+
+// Normal Calc
+int v2_minus_v1[3];
+int v3_minus_v1[3];
+int normal[3];
+int area, area_next;
+int signed back_face_cull;
+
+vec_sub norm_sub1(v2, v1, v2_minus_v1);
+vec_sub norm_sub2(v3, v1, v3_minus_v1);
+vec_cross norm_cross(v2_minus_v1, v3_minus_v1, normal);
+vec_dot back_cull_dot(v1, normal, back_face_cull);
+vec_norm norm_area(normal, area_next);
 
 // Vertex soring vars
 int top_p[4];
@@ -310,7 +325,7 @@ int mid_p[4];
 int bot_p[4];
 int temp_p[4];
 
-// Unpacked verticies
+// Unpacked sorted verticies
 int top[3], top_next[3];
 int mid[3], mid_next[3];
 int bot[3], bot_next[3];
@@ -357,7 +372,7 @@ logic h_rast_init;
 logic line_done;
 logic h_rast_valid;
 rast_line h_rast(CLK, RESET, h_rast_init, cont, y_cnt, rast_x_min, rast_left_z, rast_x_max, rast_right_z,
-                            top_p, mid_p, bot_p, rgb, xyz, h_rast_valid, line_done);
+                            top_p, mid_p, bot_p, area, rgb, xyz, h_rast_valid, line_done);
 
 assign draw_ready = h_rast_valid;
 
@@ -400,6 +415,18 @@ always_comb begin
     top_next = top;
     mid_next = mid;
     bot_next = bot;
+
+    // Unpack input verticies
+    v1[0] = v1_p[0];
+    v1[1] = v1_p[1];
+    v1[2] = v1_p[2];
+    v2[0] = v2_p[0];
+    v2[1] = v2_p[1];
+    v2[2] = v2_p[2];
+    v3[0] = v3_p[0];
+    v3[1] = v3_p[1];
+    v3[2] = v3_p[2];
+
 
     // Sorting logic
     // 0 is top of screen, so bot is really at the top
@@ -512,9 +539,18 @@ always_comb begin
             next_state = INIT3;
         end
         INIT3: begin
-            next_state = INIT4;
+            $display("V1: ", v1_p[0], v1_p[1], v1_p[2]);
+            $display("V2: ", v2_p[0], v2_p[1], v2_p[2]);
+            $display("V3: ", v3_p[0], v3_p[1], v3_p[2]);
+            $display("Norms: ", normal[0], normal[1], normal[2], back_face_cull);
+            $display(" ");
+	        if(back_face_cull >= 0)
+                next_state = WAIT;
+            else
+                next_state = INIT4;
         end
         INIT4: begin
+            $display("In init 4");
             next_state = INIT5;
         end
         INIT5: begin
@@ -574,12 +610,14 @@ always_ff @ (posedge CLK) begin
         top <= '{0, 0, 0};
         bot <= '{0, 0, 0};
         mid <= '{0, 0, 0};
+	area <= 0;
     end else begin
         state <= next_state;
         y_cnt <= y_cnt_next;
         top <= top_next;
         bot <= bot_next;
         mid <= mid_next;
+	area <= area_next;
     end
         
 end

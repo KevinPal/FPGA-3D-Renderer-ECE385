@@ -36,8 +36,8 @@ logic [1:0] GPU_MASTER_response;
 logic GPU_MASTER_waitrequest;
 int draw_x;
 int draw_y;
-assign draw_x = (GPU_MASTER_address / 4) % 640;
-assign draw_y = (GPU_MASTER_address / 4) / 480;
+assign draw_x = (GPU_MASTER_address / 4) % 320;
+assign draw_y = (GPU_MASTER_address / 4) / 240;
 
 
 gpu_core core(
@@ -63,7 +63,7 @@ gpu_core core(
     GPU_MASTER_waitrequest
 );
 
-gen_prj_mat m1(320 * (1<<8), 240* (1<<8), 5*(1<<8), 200*(1<<8), prj);
+//gen_prj_mat m1(320 * (1<<8), 240* (1<<8), 5*(1<<8), 200*(1<<8), prj);
 
 //rast_cube cube_renderer(CLK, RESET, start, cont, 
 //    scale, '{x, y, z}, prj, rast_ready, rast_rgb, rast_xyz, rast_done);
@@ -80,7 +80,7 @@ assign v2 = verticies[6];
 assign v3 = verticies[7];
 logic ready;
 byte in_rgb[3] = '{255, 255, 255};
-int color_data[480*640*2];
+int color_data[240*320*2];
 
 assign rast_done = core.done;
 
@@ -97,7 +97,7 @@ always_comb begin
 end
 //rast_triangle test(CLK, RESET, start, cont, v3, v2, v1, in_rgb, draw_ready, rgb, xyz, done);
 
-project_cube projector(scale, pos, prj, verticies);
+//project_cube projector(scale, pos, prj, verticies);
 
 assign error = (  (draw_x < 170) | (draw_x > 350) | (draw_y > 427) | (draw_y  < 260));
 
@@ -180,7 +180,7 @@ RESET = 0;
 GPU_SLAVE_chipselect = 1;
 GPU_SLAVE_write = 1;
 GPU_SLAVE_address = 3;
-GPU_SLAVE_writedata= (640*480*4);
+GPU_SLAVE_writedata= (320*240*4);
 #4
 // Set mode to clear depth
 GPU_SLAVE_chipselect = 1;
@@ -236,9 +236,9 @@ GPU_SLAVE_writedata= 0;
 #4
 for(int i=-5;i<5;i++) begin
 for(int j=-5;j<5;j++) begin
-    if(i%2 == 0)
-        continue;
     if(j%2 == 0)
+        continue;
+    if(i%2 == 0)
         continue;
 	// unSet start
 	GPU_SLAVE_chipselect = 1;
@@ -304,16 +304,15 @@ for(int j=-5;j<5;j++) begin
 	$display("Render %d %d Done", i, j);
 end
 end
+$display("Done rendering at time ", $time);
 
 f = $fopen("output.txt","wb+");
-for (i = 0; i<(480*640*2); i=i+1)
+for (i = 0; i<(240*320*2); i=i+1)
     $fwrite(f,"%h\n",color_data[i]);
 
 $fclose(f);
-$display("done");
+$display("Done writing to file");
 
-$system("python \\u\Desktop\385_FinalPrj\sim_files\convert.py");
-$display("done converting");
 
 end
 endmodule
