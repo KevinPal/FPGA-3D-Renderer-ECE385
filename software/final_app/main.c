@@ -99,9 +99,7 @@ int main() {
 	init_keyboard();
 
 	double theta = 0;
-
-
-
+	double phi = 0;
 
 	int keycode = 0;
 	while (1) {
@@ -111,8 +109,8 @@ int main() {
 		printf("Clear ticks %d\n", clock() - start_time);
 		start_time = clock();
 
-		for(int z = 5; z > 0; z--) {
-		for(int x = 10; x > -30; x--) {
+		for(int z = 4; z > 0; z--) {
+		for(int x = 10; x > -5; x--) {
 					draw_cube(gpu, 8, -16 + 8*x, -16, -64 + 8*z, 0);
 			}
 		}
@@ -135,12 +133,8 @@ int main() {
 
 		memcpy(frame1, frame2, sizeof(frame1->D1));
 
-
 		printf("Render ticks %d\n", clock() - start_time);
 		start_time = clock();
-		//usleep(500000);
-		//printf("swaping");
-		//swap_buffers();
 
 		loop_keyboard(&keycode);
 		if(keycode == KEY_S) {
@@ -148,30 +142,53 @@ int main() {
 		} else if (keycode == KEY_W) {
 			gpu->cam_pos.z -= 1;
 		}
-		if(keycode == KEY_A) {
-			//gpu->cam_pos.y += 1;
+
+		if(keycode == KEY_UP) {
 			theta += 0.01;
-		} else if(keycode == KEY_D) {
+		} else if(keycode == KEY_DOWN) {
 			theta -= 0.01;
-			//gpu->cam_pos.y -= 1;
-			//printf("moving %d", gpu->cam_pos.y);
 		}
 
-		int s = (int)(sin(theta) * (1<<8));
-		int c = (int)(cos(theta) * (1<<8));
+		if(keycode == KEY_LEFT) {
+			phi += 0.01;
+		} else if(keycode == KEY_RIGHT) {
+			phi -= 0.01;
+		}
 
-		gpu->cam_x_axis.x = c;
-		gpu->cam_x_axis.y = 0;
-		gpu->cam_x_axis.z = -s;
+
+		int s_t = (int)(sin(theta) * (1<<8));
+		int c_t = (int)(cos(theta) * (1<<8));
+
+		int s_p = (int)(sin(phi) * (1<<8));
+		int c_p = (int)(cos(phi) * (1<<8));
+
+//		gpu->cam_x_axis.x = c;
+//		gpu->cam_x_axis.y = 0;
+//		gpu->cam_x_axis.z = -s;
+//
+//		gpu->cam_y_axis.x = 0;
+//		gpu->cam_y_axis.y = 1<<8;
+//		gpu->cam_y_axis.z = 0;
+//
+//		gpu->cam_z_axis.x = s;
+//		gpu->cam_z_axis.y = 0;
+//		gpu->cam_z_axis.z = c;
+
+		//        Matrix([[cos(phi), 			0,			 sin(phi), 0],
+		//                [sin(phi)*sin(theta), cos(theta), -sin(theta)*cos(phi), 0],
+		//                [-sin(phi)*cos(theta), sin(theta), cos(phi)*cos(theta), 0], [0, 0, 0, 1]]
+
+		gpu->cam_x_axis.x = c_p;
+		gpu->cam_x_axis.y = s_p*s_t/(1<<8);
+		gpu->cam_x_axis.z = -s_p*c_t/(1<<8);
 
 		gpu->cam_y_axis.x = 0;
-		gpu->cam_y_axis.y = 1<<8;
-		gpu->cam_y_axis.z = 0;
+		gpu->cam_y_axis.y = c_t;
+		gpu->cam_y_axis.z = s_t;
 
-		gpu->cam_z_axis.x = s;
-		gpu->cam_z_axis.y = 0;
-		gpu->cam_z_axis.z = c;
-
+		gpu->cam_z_axis.x = s_p;
+		gpu->cam_z_axis.y = -s_t*c_p/(1<<8);
+		gpu->cam_z_axis.z = c_p*c_t/(1<<8);
 	}
 
 	return 1;

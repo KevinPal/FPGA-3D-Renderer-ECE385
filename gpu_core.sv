@@ -463,10 +463,15 @@ always_comb begin
         end
         PROJECTING_4: begin
             // back_top_left.x and front_bot_right.x are < 0
-            if((verticies[0][0] < 0) & (verticies[7][0] < 0))
+            if((verticies[0][0] < 30) & (verticies[7][0] < 30)) // TODO 
                 next_state = DONE;
             // back_top_left.x and front_bot_right.x are > screen_width
             else if((verticies[0][0] > (320 * (1<<8))) & (verticies[7][0] > (320 * (1<<8))))
+                next_state = DONE;
+            else if((verticies[0][1] < 30) & (verticies[7][1] < 30)) // TODO 
+                next_state = DONE;
+            // back_top_left.x and front_bot_right.x are > screen_width
+            else if((verticies[0][1] > (240 * (1<<8))) & (verticies[7][1] > (240 * (1<<8))))
                 next_state = DONE;
             else
                 next_state = TOP_1;
