@@ -1,5 +1,5 @@
 Flow report for ece385_finalprj
-Sat Dec 07 21:21:29 2019
+Sun Dec 08 19:03:43 2019
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -37,26 +37,26 @@ refer to the applicable agreement for further details.
 
 
 
-+----------------------------------------------------------------------------------+
-; Flow Summary                                                                     ;
-+------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Sat Dec 07 21:21:29 2019       ;
-; Quartus Prime Version              ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition ;
-; Revision Name                      ; ece385_finalprj                             ;
-; Top-level Entity Name              ; final_top                                   ;
-; Family                             ; Cyclone IV E                                ;
-; Device                             ; EP4CE115F29C7                               ;
-; Timing Models                      ; Final                                       ;
-; Total logic elements               ; 71,120 / 114,480 ( 62 % )                   ;
-;     Total combinational functions  ; 68,225 / 114,480 ( 60 % )                   ;
-;     Dedicated logic registers      ; 13,745 / 114,480 ( 12 % )                   ;
-; Total registers                    ; 13864                                       ;
-; Total pins                         ; 194 / 529 ( 37 % )                          ;
-; Total virtual pins                 ; 0                                           ;
-; Total memory bits                  ; 3,266,304 / 3,981,312 ( 82 % )              ;
-; Embedded Multiplier 9-bit elements ; 531 / 532 ( 100 % )                         ;
-; Total PLLs                         ; 1 / 4 ( 25 % )                              ;
-+------------------------------------+---------------------------------------------+
++-------------------------------------------------------------------------------------------+
+; Flow Summary                                                                              ;
++------------------------------------+------------------------------------------------------+
+; Flow Status                        ; EDA Netlist Writer Failed - Sun Dec 08 19:03:43 2019 ;
+; Quartus Prime Version              ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition          ;
+; Revision Name                      ; ece385_finalprj                                      ;
+; Top-level Entity Name              ; final_top                                            ;
+; Family                             ; Cyclone IV E                                         ;
+; Device                             ; EP4CE115F29C7                                        ;
+; Timing Models                      ; Final                                                ;
+; Total logic elements               ; 72,307 / 114,480 ( 63 % )                            ;
+;     Total combinational functions  ; 69,465 / 114,480 ( 61 % )                            ;
+;     Dedicated logic registers      ; 13,851 / 114,480 ( 12 % )                            ;
+; Total registers                    ; 13970                                                ;
+; Total pins                         ; 194 / 529 ( 37 % )                                   ;
+; Total virtual pins                 ; 0                                                    ;
+; Total memory bits                  ; 3,266,304 / 3,981,312 ( 82 % )                       ;
+; Embedded Multiplier 9-bit elements ; 531 / 532 ( 100 % )                                  ;
+; Total PLLs                         ; 1 / 4 ( 25 % )                                       ;
++------------------------------------+------------------------------------------------------+
 
 
 +-----------------------------------------+
@@ -64,7 +64,7 @@ refer to the applicable agreement for further details.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 12/07/2019 21:02:14 ;
+; Start date & time ; 12/08/2019 18:41:55 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; ece385_finalprj     ;
 +-------------------+---------------------+
@@ -75,7 +75,7 @@ refer to the applicable agreement for further details.
 +----------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+-----------------+------------------+
 ; Assignment Name                              ; Value                                                                                                                                                                                                                                                                                                   ; Default Value   ; Entity Name     ; Section Id       ;
 +----------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+-----------------+------------------+
-; COMPILER_SIGNATURE_ID                        ; 220964532840647.157577413343032                                                                                                                                                                                                                                                                         ; --              ; --              ; --               ;
+; COMPILER_SIGNATURE_ID                        ; 220964532840647.157585211444980                                                                                                                                                                                                                                                                         ; --              ; --              ; --               ;
 ; CYCLONEII_OPTIMIZATION_TECHNIQUE             ; Speed                                                                                                                                                                                                                                                                                                   ; Balanced        ; --              ; --               ;
 ; EDA_DESIGN_INSTANCE_NAME                     ; NA                                                                                                                                                                                                                                                                                                      ; --              ; --              ; testbench        ;
 ; EDA_NATIVELINK_SIMULATION_TEST_BENCH         ; testbench                                                                                                                                                                                                                                                                                               ; --              ; --              ; eda_simulation   ;
@@ -87,11 +87,14 @@ refer to the applicable agreement for further details.
 ; EDA_TEST_BENCH_NAME                          ; testbench                                                                                                                                                                                                                                                                                               ; --              ; --              ; eda_simulation   ;
 ; EDA_TEST_BENCH_RUN_SIM_FOR                   ; 10000 ns                                                                                                                                                                                                                                                                                                ; --              ; --              ; testbench        ;
 ; ENABLE_SIGNALTAP                             ; On                                                                                                                                                                                                                                                                                                      ; --              ; --              ; --               ;
+; FITTER_EFFORT                                ; Standard Fit                                                                                                                                                                                                                                                                                            ; Auto Fit        ; --              ; --               ;
 ; FLOW_ENABLE_POWER_ANALYZER                   ; On                                                                                                                                                                                                                                                                                                      ; Off             ; --              ; --               ;
 ; MAX_CORE_JUNCTION_TEMP                       ; 85                                                                                                                                                                                                                                                                                                      ; --              ; --              ; --               ;
 ; MIN_CORE_JUNCTION_TEMP                       ; 0                                                                                                                                                                                                                                                                                                       ; --              ; --              ; --               ;
 ; MISC_FILE                                    ; final_soc/synthesis/../final_soc.cmp                                                                                                                                                                                                                                                                    ; --              ; --              ; --               ;
 ; MISC_FILE                                    ; final_soc/synthesis/../../final_soc.qsys                                                                                                                                                                                                                                                                ; --              ; --              ; --               ;
+; MUX_RESTRUCTURE                              ; Off                                                                                                                                                                                                                                                                                                     ; Auto            ; --              ; --               ;
+; OPTIMIZATION_MODE                            ; Aggressive Performance                                                                                                                                                                                                                                                                                  ; Balanced        ; --              ; --               ;
 ; PARTITION_COLOR                              ; -- (Not supported for targeted family)                                                                                                                                                                                                                                                                  ; --              ; DE2_115_Default ; Top              ;
 ; PARTITION_COLOR                              ; -- (Not supported for targeted family)                                                                                                                                                                                                                                                                  ; --              ; final_top       ; Top              ;
 ; PARTITION_FITTER_PRESERVATION_LEVEL          ; -- (Not supported for targeted family)                                                                                                                                                                                                                                                                  ; --              ; DE2_115_Default ; Top              ;
@@ -101,6 +104,7 @@ refer to the applicable agreement for further details.
 ; PHYSICAL_SYNTHESIS_COMBO_LOGIC               ; On                                                                                                                                                                                                                                                                                                      ; Off             ; --              ; --               ;
 ; PHYSICAL_SYNTHESIS_REGISTER_DUPLICATION      ; On                                                                                                                                                                                                                                                                                                      ; Off             ; --              ; --               ;
 ; PHYSICAL_SYNTHESIS_REGISTER_RETIMING         ; On                                                                                                                                                                                                                                                                                                      ; Off             ; --              ; --               ;
+; PLACEMENT_EFFORT_MULTIPLIER                  ; 4.0                                                                                                                                                                                                                                                                                                     ; 1.0             ; --              ; --               ;
 ; POWER_BOARD_THERMAL_MODEL                    ; None (CONSERVATIVE)                                                                                                                                                                                                                                                                                     ; --              ; --              ; --               ;
 ; POWER_DEFAULT_INPUT_IO_TOGGLE_RATE           ; 12.5 %                                                                                                                                                                                                                                                                                                  ; 12.5%           ; --              ; --               ;
 ; POWER_PRESET_COOLING_SOLUTION                ; 23 MM HEAT SINK WITH 200 LFPM AIRFLOW                                                                                                                                                                                                                                                                   ; --              ; --              ; --               ;
@@ -111,7 +115,7 @@ refer to the applicable agreement for further details.
 ; SLD_FILE                                     ; final_soc/synthesis/final_soc.regmap                                                                                                                                                                                                                                                                    ; --              ; --              ; --               ;
 ; SLD_FILE                                     ; final_soc/synthesis/final_soc.debuginfo                                                                                                                                                                                                                                                                 ; --              ; --              ; --               ;
 ; SLD_FILE                                     ; db/stp1_auto_stripped.stp                                                                                                                                                                                                                                                                               ; --              ; --              ; --               ;
-; SLD_INFO                                     ; QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1575774037                                                                                                                                                                                                                                             ; --              ; final_soc       ; --               ;
+; SLD_INFO                                     ; QSYS_NAME final_soc HAS_SOPCINFO 1 GENERATION_ID 1575801372                                                                                                                                                                                                                                             ; --              ; final_soc       ; --               ;
 ; SLD_NODE_CREATOR_ID                          ; 110                                                                                                                                                                                                                                                                                                     ; --              ; --              ; auto_signaltap_0 ;
 ; SLD_NODE_ENTITY_NAME                         ; sld_signaltap                                                                                                                                                                                                                                                                                           ; --              ; --              ; auto_signaltap_0 ;
 ; SLD_NODE_PARAMETER_ASSIGNMENT                ; SLD_RAM_BLOCK_TYPE=AUTO                                                                                                                                                                                                                                                                                 ; --              ; --              ; auto_signaltap_0 ;
@@ -151,13 +155,13 @@ refer to the applicable agreement for further details.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:04:51     ; 1.0                     ; 5609 MB             ; 00:05:02                           ;
-; Fitter               ; 00:10:58     ; 1.1                     ; 7099 MB             ; 00:31:06                           ;
-; Assembler            ; 00:00:07     ; 1.0                     ; 4968 MB             ; 00:00:07                           ;
-; Power Analyzer       ; 00:00:54     ; 1.2                     ; 5443 MB             ; 00:01:02                           ;
-; Timing Analyzer      ; 00:00:40     ; 2.6                     ; 5914 MB             ; 00:01:02                           ;
-; EDA Netlist Writer   ; 00:01:10     ; 1.0                     ; 5312 MB             ; 00:01:07                           ;
-; Total                ; 00:18:40     ; --                      ; --                  ; 00:39:26                           ;
+; Analysis & Synthesis ; 00:04:51     ; 1.0                     ; 5630 MB             ; 00:05:00                           ;
+; Fitter               ; 00:13:29     ; 1.1                     ; 7117 MB             ; 00:43:55                           ;
+; Assembler            ; 00:00:07     ; 1.0                     ; 4967 MB             ; 00:00:07                           ;
+; Power Analyzer       ; 00:00:55     ; 1.2                     ; 5444 MB             ; 00:01:03                           ;
+; Timing Analyzer      ; 00:00:42     ; 2.6                     ; 6024 MB             ; 00:01:04                           ;
+; EDA Netlist Writer   ; 00:01:08     ; 1.0                     ; 5324 MB             ; 00:01:05                           ;
+; Total                ; 00:21:12     ; --                      ; --                  ; 00:52:14                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 

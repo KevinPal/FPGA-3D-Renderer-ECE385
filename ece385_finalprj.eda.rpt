@@ -1,5 +1,5 @@
 EDA Netlist Writer report for ece385_finalprj
-Sat Dec 07 21:21:29 2019
+Sun Dec 08 19:03:43 2019
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -33,15 +33,15 @@ refer to the applicable agreement for further details.
 
 
 
-+-------------------------------------------------------------------+
-; EDA Netlist Writer Summary                                        ;
-+---------------------------+---------------------------------------+
-; EDA Netlist Writer Status ; Successful - Sat Dec 07 21:21:29 2019 ;
-; Revision Name             ; ece385_finalprj                       ;
-; Top-level Entity Name     ; final_top                             ;
-; Family                    ; Cyclone IV E                          ;
-; Simulation Files Creation ; Successful                            ;
-+---------------------------+---------------------------------------+
++---------------------------------------------------------------+
+; EDA Netlist Writer Summary                                    ;
++---------------------------+-----------------------------------+
+; EDA Netlist Writer Status ; Failed - Sun Dec 08 19:03:43 2019 ;
+; Revision Name             ; ece385_finalprj                   ;
+; Top-level Entity Name     ; final_top                         ;
+; Family                    ; Cyclone IV E                      ;
+; Simulation Files Creation ; Successful                        ;
++---------------------------+-----------------------------------+
 
 
 +-------------------------------------------------------------------------------------------------------------------------------------+
@@ -88,7 +88,7 @@ refer to the applicable agreement for further details.
 Info: *******************************************************************
 Info: Running Quartus Prime EDA Netlist Writer
     Info: Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
-    Info: Processing started: Sat Dec 07 21:20:19 2019
+    Info: Processing started: Sun Dec 08 19:02:35 2019
 Info: Command: quartus_eda --read_settings_files=off --write_settings_files=off ece385_finalprj -c ece385_finalprj
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (204019): Generated file ece385_finalprj_7_1200mv_85c_slow.svo in folder "C:/Users/kpalani/Desktop/ece385_finalprj/simulation/modelsim/" for EDA simulation tool
@@ -96,13 +96,14 @@ Info (204019): Generated file ece385_finalprj_7_1200mv_0c_slow.svo in folder "C:
 Info (204019): Generated file ece385_finalprj_min_1200mv_0c_fast.svo in folder "C:/Users/kpalani/Desktop/ece385_finalprj/simulation/modelsim/" for EDA simulation tool
 Info (204019): Generated file ece385_finalprj.svo in folder "C:/Users/kpalani/Desktop/ece385_finalprj/simulation/modelsim/" for EDA simulation tool
 Info (204019): Generated file ece385_finalprj_7_1200mv_85c_v_slow.sdo in folder "C:/Users/kpalani/Desktop/ece385_finalprj/simulation/modelsim/" for EDA simulation tool
+Error (200002): Can't open file C:/Users/kpalani/Desktop/ece385_finalprj/simulation/modelsim/ece385_finalprj_7_1200mv_0c_v_slow.sdo for writing
 Info (204019): Generated file ece385_finalprj_7_1200mv_0c_v_slow.sdo in folder "C:/Users/kpalani/Desktop/ece385_finalprj/simulation/modelsim/" for EDA simulation tool
 Info (204019): Generated file ece385_finalprj_min_1200mv_0c_v_fast.sdo in folder "C:/Users/kpalani/Desktop/ece385_finalprj/simulation/modelsim/" for EDA simulation tool
 Info (204019): Generated file ece385_finalprj_v.sdo in folder "C:/Users/kpalani/Desktop/ece385_finalprj/simulation/modelsim/" for EDA simulation tool
-Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 5312 megabytes
-    Info: Processing ended: Sat Dec 07 21:21:30 2019
-    Info: Elapsed time: 00:01:11
-    Info: Total CPU time (on all processors): 00:01:08
+Error: Quartus Prime EDA Netlist Writer was unsuccessful. 1 error, 1 warning
+    Error: Peak virtual memory: 5324 megabytes
+    Error: Processing ended: Sun Dec 08 19:03:43 2019
+    Error: Elapsed time: 00:01:08
+    Error: Total CPU time (on all processors): 00:01:06
 
 
