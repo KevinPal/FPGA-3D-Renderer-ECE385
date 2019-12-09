@@ -4,7 +4,7 @@
  * Machine generated for CPU 'NIOS2' in SOPC Builder design 'final_soc'
  * SOPC Builder design path: ../../final_soc.sopcinfo
  *
- * Generated: Sun Dec 08 04:36:55 CST 2019
+ * Generated: Sun Dec 08 23:41:52 CST 2019
  */
 
 /*
@@ -59,6 +59,7 @@
  */
 
 #include "altera_nios2_gen2_irq.h"
+#include "altera_avalon_dma.h"
 #include "altera_avalon_jtag_uart.h"
 #include "altera_avalon_timer.h"
 #include "altera_up_avalon_video_pixel_buffer_dma.h"
@@ -69,6 +70,7 @@
  */
 
 ALTERA_NIOS2_GEN2_IRQ_INSTANCE ( NIOS2, NIOS2);
+ALTERA_AVALON_DMA_INSTANCE ( COPY_DMA, copy_dma);
 ALTERA_AVALON_JTAG_UART_INSTANCE ( JTAG_UART_0, jtag_uart_0);
 ALTERA_AVALON_TIMER_INSTANCE ( TIMER_0, timer_0);
 ALTERA_UP_AVALON_VIDEO_PIXEL_BUFFER_DMA_INSTANCE ( PIXEL_DMA, pixel_dma);
@@ -96,6 +98,7 @@ void alt_irq_init ( const void* base )
 void alt_sys_init( void )
 {
     ALTERA_AVALON_TIMER_INIT ( TIMER_0, timer_0);
+    ALTERA_AVALON_DMA_INIT ( COPY_DMA, copy_dma);
     ALTERA_AVALON_JTAG_UART_INIT ( JTAG_UART_0, jtag_uart_0);
     ALTERA_UP_AVALON_VIDEO_PIXEL_BUFFER_DMA_INIT ( PIXEL_DMA, pixel_dma);
     ALTERA_UP_AVALON_VIDEO_RGB_RESAMPLER_INIT ( VGA_RESAMPLER, vga_resampler);

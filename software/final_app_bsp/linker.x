@@ -4,7 +4,7 @@
  * Machine generated for CPU 'NIOS2' in SOPC Builder design 'final_soc'
  * SOPC Builder design path: ../../final_soc.sopcinfo
  *
- * Generated: Sun Dec 08 04:36:55 CST 2019
+ * Generated: Sun Dec 08 23:41:52 CST 2019
  */
 
 /*
@@ -53,12 +53,10 @@ MEMORY
     reset : ORIGIN = 0x0, LENGTH = 32
     SDRAM : ORIGIN = 0x20, LENGTH = 134216672
     exception_stack : ORIGIN = 0x7fffc00, LENGTH = 1024
-    frame_buffer : ORIGIN = 0x8000000, LENGTH = 307200
 }
 
 /* Define symbols for each memory base-address */
 __alt_mem_SDRAM = 0x0;
-__alt_mem_frame_buffer = 0x8000000;
 
 OUTPUT_FORMAT( "elf32-littlenios2",
                "elf32-littlenios2",
@@ -322,23 +320,6 @@ SECTIONS
     } > SDRAM
 
     PROVIDE (_alt_partition_SDRAM_load_addr = LOADADDR(.SDRAM));
-
-    /*
-     *
-     * This section's LMA is set to the .text region.
-     * crt0 will copy to this section's specified mapped region virtual memory address (VMA)
-     *
-     */
-
-    .frame_buffer : AT ( LOADADDR (.SDRAM) + SIZEOF (.SDRAM) )
-    {
-        PROVIDE (_alt_partition_frame_buffer_start = ABSOLUTE(.));
-        *(.frame_buffer .frame_buffer. frame_buffer.*)
-        . = ALIGN(4);
-        PROVIDE (_alt_partition_frame_buffer_end = ABSOLUTE(.));
-    } > frame_buffer
-
-    PROVIDE (_alt_partition_frame_buffer_load_addr = LOADADDR(.frame_buffer));
 
     /*
      * Stabs debugging sections.

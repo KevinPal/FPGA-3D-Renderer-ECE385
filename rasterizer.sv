@@ -383,6 +383,8 @@ enum logic [5:0] {
     INIT3,
     INIT4,
     INIT5,
+    INIT6,
+    INIT7,
     RENDER_BOT_INIT_1,
     RENDER_BOT_INIT_2,
     RENDER_BOT,
@@ -539,21 +541,21 @@ always_comb begin
             next_state = INIT3;
         end
         INIT3: begin
-            $display("V1: ", v1_p[0], v1_p[1], v1_p[2]);
-            $display("V2: ", v2_p[0], v2_p[1], v2_p[2]);
-            $display("V3: ", v3_p[0], v3_p[1], v3_p[2]);
-            $display("Norms: ", normal[0], normal[1], normal[2], back_face_cull);
-            $display(" ");
 	        if(back_face_cull >= 0)
                 next_state = WAIT;
             else
                 next_state = INIT4;
         end
         INIT4: begin
-            $display("In init 4");
             next_state = INIT5;
         end
         INIT5: begin
+            next_state = INIT6;
+        end
+        INIT6: begin
+            next_state = INIT7;
+        end
+        INIT7: begin
             next_state = RENDER_BOT_INIT_1;
             y_cnt_next = e1_ymin_c;
         end
@@ -649,7 +651,9 @@ enum logic [5:0] {
     NOT_INIT,
     INIT_1,
     INIT_2,
-    INIT_3
+    INIT_3,
+    INIT_4,
+    INIT_5
 } init_state = NOT_INIT, init_state_next;
 
 ceil_min_max minmaxers[3](bot, top, min_pos, max_pos);
@@ -665,17 +669,20 @@ always_comb begin
     steps[1] = 32'hxxxxxxxx;
     steps[2] = 32'hxxxxxxxx;
 
-    if((init & (init_state == NOT_INIT)) | (init_state == INIT_1) ) begin
+    if((init & (init_state == NOT_INIT)) | (init_state == INIT_1) |
+         (init_state == INIT_2) | (init_state == INIT_3) |
+         (init_state == INIT_4) | (init_state == INIT_5)
+         ) begin
         steps[0] = top[0] - bot[0];
         steps[1] = top[1] - bot[1];
         steps[2] = top[2] - bot[2];
 
         dxBdyNext = (steps[0] * (1<<8))/steps[1];
         dzBdyNext = (steps[2] * (1<<8))/steps[1];
-    end else if ((init_state == INIT_2) | (init_state == INIT_3)) begin
+
         yPreStep = min_pos[1] - bot[1];  // minY - bot.Y
-        current_pos_next[0] = (bot[0] + ((yPreStep * dxBdy)/(1<<8)));
-        current_pos_next[2] = (bot[2] + ((yPreStep * dzBdy)/(1<<8)));
+        current_pos_next[0] = (bot[0] + ((yPreStep * dxBdyNext)/(1<<8)));
+        current_pos_next[2] = (bot[2] + ((yPreStep * dzBdyNext)/(1<<8)));
         current_pos_next[1] = (bot[1] + yPreStep);
     end else if(step & (init_state == NOT_INIT)) begin
         current_pos_next[0] += dxBdy;
@@ -697,10 +704,16 @@ always_comb begin
             init_state_next = INIT_3;
         end
         INIT_3: begin
+            init_state_next = INIT_4;
+        end
+        INIT_4: begin
+            init_state_next = INIT_5;
+        end
+        INIT_5: begin
             if(~init)
                 init_state_next = NOT_INIT;
             else
-                init_state_next = INIT_3;
+                init_state_next = INIT_5;
         end
     endcase
 

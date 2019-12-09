@@ -4,7 +4,7 @@
  * Machine generated for CPU 'NIOS2' in SOPC Builder design 'final_soc'
  * SOPC Builder design path: ../../final_soc.sopcinfo
  *
- * Generated: Sun Dec 08 04:36:55 CST 2019
+ * Generated: Sun Dec 08 23:41:52 CST 2019
  */
 
 /*
@@ -67,8 +67,6 @@
 
 #define EXCEPTION_STACK_REGION_BASE 0x7fffc00
 #define EXCEPTION_STACK_REGION_SPAN 1024
-#define FRAME_BUFFER_REGION_BASE 0x8000000
-#define FRAME_BUFFER_REGION_SPAN 307200
 #define RESET_REGION_BASE 0x0
 #define RESET_REGION_SPAN 32
 #define SDRAM_REGION_BASE 0x20

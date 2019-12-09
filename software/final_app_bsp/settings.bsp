@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Dec 8, 2019 4:36:54 AM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1575801414831</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Dec 9, 2019 1:30:37 AM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1575876637511</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Users\kpalani\Desktop\ece385_finalprj\software\final_app_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\final_soc.sopcinfo</SopcDesignFile>
@@ -905,86 +905,86 @@
                 <attributes>memory</attributes>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>frame_buffer</slaveDescriptor>
-                <addressRange>0x08000000 - 0x0804AFFF</addressRange>
-                <addressSpan>307200</addressSpan>
-                <attributes>memory</attributes>
-        </MemoryMap>
-        <MemoryMap>
                 <slaveDescriptor>GPU_CORE_0</slaveDescriptor>
-                <addressRange>0x08080000 - 0x08081FFF</addressRange>
+                <addressRange>0x08000000 - 0x08001FFF</addressRange>
                 <addressSpan>8192</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
+                <slaveDescriptor>copy_dma</slaveDescriptor>
+                <addressRange>0x08003000 - 0x0800301F</addressRange>
+                <addressSpan>32</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
                 <slaveDescriptor>timer_0</slaveDescriptor>
-                <addressRange>0x08083000 - 0x0808301F</addressRange>
+                <addressRange>0x08003020 - 0x0800303F</addressRange>
                 <addressSpan>32</addressSpan>
                 <attributes>timer</attributes>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>pixel_dma</slaveDescriptor>
-                <addressRange>0x08083020 - 0x0808302F</addressRange>
-                <addressSpan>16</addressSpan>
-                <attributes/>
-        </MemoryMap>
-        <MemoryMap>
                 <slaveDescriptor>otg_hpi_reset</slaveDescriptor>
-                <addressRange>0x08083030 - 0x0808303F</addressRange>
+                <addressRange>0x08003040 - 0x0800304F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>otg_hpi_cs</slaveDescriptor>
-                <addressRange>0x08083040 - 0x0808304F</addressRange>
+                <addressRange>0x08003050 - 0x0800305F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>otg_hpi_w</slaveDescriptor>
-                <addressRange>0x08083050 - 0x0808305F</addressRange>
+                <addressRange>0x08003060 - 0x0800306F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>otg_hpi_r</slaveDescriptor>
-                <addressRange>0x08083060 - 0x0808306F</addressRange>
+                <addressRange>0x08003070 - 0x0800307F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>otg_hpi_data</slaveDescriptor>
-                <addressRange>0x08083070 - 0x0808307F</addressRange>
+                <addressRange>0x08003080 - 0x0800308F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>otg_hpi_address</slaveDescriptor>
-                <addressRange>0x08083080 - 0x0808308F</addressRange>
+                <addressRange>0x08003090 - 0x0800309F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>keycode</slaveDescriptor>
-                <addressRange>0x08083090 - 0x0808309F</addressRange>
+                <addressRange>0x080030A0 - 0x080030AF</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>PLL</slaveDescriptor>
-                <addressRange>0x080830A0 - 0x080830AF</addressRange>
+                <addressRange>0x080030B0 - 0x080030BF</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>pixel_dma</slaveDescriptor>
+                <addressRange>0x080030C0 - 0x080030CF</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>jtag_uart_0</slaveDescriptor>
-                <addressRange>0x080830B0 - 0x080830B7</addressRange>
+                <addressRange>0x080030D0 - 0x080030D7</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes>printable</attributes>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>vga_resampler</slaveDescriptor>
-                <addressRange>0x080830BC - 0x080830BF</addressRange>
+                <addressRange>0x080030DC - 0x080030DF</addressRange>
                 <addressSpan>4</addressSpan>
                 <attributes/>
         </MemoryMap>

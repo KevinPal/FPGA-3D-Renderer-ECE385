@@ -21,10 +21,19 @@
 #define KEY_A 0x04
 #define KEY_D 0x07
 
+#define BLOCK_GRASS 0
+#define BLOCK_DIRT 1
+#define BLOCK_LOG 2
+#define BLOCK_COBBLE 3
+#define BLOCK_IRON 4
+#define BLOCK_LEAF 5
+#define BLOCK_FURNACE 6
+#define BLOCK_PUMPKIN 7
+
 typedef struct pixel_t {
-	char r;
-	char g;
 	char b;
+	char g;
+	char r;
 	char a;
 } pixel_t;
 
@@ -58,6 +67,17 @@ typedef struct dma_controller_t {
 	volatile int resolution;
 	volatile int status;
 } dma_controller_t;
+
+typedef struct copy_dma_controller_t {
+	volatile int status;
+	volatile frame_buffer_t* write_pointer;
+	volatile frame_buffer_t* read_pointer;
+	volatile int length;
+	volatile int res_1;
+	volatile int res_2;
+	volatile int control;
+	volatile int res_3;
+};
 
 typedef struct vec3_t {
 	volatile int x;
