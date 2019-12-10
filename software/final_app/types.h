@@ -108,6 +108,8 @@ typedef struct gpu_core_t {
 	volatile vec3_t cam_y_axis;
 	volatile vec3_t cam_z_axis;
 	volatile vec3_t cam_pos;
+	volatile vec3_t cam_trans;
+	volatile int z_clip;
 } gpu_core_t;
 
 #endif

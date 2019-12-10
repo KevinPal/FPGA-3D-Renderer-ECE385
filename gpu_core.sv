@@ -60,16 +60,18 @@ int y_axis_next[3];
 int z_axis_next[3];
 int cam_pos[3];
 int cam_pos_next[3];
+int trans[3];
+int trans_next[3];
 
+int z_clip, z_clip_next;
 
 gen_prj_mat m1(320 * (1<<8), 240 * (1<<8), 5 * (1<<8), 200 * (1<<8), prj_raw);
-gen_camera_mat m2('{x_axis[0],x_axis[1], x_axis[2]}, '{y_axis[0],y_axis[1], y_axis[2]},
-	'{z_axis[0],z_axis[1], z_axis[2]}, '{cam_pos[0], cam_pos[1], cam_pos[2]}, cam);
+gen_camera_mat m2(x_axis, y_axis, z_axis, cam_pos, trans, cam);
 
 mat_mat_mul m3(cam, prj_raw, prj);
 
 rast_cube cube_renderer(CLK_clk, RESET_reset, rast_start, rast_cont, 
-    scale, '{x, y, z}, block_id, prj, rast_ready, rast_rgb, rast_xyz, rast_done);
+    scale, '{x, y, z}, block_id, prj, z_clip, rast_ready, rast_rgb, rast_xyz, rast_done);
 
 
 int clear_counter, clear_counter_next;
@@ -115,6 +117,7 @@ always_comb begin
     y_axis_next = y_axis;
     z_axis_next = z_axis;
     cam_pos_next = cam_pos;
+    z_clip_next = z_clip;
 
     // rast defaults
     rast_start = 0;
@@ -147,6 +150,10 @@ always_comb begin
                 19: GPU_SLAVE_readdata = cam_pos[0];
                 20: GPU_SLAVE_readdata = cam_pos[1];
                 21: GPU_SLAVE_readdata = cam_pos[2];
+                22: GPU_SLAVE_readdata = trans[0];
+                23: GPU_SLAVE_readdata = trans[1];
+                24: GPU_SLAVE_readdata = trans[2];
+                25: GPU_SLAVE_readdata = z_clip;
             endcase
         end
 
@@ -175,6 +182,10 @@ always_comb begin
                 19: cam_pos_next[0]      = GPU_SLAVE_writedata;
                 20: cam_pos_next[1]      = GPU_SLAVE_writedata;
                 21: cam_pos_next[2]      = GPU_SLAVE_writedata;
+                22: trans_next[0]        = GPU_SLAVE_writedata;
+                23: trans_next[1]        = GPU_SLAVE_writedata;
+                24: trans_next[2]        = GPU_SLAVE_writedata;
+                25: z_clip_next          = GPU_SLAVE_writedata;
             endcase
         end
 
@@ -293,6 +304,8 @@ always_ff @ (posedge CLK_clk) begin
         y_axis <= '{0, (1<<8), 0};
         z_axis <= '{0, 0, (1<<8)};
         cam_pos <= '{0, 0, 0};
+        trans <= '{0, 0, 0};
+        z_clip <= 0;
     end else begin
         frame_pointer <= frame_pointer_next;
         start <= start_next;
@@ -311,6 +324,8 @@ always_ff @ (posedge CLK_clk) begin
         y_axis <= y_axis_next;
         z_axis <= z_axis_next;
         cam_pos <= cam_pos_next;
+        trans <= trans_next;
+        z_clip <= z_clip_next;
     end
 end
 
@@ -326,6 +341,7 @@ module rast_cube(
     input int pos[3],
     input int block_id,
     input int prj[4][4],
+    input int z_clip,
     output logic rast_ready,
     output byte rgb[3],
     output int xyz[3],
@@ -464,15 +480,17 @@ always_comb begin
         end
         PROJECTING_4: begin
             // back_top_left.x and front_bot_right.x are < 0
-            if((verticies[0][0] < 30) & (verticies[7][0] < 30)) // TODO 
+            if((verticies[0][0] < 30) || (verticies[7][0] < 30)) // TODO 
                 next_state = DONE;
             // back_top_left.x and front_bot_right.x are > screen_width
-            else if((verticies[0][0] > (320 * (1<<8))) & (verticies[7][0] > (320 * (1<<8))))
+            else if((verticies[0][0] > (320 || (1<<8))) & (verticies[7][0] > (320 * (1<<8))))
                 next_state = DONE;
-            else if((verticies[0][1] < 30) & (verticies[7][1] < 30)) // TODO 
+            else if((verticies[0][1] < 30) || (verticies[7][1] < 30)) // TODO 
                 next_state = DONE;
             // back_top_left.x and front_bot_right.x are > screen_width
-            else if((verticies[0][1] > (240 * (1<<8))) & (verticies[7][1] > (240 * (1<<8))))
+            else if((verticies[0][1] > (240 * (1<<8))) || (verticies[7][1] > (240 * (1<<8))))
+                next_state = DONE;
+            else if(verticies[0][2] < (z_clip))
                 next_state = DONE;
             else
                 next_state = TOP_1;

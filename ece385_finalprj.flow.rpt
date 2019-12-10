@@ -1,5 +1,5 @@
 Flow report for ece385_finalprj
-Mon Dec 09 21:53:50 2019
+Tue Dec 10 03:12:45 2019
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -40,17 +40,17 @@ refer to the applicable agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Mon Dec 09 21:53:50 2019       ;
+; Flow Status                        ; Successful - Tue Dec 10 03:12:45 2019       ;
 ; Quartus Prime Version              ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition ;
 ; Revision Name                      ; ece385_finalprj                             ;
 ; Top-level Entity Name              ; final_top                                   ;
 ; Family                             ; Cyclone IV E                                ;
 ; Device                             ; EP4CE115F29C7                               ;
 ; Timing Models                      ; Final                                       ;
-; Total logic elements               ; 72,645 / 114,480 ( 63 % )                   ;
-;     Total combinational functions  ; 70,410 / 114,480 ( 62 % )                   ;
-;     Dedicated logic registers      ; 12,069 / 114,480 ( 11 % )                   ;
-; Total registers                    ; 12188                                       ;
+; Total logic elements               ; 73,466 / 114,480 ( 64 % )                   ;
+;     Total combinational functions  ; 71,134 / 114,480 ( 62 % )                   ;
+;     Dedicated logic registers      ; 12,181 / 114,480 ( 11 % )                   ;
+; Total registers                    ; 12300                                       ;
 ; Total pins                         ; 194 / 529 ( 37 % )                          ;
 ; Total virtual pins                 ; 0                                           ;
 ; Total memory bits                  ; 2,044,672 / 3,981,312 ( 51 % )              ;
@@ -64,7 +64,7 @@ refer to the applicable agreement for further details.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 12/09/2019 21:33:18 ;
+; Start date & time ; 12/10/2019 02:51:57 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; ece385_finalprj     ;
 +-------------------+---------------------+
@@ -75,7 +75,7 @@ refer to the applicable agreement for further details.
 +----------------------------------------------+-------------------------------------------------------------+-----------------+-----------------+----------------+
 ; Assignment Name                              ; Value                                                       ; Default Value   ; Entity Name     ; Section Id     ;
 +----------------------------------------------+-------------------------------------------------------------+-----------------+-----------------+----------------+
-; COMPILER_SIGNATURE_ID                        ; 220964532840647.157594879722736                             ; --              ; --              ; --             ;
+; COMPILER_SIGNATURE_ID                        ; 220964532840647.157596791636008                             ; --              ; --              ; --             ;
 ; CYCLONEII_OPTIMIZATION_TECHNIQUE             ; Speed                                                       ; Balanced        ; --              ; --             ;
 ; EDA_DESIGN_INSTANCE_NAME                     ; NA                                                          ; --              ; --              ; testbench      ;
 ; EDA_NATIVELINK_SIMULATION_TEST_BENCH         ; testbench                                                   ; --              ; --              ; eda_simulation ;
@@ -127,13 +127,13 @@ refer to the applicable agreement for further details.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:04:47     ; 1.0                     ; 5561 MB             ; 00:05:03                           ;
-; Fitter               ; 00:12:14     ; 1.1                     ; 7033 MB             ; 00:41:14                           ;
-; Assembler            ; 00:00:07     ; 1.0                     ; 4956 MB             ; 00:00:07                           ;
-; Power Analyzer       ; 00:00:53     ; 1.2                     ; 5431 MB             ; 00:01:01                           ;
-; Timing Analyzer      ; 00:00:45     ; 2.7                     ; 6078 MB             ; 00:01:04                           ;
-; EDA Netlist Writer   ; 00:01:11     ; 1.0                     ; 5296 MB             ; 00:01:08                           ;
-; Total                ; 00:19:57     ; --                      ; --                  ; 00:49:37                           ;
+; Analysis & Synthesis ; 00:04:49     ; 1.0                     ; 5607 MB             ; 00:05:04                           ;
+; Fitter               ; 00:12:24     ; 1.1                     ; 7051 MB             ; 00:42:14                           ;
+; Assembler            ; 00:00:07     ; 1.0                     ; 4962 MB             ; 00:00:07                           ;
+; Power Analyzer       ; 00:00:54     ; 1.2                     ; 5435 MB             ; 00:01:03                           ;
+; Timing Analyzer      ; 00:00:45     ; 2.8                     ; 6201 MB             ; 00:01:06                           ;
+; EDA Netlist Writer   ; 00:01:16     ; 1.0                     ; 5302 MB             ; 00:01:12                           ;
+; Total                ; 00:20:15     ; --                      ; --                  ; 00:50:46                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 

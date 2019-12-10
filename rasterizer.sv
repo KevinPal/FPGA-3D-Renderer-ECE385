@@ -205,7 +205,7 @@ always_comb begin
         end
         RENDERING_TEXT: begin
             output_valid = 1;
-            if(((x_cnt >= right_x) || (x_cnt >= (640*(1<<8)))) & cont)
+            if(((x_cnt >= right_x) || (x_cnt >= (320*(1<<8)))) & cont)
                 next_state = DONE;
             else if(cont) begin
                 next_state = RENDERING_CALC;
@@ -385,6 +385,7 @@ enum logic [5:0] {
     INIT5,
     INIT6,
     INIT7,
+    INIT8,
     RENDER_BOT_INIT_1,
     RENDER_BOT_INIT_2,
     RENDER_BOT,
@@ -470,7 +471,7 @@ always_comb begin
     //
     //
     // Main Inits
-    if((state == INIT1) | (state == INIT2) | (state == INIT3) | (state == INIT4) | (state == INIT5))
+    if((state == INIT1) | (state == INIT2) | (state == INIT3) | (state == INIT4) | (state == INIT5) | (state == INIT7) | (state == INIT8) )
         init = 1;
 
     // Find left and right edge for bot
@@ -556,6 +557,9 @@ always_comb begin
             next_state = INIT7;
         end
         INIT7: begin
+            next_state = INIT8;
+        end
+        INIT8: begin
             next_state = RENDER_BOT_INIT_1;
             y_cnt_next = e1_ymin_c;
         end
@@ -653,7 +657,8 @@ enum logic [5:0] {
     INIT_2,
     INIT_3,
     INIT_4,
-    INIT_5
+    INIT_5,
+    INIT_6
 } init_state = NOT_INIT, init_state_next;
 
 ceil_min_max minmaxers[3](bot, top, min_pos, max_pos);
@@ -671,7 +676,8 @@ always_comb begin
 
     if((init & (init_state == NOT_INIT)) | (init_state == INIT_1) |
          (init_state == INIT_2) | (init_state == INIT_3) |
-         (init_state == INIT_4) | (init_state == INIT_5)
+         (init_state == INIT_4) | (init_state == INIT_5) |
+         (init_state == INIT_6)
          ) begin
         steps[0] = top[0] - bot[0];
         steps[1] = top[1] - bot[1];
@@ -710,10 +716,13 @@ always_comb begin
             init_state_next = INIT_5;
         end
         INIT_5: begin
+            init_state_next = INIT_6;
+        end
+        INIT_6: begin
             if(~init)
                 init_state_next = NOT_INIT;
             else
-                init_state_next = INIT_5;
+                init_state_next = INIT_6;
         end
     endcase
 

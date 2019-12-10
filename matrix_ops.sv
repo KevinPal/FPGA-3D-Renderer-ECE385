@@ -56,6 +56,7 @@ module gen_camera_mat(
     input int y_axis[3],
     input int z_axis[3],
     input int camera_pos[3],
+    input int trans[3],
     output int out[4][4]
 );
 
@@ -68,15 +69,15 @@ vec_dot dot3(z_axis, camera_pos, dot_pos[2]);
 assign out[0][0] = x_axis[0];
 assign out[0][1] = y_axis[0];
 assign out[0][2] = z_axis[0];
-assign out[0][3] = 0;
+assign out[0][3] = trans[0];
 assign out[1][0] = x_axis[1];
 assign out[1][1] = y_axis[1];
 assign out[1][2] = z_axis[1];
-assign out[1][3] = 0;
+assign out[1][3] = trans[1];
 assign out[2][0] = x_axis[2];
 assign out[2][1] = y_axis[2];
 assign out[2][2] = z_axis[2];
-assign out[2][3] = 0;
+assign out[2][3] = trans[2];
 assign out[3][0] = dot_pos[0];
 assign out[3][1] = dot_pos[1];
 assign out[3][2] = dot_pos[2];

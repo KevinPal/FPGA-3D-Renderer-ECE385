@@ -57,6 +57,8 @@ int main() {
 	gpu->frame_pointer = frame2;
 	gpu->z_buffer = z_buffer;
 
+	gpu->z_clip = -16 * (FP_SCALE);
+
 	printf("Allocation Done. Frame 1: %h, Frame2: %h, Z Buffer: %h\n", frame1,
 			frame2, z_buffer);
 
@@ -72,6 +74,7 @@ int main() {
 	int keycode = 0;
 	float last_fps = 0;
 	char fps_str[4];
+	printf("Starting game loop");
 	while (1) {
 		time_t start_time = clock();
 		time_t frame_time = clock();
@@ -82,11 +85,6 @@ int main() {
 		clear_screen(gpu, 1);
 		clear_depth(gpu, 1);
 
-
-		printf("Clear ticks %d\n", clock() - start_time);
-
-		start_time = clock();
-
 		for (int z = 4; z > 0; z--) {
 			for (int x = 10; x > -5; x--) {
 				draw_cube(gpu, 8, -16 + 8 * x, -16, -64 + 8 * z, BLOCK_GRASS);
@@ -95,7 +93,6 @@ int main() {
 
 		//		draw_cube(gpu, 8, -16 + 16, -16 + 8 * y, -64 + 16 - 16, BLOCK_LOG_DARK);
 		draw_tree(gpu, 0, -16, -64, 5, BLOCK_LOG_DARK, BLOCK_LEAF_TRANS);
-
 
 		draw_tree(gpu, -16, -16, -48, 6,  BLOCK_LOG, BLOCK_LEAF_TRANS);
 
@@ -120,20 +117,21 @@ int main() {
 			frame2->D2[SCREEN_HEIGHT/2][c] = pixel;
 		}
 
-		printf("Render ticks %d\n", clock() - start_time);
-		start_time = clock();
-
-
 		gcvt (last_fps, 4, fps_str);
 		draw_string(frame2, "FPS:", 4, 10, 10);
-		draw_string(frame2, fps_str, 4, 40, 10);
+		draw_string(frame2, fps_str, 5, 40, 10);
 		transfer(frame2, frame1,sizeof(frame1->D1));
-
-		printf("Copy ticks %d\n", clock() - start_time);
-		start_time = clock();
 
 
 		loop_keyboard(&keycode);
+//
+//		if(keycode == KEY_S) {
+//			gpu->cam_trans.z += FP_SCALE;
+//		} else if (keycode == KEY_W) {
+//			gpu->cam_trans.z -= FP_SCALE;
+//			printf("%d", gpu->cam_trans.z);
+//		}
+
 		if(keycode == KEY_S) {
 			gpu->cam_pos.z += 1;
 		} else if (keycode == KEY_W) {
