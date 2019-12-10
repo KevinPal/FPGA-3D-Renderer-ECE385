@@ -189,7 +189,8 @@ always_comb begin
                     GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*320) + (rast_xyz[0]/(1<<8)))*4);
 
                     if(GPU_MASTER_readdatavalid & ~GPU_MASTER_waitrequest) begin
-                        if((GPU_MASTER_readdata > rast_xyz[2]) & (rast_xyz[0] > 0) & (rast_xyz[0] < (320*(1<<8))) & (rast_xyz[1] > 0) & (rast_xyz[1] < (240*(1<<8)))) begin
+                        // Skip off screen pixels and pure yellow pixels
+                        if((GPU_MASTER_readdata > rast_xyz[2]) & (rast_xyz[0] > 0) & (rast_xyz[0] < (320*(1<<8))) & (rast_xyz[1] > 0) & (rast_xyz[1] < (240*(1<<8))) & ((rast_rgb[0] != 8'd255) || (rast_rgb[1] != 8'd255) || (rast_rgb[2] != 8'd0) )) begin
                             rast_next_state = RGB_WRITE;
                         end else begin
                             rast_cont = 1; // Skip pixel
@@ -224,7 +225,7 @@ always_comb begin
                 GPU_MASTER_writedata = {8'h7F, 8'hFF, 8'hFF, 8'hFF};
                 GPU_MASTER_address = z_buffer_pointer + clear_counter*4;
             end
-            if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
+            if(~GPU_MASTER_waitrequest)
                 clear_counter_next = clear_counter + 1;
         end
     end

@@ -1,3 +1,6 @@
+#ifndef TYPES_H_
+#define TYPES_H_
+
 #include "alt_types.h"
 
 #define SCREEN_WIDTH 320
@@ -24,11 +27,16 @@
 #define BLOCK_GRASS 0
 #define BLOCK_DIRT 1
 #define BLOCK_LOG 2
-#define BLOCK_COBBLE 3
-#define BLOCK_IRON 4
-#define BLOCK_LEAF 5
-#define BLOCK_FURNACE 6
-#define BLOCK_PUMPKIN 7
+#define BLOCK_LOG_DARK 3
+#define BLOCK_PLANK 4
+#define BLOCK_LEAF_TRANS 5
+#define BLOCK_LEAF_SOLID 6
+#define BLOCK_STONE 7
+#define BLOCK_COBBLE 8
+#define BLOCK_PUMPKIN 9
+#define BLOCK_FURNACE 10
+#define BLOCK_GLASS 11
+#define BLOCK_BEEHIVE 12
 
 typedef struct pixel_t {
 	char b;
@@ -102,6 +110,6 @@ typedef struct gpu_core_t {
 	volatile vec3_t cam_pos;
 } gpu_core_t;
 
-
+#endif
 
 

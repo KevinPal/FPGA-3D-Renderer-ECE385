@@ -33,11 +33,6 @@ with open('sprite_pallet.txt', 'w+') as f:
             c = pixels[x, y]
             id = color2id[c]
             f.write("{0:b}".format(id).rjust(data_bits, '0') + '\n')
-
-    print("Padding with %d entires" %  (2**addres_bits - (width*height)))
-    for i in range(width*height, 2**(addres_bits)):
-        f.write("{0:b}".format(color_id).rjust(data_bits, '0') + '\n')
-        
 rom = '''
 // AUTO GENERATED MODULE
 module texutre_rom (
