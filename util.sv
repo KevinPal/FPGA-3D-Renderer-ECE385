@@ -37,7 +37,8 @@ end
 
 endmodule
 
-
+// Detects the positive edge of the signal clock by comparing it to its
+// value from the last clock cycle. 
 module pos_edge_detect(
     input logic CLK,
     input logic RESET,

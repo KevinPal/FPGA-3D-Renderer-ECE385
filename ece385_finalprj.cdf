@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EP4CE115F29) Path("C:/Users/kpalani/Desktop/ece385_finalprj/") File("ece385_finalprj.sof") MfrSpec(OpMask(1));
+		Device PartName(EP4CE115F29) Path("C:/Users/kpalani/Desktop/") File("ece385_finalprj_clean_slow.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 

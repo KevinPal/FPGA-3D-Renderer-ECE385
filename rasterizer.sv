@@ -1,4 +1,16 @@
-
+// Rasterizes a horizontal line in the X Z plane
+// init must go high when new data is presented. Inputs will
+// not be reused unless the module is re-inited.
+//
+// cont must go high to signal the module to generate a new pixel
+// output valid will go high when a new pixel is ready
+// done will go high when the entire line is done
+// 
+// the x and z coordinates of the end points of the line must be past in
+// the y coordinate being rendered at must be passed in
+// the 3 verticies of the surrounding triangle are used to UV interpolation
+//
+// Outputs an RGB, as well as an XYZ every output valid
 module rast_line(
     input logic CLK, RESET,
     input logic init,
@@ -108,6 +120,7 @@ enum logic [5:0] {
     RENDERING_CALC_5,
     RENDERING_SLEEP,
     RENDERING_TEXT,
+    DONE_SLEEP,
     DONE
 } state = IDLE, next_state;
 
@@ -153,7 +166,7 @@ always_comb begin
     mid_uv = '{mid[3][31:16]*(1<<8), mid[3][15:0]*(1<<8)};
     bot_uv = '{bot[3][31:16]*(1<<8), bot[3][15:0]*(1<<8)};
 
-
+    // Setup counts and dz/dy slope
     if(state == INIT) begin
         x_cnt_next = left_x;
         z_cnt_next = left_z;
@@ -171,6 +184,7 @@ always_comb begin
     end
     xyz = '{x_cnt, y, z_cnt};
 
+    // State machine
     unique case(state)
         IDLE: begin
             if(init)
@@ -205,8 +219,8 @@ always_comb begin
         end
         RENDERING_TEXT: begin
             output_valid = 1;
-            if(((x_cnt >= right_x) || (x_cnt >= (320*(1<<8)))) & cont)
-                next_state = DONE;
+            if(((x_cnt >= (right_x + (0<<8))) || (x_cnt >= (320*(1<<8)))) & cont)
+                next_state = DONE_SLEEP;
             else if(cont) begin
                 next_state = RENDERING_CALC;
                 x_cnt_next = x_cnt + (1<<8);
@@ -214,6 +228,9 @@ always_comb begin
             end else begin
 
             end
+        end
+        DONE_SLEEP: begin
+            next_state = DONE;
         end
         DONE: begin
             if(init)
@@ -227,7 +244,7 @@ always_comb begin
 
 end
 
-
+// Lots of D flip flops
 always_ff @ (posedge CLK) begin
     if(RESET) begin
         x_cnt <= 0;
@@ -287,7 +304,17 @@ end
 
 endmodule
 
-// Rasterizes a triangle
+// Rasterizes a triangle by splitting it into many horizontal
+// lines and drawing those via rast_line
+//
+// cont must be set high whenever the module should produce a new
+// pixel. draw ready goes high when the new pixel is ready
+//
+// 3 verticies of ther triangle must be passed in, along with their UV coords
+//
+// done is set high when the triangle is done
+//
+// outputs an RGB and XYZ every draw ready
 module rast_triangle(
     input logic CLK, RESET,
     input logic start,
@@ -630,7 +657,16 @@ end
 
 endmodule
 
-// TODO figure out why init takes 2 cycles
+// Represents a 3d edge 
+//
+// The init process takes 6 cycles
+// the module will step across the line, starting at the top
+// current pos will move one unit in the y direction, and move
+// the correct amounts in the x and z directions to stay on the line.
+//
+// This is done every cycle step is high
+//
+// The bounding box of the edge is also outputted
 module vert_edge(
     input logic CLK, RESET,
     input logic init,
@@ -679,6 +715,7 @@ always_comb begin
          (init_state == INIT_4) | (init_state == INIT_5) |
          (init_state == INIT_6)
          ) begin
+        // Init slopes/counters and do Y pre step
         steps[0] = top[0] - bot[0];
         steps[1] = top[1] - bot[1];
         steps[2] = top[2] - bot[2];
@@ -691,6 +728,7 @@ always_comb begin
         current_pos_next[2] = (bot[2] + ((yPreStep * dzBdyNext)/(1<<8)));
         current_pos_next[1] = (bot[1] + yPreStep);
     end else if(step & (init_state == NOT_INIT)) begin
+        // Step 1 unit is Y
         current_pos_next[0] += dxBdy;
         current_pos_next[2] += dzBdy;
         current_pos_next[1] += (1<<8);

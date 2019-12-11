@@ -1,11 +1,6 @@
 /************************************************************************
-Lab 9 Quartus Project Top Level
+Final project top level
 
-Dong Kai Wang, Fall 2017
-Christine Chen, Fall 2013
-
-For use with ECE 385 Experiment 9
-University of Illinois ECE Department
 ************************************************************************/
 
 module final_top (

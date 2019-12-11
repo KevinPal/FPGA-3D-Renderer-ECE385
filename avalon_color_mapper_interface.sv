@@ -1,3 +1,5 @@
+// Interface for an avalon streaming core that
+// converts an color ID stream into an RGB value
 module avalon_color_mapper_interface (
     input  logic CLK_clk,
     input  logic RESET_reset,
@@ -21,7 +23,7 @@ assign RGB_SOURCE_ready = COLOR_ID_SINK_ready;
 assign RGB_SOURCE_valid = COLOR_ID_SINK_valid;
 
 byte rgb[3];
-
+// looks up the color id
 texture_mapper mapper(COLOR_ID_SINK_1_data, rgb[0], rgb[1], rgb[2]);
 
 assign RGB_SOURCE_data = {rgb[0], rgb[1], rgb[2]};

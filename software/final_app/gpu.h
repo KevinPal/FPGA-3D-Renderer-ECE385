@@ -17,9 +17,9 @@ void clear_depth(volatile gpu_core_t* gpu, int should_wait);
 void draw_cube(volatile gpu_core_t* gpu, int scale, int x, int y, int z,
 		int block_id);
 
-void draw_string(frame_buffer_t* frame, char* s, int num_chars, int x, int y);
+void draw_string(frame_buffer_t* frame, char* s, int num_chars, int x, int y, pixel_t color);
 
-void draw_char(frame_buffer_t* frame, char c, int x, int y);
+void draw_char(frame_buffer_t* frame, char c, int x, int y, pixel_t color);
 
 
 #endif /* GPU_H_ */

@@ -1,4 +1,5 @@
-
+// Generated a projection matrix with the specified paramaters
+// Used to convert points from 3D to 2D
 module gen_prj_mat(
     input int  half_width,
     input int  half_height,
@@ -25,7 +26,8 @@ assign prj[3][2] = (near*far/(1<<8))/(near-far);
 assign prj[3][3] = 0;
 
 endmodule
-
+// Generated the translation matrix for the given offset position and 
+// scale. Used to translate and scale verticies
 module gen_trans_mat(
     input int scale,
     input int pos[3],
@@ -50,7 +52,7 @@ assign out[3][2] = 0;
 assign out[3][3] = 1 * (1<<8);
 
 endmodule
-
+// Generates the camera matrix. Used to rotate the camera
 module gen_camera_mat(
     input int x_axis[3],
     input int y_axis[3],
@@ -85,6 +87,8 @@ assign out[3][3] = 1 * (1<<8);
 
 endmodule
 
+// Multiplies a 4x4 matrix by a 4d vector.
+// Used to multiply verticies by the total projection matrix
 module mat_vec_mul(
     input int  m1[4][4],
     input int vec[4],
@@ -98,6 +102,8 @@ assign out[3] =   ((m1[3][0] * vec[0])/(1<<8)) + ((m1[3][1] * vec[1])/(1<<8)) + 
 
 endmodule
 
+// Multiplies a 4x4 matrix by another 4x4 matrix
+// Used to combine various matricies into one
 module mat_mat_mul(
     input int    m1[4][4],
     input int    m2[4][4],
@@ -123,6 +129,7 @@ assign out[3][3] =((m1[3][0] * m2[0][3])/(1<<8)) + ((m1[3][1] * m2[1][3])/(1<<8)
 
 endmodule
 
+// Computes the cross product of 2 3 element vectors. Order matters
 module vec_cross(
     input int a[3],
     input int b[3],
@@ -140,6 +147,7 @@ assign temp2 = ((a[1]*b[0])/(1<<8));
 
 endmodule
 
+// Subtracts two 3D vectors
 module vec_sub(
     input int a[3],
     input int b[3],
@@ -152,6 +160,7 @@ assign out[2] = a[2] - b[2];
 
 endmodule
 
+// Computes the dot product of 2 3D vectors
 module vec_dot(
     input int a[3],
     input int b[3],
@@ -202,6 +211,7 @@ end
 
 endmodule
 
+// Estimates the length of a 3d vector
 module vec_norm(
     input int a[3],
     output int out
@@ -213,6 +223,7 @@ vec2d_norm n2(temp, a[2], out);
 
 endmodule
 
+// Multiplies a 3D vector by a scalar
 module vec_mul(
     input int a[3],
     input int b,
@@ -225,6 +236,7 @@ assign out[2] = (a[2]/(1<<8)) * b;
 
 endmodule
 
+// Multiplies a 2D vector by a scalar
 module vec2_mul(
     input int a[2],
     input int b,
@@ -236,6 +248,7 @@ assign out[1] = (a[1]/(1<<8)) * b;
 
 endmodule
 
+// Adds 2 3d vectors
 module vec_add(
     input int a[3],
     input int b[3],
@@ -249,6 +262,7 @@ assign out[2] = a[2] + b[2];
 endmodule
 
 
+// Adds 2 2d vectors
 module vec2_add(
     input int a[2],
     input int b[2],

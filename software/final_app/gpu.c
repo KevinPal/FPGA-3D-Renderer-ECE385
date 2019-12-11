@@ -24,8 +24,9 @@ void clear_screen(volatile gpu_core_t* gpu, int should_wait) {
 	if (should_wait == 1) {
 		while (gpu->done == 0) {
 		}
+		gpu->mode = GPU_MODE_IDLE;
+
 	}
-	gpu->mode = GPU_MODE_IDLE;
 }
 
 void clear_depth(volatile gpu_core_t* gpu, int should_wait) {
@@ -40,14 +41,19 @@ void clear_depth(volatile gpu_core_t* gpu, int should_wait) {
 	gpu->mode = GPU_MODE_IDLE;
 }
 
+int x_off;
+int y_off;
+int z_off;
+
 void draw_cube(volatile gpu_core_t* gpu, int scale, int x, int y, int z,
 		int block_id) {
 	gpu->mode = GPU_MODE_RENDER;
 	gpu->block_id = block_id;
 	gpu->scale = scale * (FP_SCALE);
-	gpu->x = (x-4) * (FP_SCALE);
-	gpu->y = (y+4) * (FP_SCALE);
-	gpu->z = (z) * (FP_SCALE);
+	gpu->x = (x+x_off) * (FP_SCALE);
+	gpu->y = (y+4+y_off) * (FP_SCALE);
+	gpu->z = (z+z_off) * (FP_SCALE);
+	//printf("%d\n", z_off);
 	gpu->done = 0;
 	gpu->start = 0;
 	gpu->start = 1;
@@ -60,7 +66,7 @@ void draw_cube(volatile gpu_core_t* gpu, int scale, int x, int y, int z,
 
 }
 
-void draw_string(frame_buffer_t* frame, char* s, int num_chars, int x, int y) {
+void draw_string(frame_buffer_t* frame, char* s, int num_chars, int x, int y, pixel_t color) {
 	int x_offset = 0;
 	for(int i = 0; i < num_chars; i++) {
 		if(s[i] == '.') {
@@ -72,25 +78,28 @@ void draw_string(frame_buffer_t* frame, char* s, int num_chars, int x, int y) {
 			frame->D2[y + 6][x + x_offset] = black;
 			frame->D2[y + 1][x + x_offset] = black;
 			x_offset += 2;
+		} else if(s[i] == ' ') {
+			x_offset += 3;
+		} else if((int)s[i] == 4) {
+			x_offset += 3;
 		} else {
-			draw_char(frame, s[i], x+x_offset, y);
+			draw_char(frame, s[i], x+x_offset, y, color);
 			x_offset += 8;
 		}
 	}
 }
 
-void draw_char(frame_buffer_t* frame, char c, int x, int y) {
+void draw_char(frame_buffer_t* frame, char c, int x, int y, pixel_t color) {
 	int offset = 0;
 	if(c >= 'A') {
 		offset = c - 'A';
 	} else {
 		offset = c - '0' + 26;
 	}
-	pixel_t black = {0, 0, 0, 0};
 	for(int i = 0; i < 7; i++) {
 		for(int j = 0; j < 7; j++) {
 			if(font_data[i][j + offset*7]) {
-				frame->D2[i + y][j + x] = black;
+				frame->D2[i + y][j + x] = color;
 			}
 		}
 	}

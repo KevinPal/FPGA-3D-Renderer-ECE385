@@ -1,3 +1,5 @@
+// Avalon interface for the GPU,
+// with an avalon slave and an avalon master
 module avalon_gpu_interface (
     input  logic CLK_clk,
     input  logic RESET_reset,
@@ -22,6 +24,7 @@ module avalon_gpu_interface (
     input  logic GPU_MASTER_waitrequest
 );
 
+// pass all signals to GPU
 gpu_core gpu(.*);
 
 

@@ -1,5 +1,10 @@
 
 // Actual implementation of the interface to save compile time
+// Implements the connections to the avalob bus. THe avalon
+// master signals are used to write to memory locations
+// such as the SDRAM and onchip memory. The avalon slave
+// is used for the nios to send data to the gpu to render.
+// Control signals such as wait request are used for syncronization
 module gpu_core(
     input  logic CLK_clk,
     input  logic RESET_reset,
@@ -65,6 +70,7 @@ int trans_next[3];
 
 int z_clip, z_clip_next;
 
+// Matrix calculations
 gen_prj_mat m1(320 * (1<<8), 240 * (1<<8), 5 * (1<<8), 200 * (1<<8), prj_raw);
 gen_camera_mat m2(x_axis, y_axis, z_axis, cam_pos, trans, cam);
 
@@ -76,17 +82,24 @@ rast_cube cube_renderer(CLK_clk, RESET_reset, rast_start, rast_cont,
 
 int clear_counter, clear_counter_next;
 
+int read_addr;
+
+// Overwall state
 enum logic [5:0] {
     IDLE,
     RUNNING,
     DONE
 } state = IDLE, next_state;
 
+// Reading/Writing state
 enum logic [5:0] {
+    Z_READ_SLEEP,
     Z_READ,
-    Z_WRITE,
-    RGB_WRITE
-} rast_state = Z_READ, rast_next_state;
+    RGB_WRITE_SLEEP,
+    RGB_WRITE,
+    Z_WRITE_SLEEP,
+    Z_WRITE
+} rast_state = Z_READ_SLEEP, rast_next_state;
 
 always_comb begin
 
@@ -122,7 +135,11 @@ always_comb begin
     // rast defaults
     rast_start = 0;
     rast_cont = 0;
+    
+    read_addr = 32'hxxxxxxxxxxxxxxxx;
 
+    // Software-Hardware interface 
+    //
     // Slave
     if(GPU_SLAVE_chipselect) begin
         // Slave Reads
@@ -190,39 +207,55 @@ always_comb begin
         end
 
     end
-
+    
+    // Memory read/write statemachine next states
     if(state == RUNNING) begin
         if(mode == 1) begin // Cube rendering
             if(rast_ready) begin
+                read_addr = (((rast_xyz[1]/(1<<8))*320) + (rast_xyz[0]/(1<<8)))*4;
+
                 GPU_MASTER_chipselect = 1;
-                if(rast_state == Z_READ) begin // Check depth buffer and frame bounds
+                if((rast_state == Z_READ) || (rast_state == Z_READ_SLEEP)) begin // Check depth buffer and frame bounds
                     GPU_MASTER_read = 1;
-                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*320) + (rast_xyz[0]/(1<<8)))*4);
+                    GPU_MASTER_address = z_buffer_pointer + read_addr;
 
                     if(GPU_MASTER_readdatavalid & ~GPU_MASTER_waitrequest) begin
-                        // Skip off screen pixels and pure yellow pixels
-                        if((GPU_MASTER_readdata > rast_xyz[2]) & (rast_xyz[0] > 0) & (rast_xyz[0] < (320*(1<<8))) & (rast_xyz[1] > 0) & (rast_xyz[1] < (240*(1<<8))) & ((rast_rgb[0] != 8'd255) || (rast_rgb[1] != 8'd255) || (rast_rgb[2] != 8'd0) )) begin
-                            rast_next_state = RGB_WRITE;
-                        end else begin
-                            rast_cont = 1; // Skip pixel
+
+                        if(rast_state == Z_READ_SLEEP) begin
                             rast_next_state = Z_READ;
+                        end else begin
+                            // Skip off screen pixels and pure yellow pixels
+                            if((GPU_MASTER_readdata > rast_xyz[2]) & (rast_xyz[0] > 0) & (rast_xyz[0] < (320*(1<<8))) & (rast_xyz[1] > 0) & (rast_xyz[1] < (240*(1<<8))) & ((rast_rgb[0] != 8'd255) || (rast_rgb[1] != 8'd255) || (rast_rgb[2] != 8'd0) )) begin
+                                rast_next_state = RGB_WRITE_SLEEP;
+                            end else begin
+                                rast_cont = 1; // Skip pixel
+                                rast_next_state = Z_READ_SLEEP;
+                            end
                         end
                     end
 
-                end else if(rast_state == RGB_WRITE) begin // Write rgb to frame buffer
+                end else if((rast_state == RGB_WRITE) || (rast_state == RGB_WRITE_SLEEP) ) begin // Write rgb to frame buffer
                     GPU_MASTER_write = 1;
                     GPU_MASTER_writedata = {8'h00, rast_rgb[0], rast_rgb[1], rast_rgb[2]};
-                    GPU_MASTER_address = frame_pointer + (( ((rast_xyz[1]/(1<<8))*320) + (rast_xyz[0]/(1<<8)))*4);
-                    if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest)
-                        rast_next_state = Z_WRITE;
+                    GPU_MASTER_address = frame_pointer + read_addr;
+                    if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest) begin
+                        if(rast_state == RGB_WRITE_SLEEP)
+                            rast_next_state = RGB_WRITE;
+                        else
+                            rast_next_state = Z_WRITE_SLEEP;
+                    end
 
-                end else if(rast_state == Z_WRITE) begin // Write z to depth buffer
+                end else if((rast_state == Z_WRITE) || (rast_state == Z_WRITE_SLEEP)) begin // Write z to depth buffer
                     GPU_MASTER_write = 1;
                     GPU_MASTER_writedata = rast_xyz[2];
-                    GPU_MASTER_address = z_buffer_pointer + (( ((rast_xyz[1]/(1<<8))*320) + (rast_xyz[0]/(1<<8)))*4);
+                    GPU_MASTER_address = z_buffer_pointer + read_addr;
                     if(GPU_MASTER_writeresponsevalid & ~GPU_MASTER_waitrequest) begin
-                        rast_next_state = Z_READ;
-                        rast_cont = 1;
+                        if(rast_state == Z_WRITE_SLEEP) begin
+                            rast_next_state = Z_WRITE;
+                        end else begin
+                            rast_next_state = Z_READ_SLEEP;
+                            rast_cont = 1;
+                        end
                     end
                 end
             end
@@ -285,6 +318,7 @@ always_comb begin
     endcase
 end
 
+// D flip flops
 always_ff @ (posedge CLK_clk) begin
     if(RESET_reset) begin
         frame_pointer <= 0;
@@ -331,7 +365,19 @@ end
 
 endmodule
 
-
+// Rasterizes a cube in 3D
+//
+// Start initializes and stats all calculations
+// cont signals the module to produce a new pixel
+// scale, pos, and blockID define the block to be rendered
+// prj and zclip define the projection matrix and the near z clipping axis to
+// render
+// Rast ready signals a new pixel is ready
+//
+// RGB and XYZ are produced every rast_ready
+// done is high when the cube is done readering
+//
+// Splits the cube into 12 triangles are draws them all
 module rast_cube(
     input logic CLK,
     input logic RESET,
@@ -348,6 +394,7 @@ module rast_cube(
     output logic done
 );
 
+// State for rendering a cube and its 12 faces
 enum logic [5:0] {
     IDLE,
     PROJECTING_1,
@@ -622,7 +669,7 @@ always_comb begin
     endcase
 end
 
-
+// D flip flop
 always_ff @ (posedge CLK) begin
     if(RESET) begin
         state <= IDLE;
@@ -634,7 +681,8 @@ end
 
 endmodule
 
-// TODO make sequencial
+// Projects a cube into 3d by generating the 8 verticies and multiplying them
+// by the project matrix
 module project_cube(
     input logic CLK,
     input logic RESET,
@@ -663,11 +711,13 @@ int screen_verts_next[8][3];
 
 assign all_verticies = '{back_top_left, back_top_right, back_bot_left, back_bot_right, front_top_left, front_top_right, front_bot_left, front_bot_right};
 
+// Matrix multiplcation and view port transform
 mat_vec_mul projectors[8](.m1(prj), .vec(all_verticies), .out(prj_vert_next));
 viewport_trans view_transformers[8](.CLK, .RESET, .vec(prj_vert), .out(screen_verts_next));
 
 assign out = screen_verts;
 
+// D flip flops
 always_ff @ (posedge CLK) begin
     prj_vert <= prj_vert_next;
     screen_verts <= screen_verts_next;
@@ -734,6 +784,8 @@ end
 
 endmodule
 
+// Converts a 4D vector into 2D screen space by dividing by the W component
+// and scaling it to the screen
 module viewport_trans(
     input logic CLK,
     input logic RESET,
@@ -755,6 +807,7 @@ always_comb begin
     out[2] = pers_div[2];
 end
 
+// D flip flops
 always_ff @ (posedge CLK) begin
     if(RESET)
         pers_div <= '{0, 0, 0};

@@ -23,6 +23,28 @@
 #define KEY_S 0x16
 #define KEY_A 0x04
 #define KEY_D 0x07
+#define KEY_SPACE 0x2C
+#define KEY_C 0x06
+
+#define KEY_E 0x08
+#define KEY_Q 0x14
+
+#define KEY_R 0x15
+
+#define KEY_1 0x1E
+#define KEY_2 0x1F
+#define KEY_3 0x20
+#define KEY_4 0x21
+#define KEY_5 0x22
+#define KEY_6 0x23
+#define KEY_7 0x24
+#define KEY_8 0x25
+#define KEY_9 0x26
+#define KEY_0 0x27
+
+#define KEY_I 0x0c
+#define KEY_O 0x12
+#define KEY_P 0x13
 
 #define BLOCK_GRASS 0
 #define BLOCK_DIRT 1
@@ -111,6 +133,13 @@ typedef struct gpu_core_t {
 	volatile vec3_t cam_trans;
 	volatile int z_clip;
 } gpu_core_t;
+
+typedef struct block_t {
+	int x;
+	int y;
+	int z;
+	int block_id;
+} block_t;
 
 #endif
 

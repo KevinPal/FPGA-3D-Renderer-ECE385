@@ -1,5 +1,8 @@
 
 // AUTO GENERATED MODULE
+//
+// Converts a UV coordinate to the rgb value by looking it up in the exture
+// sheet and converting the color id to a RGB
 module texture(
     input logic CLK,
     input int UV[2],
@@ -12,13 +15,23 @@ logic [10:0] color_id;
 texutre_rom rom(CLK, read_address, color_id);
 texture_mapper mapper(color_id, rgb);
 
-assign read_address = (UV[0] / (1<<8)) + (UV[1] / (1<<8))*416;
+longint U;
+longint V;
+
+always_comb begin
+    U = (UV[0] / (1<<8));
+    V = (UV[1] / (1<<8))*416;
+    read_address = U + V;
+end
+
 
 endmodule
 
 
 
 // AUTO GENERATED MODULE
+//
+// Represents a block of on chip memory where the texture is loaded
 module texutre_rom (
     input CLK,
     input [13:0] read_address,
@@ -41,6 +54,8 @@ endmodule
 
 
 // AUTO GENERATED MODULE
+//
+// Converts a color id to an RGB
 module texture_mapper(
     input logic [10:0] color_id,
     output byte rgb[3]

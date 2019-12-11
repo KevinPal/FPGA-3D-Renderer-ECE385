@@ -16,5 +16,7 @@ set_output_delay -clock {Clk} -max 3 [all_outputs]
 set_output_delay -clock {Clk} -min 2 [all_outputs]
 
 
-set_multicycle_path -from [get_registers final_soc:final_subsystem\|avalon_gpu_interface:gpu_core_0\|gpu_core:gpu\|rast_cube:cube_renderer\|rast_triangle:triangle_renderer\|vert_edge:E*\|Add*] -through [get_registers final_soc:final_subsystem\|avalon_gpu_interface:gpu_core_0\|gpu_core:gpu\|rast_cube:cube_renderer\|rast_triangle:triangle_renderer\|vert_edge:E*\|lp*] -to [get_registers final_soc:final_subsystem\|avalon_gpu_interface:gpu_core_0\|gpu_core:gpu\|rast_cube:cube_renderer\|rast_triangle:triangle_renderer\|vert_edge:E*\|cur*] -setup -end 6
+#set_multicycle_path -from [get_registers final_soc:final_subsystem\|avalon_gpu_interface:gpu_core_0\|gpu_core:gpu\|rast_cube:cube_renderer\|rast_triangle:triangle_renderer\|vert_edge:E*\|Add*] -to [get_registers final_soc:final_subsystem\|avalon_gpu_interface:gpu_core_0\|gpu_core:gpu\|rast_cube:cube_renderer\|rast_triangle:triangle_renderer\|vert_edge:E*\|lp*] -setup -end 3
+
+set_multicycle_path -from [get_registers final_soc:final_subsystem\|avalon_gpu_interface:gpu_core_0\|gpu_core:gpu\|rast_cube:cube_renderer\|rast_triangle:triangle_renderer\|vert_edge:E*\|*] -to [get_registers final_soc:final_subsystem\|avalon_gpu_interface:gpu_core_0\|gpu_core:gpu\|rast_cube:cube_renderer\|rast_triangle:triangle_renderer\|vert_edge:E*\|cur*] -setup -end 6
 
